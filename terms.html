@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Use – FitWow</title>
+  <script>
+    (function () {
+      var supported = ['en', 'es', 'de', 'fr', 'it', 'pt', 'ar', 'ru', 'zh', 'tr'];
+      var params = new URLSearchParams(window.location.search);
+      var override = params.get('lang');
+      if (override && supported.indexOf(override) !== -1) {
+        window.location.replace('/' + override + '/terms.html');
+        return;
+      }
+      var lang = navigator.language || navigator.userLanguage || '';
+      var primary = (lang.split('-')[0] || 'en').toLowerCase();
+      if (primary === 'zh') {
+        window.location.replace('/zh/terms.html');
+        return;
+      }
+      if (supported.indexOf(primary) !== -1) {
+        window.location.replace('/' + primary + '/terms.html');
+        return;
+      }
+      var list = navigator.languages || [lang];
+      for (var i = 0; i < list.length; i++) {
+        var code = (list[i].split('-')[0] || '').toLowerCase();
+        if (code === 'zh') {
+          window.location.replace('/zh/terms.html');
+          return;
+        }
+        if (supported.indexOf(code) !== -1) {
+          window.location.replace('/' + code + '/terms.html');
+          return;
+        }
+      }
+      window.location.replace('/en/terms.html');
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting… <a href="/en/terms.html">Terms of Use (English)</a></p>
+</body>
+</html>
