@@ -3,12 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="refresh" content="0;url=en/privacy.html" />
-  <link rel="canonical" href="en/privacy.html" />
   <title>Privacy Policy – FitWow</title>
-  <script>window.location.replace("en/privacy.html");</script>
+  <script>
+    (function () {
+      var supported = ['en', 'es', 'de', 'fr', 'it', 'pt', 'ar', 'ru', 'zh', 'tr'];
+      var params = new URLSearchParams(window.location.search);
+      var override = params.get('lang');
+      if (override && supported.indexOf(override) !== -1) {
+        window.location.replace('/' + override + '/privacy.html');
+        return;
+      }
+      var lang = navigator.language || navigator.userLanguage || '';
+      var primary = (lang.split('-')[0] || 'en').toLowerCase();
+      if (primary === 'zh') {
+        window.location.replace('/zh/privacy.html');
+        return;
+      }
+      if (supported.indexOf(primary) !== -1) {
+        window.location.replace('/' + primary + '/privacy.html');
+        return;
+      }
+      var list = navigator.languages || [lang];
+      for (var i = 0; i < list.length; i++) {
+        var code = (list[i].split('-')[0] || '').toLowerCase();
+        if (code === 'zh') {
+          window.location.replace('/zh/privacy.html');
+          return;
+        }
+        if (supported.indexOf(code) !== -1) {
+          window.location.replace('/' + code + '/privacy.html');
+          return;
+        }
+      }
+      window.location.replace('/en/privacy.html');
+    })();
+  </script>
 </head>
 <body>
-  <p>Redirecting to <a href="en/privacy.html">Privacy Policy</a>…</p>
+  <p>Redirecting… <a href="/en/privacy.html">Privacy Policy (English)</a></p>
 </body>
 </html>
