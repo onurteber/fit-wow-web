@@ -14,7 +14,7 @@
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/idXXXXX"
-  data-google-play-url="https://play.google.com/store/apps/details?id=com.fitwow.app"
+  data-google-play-url="https://play.google.com/store/apps/details?id=com.fitwow.fitwow"
   data-referral-capture-url="https://rblvsgcluwgtdoblmtfu.supabase.co/functions/v1/referral-capture">
   <a href="#main" class="skip-link">Skip to main content</a>
   <header class="site-header">
@@ -38,7 +38,20 @@
         <div class="hero__mockup">
           <div class="phone-mockup">
             <div class="phone-mockup__screen">
-              <div class="phone-mockup__placeholder">App screenshot</div>
+              <div class="mock-screen mock-screen--hero">
+                <div class="mock-screen__header">Today</div>
+                <div class="mock-screen__cal">1,240 <span>kcal</span></div>
+                <div class="mock-screen__rings">
+                  <div class="mock-screen__ring"><span class="mock-screen__ring-label">P</span><div class="mock-screen__ring-fill" style="--pct: 65%"></div></div>
+                  <div class="mock-screen__ring"><span class="mock-screen__ring-label">C</span><div class="mock-screen__ring-fill" style="--pct: 42%"></div></div>
+                  <div class="mock-screen__ring"><span class="mock-screen__ring-label">F</span><div class="mock-screen__ring-fill" style="--pct: 78%"></div></div>
+                </div>
+                <div class="mock-screen__meals">
+                  <div class="mock-screen__meal"><span>Breakfast</span><span>420</span></div>
+                  <div class="mock-screen__meal"><span>Lunch</span><span>580</span></div>
+                  <div class="mock-screen__meal"><span>Dinner</span><span>240</span></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -69,6 +82,11 @@
             <h3 class="feature-card__title">Social Challenges</h3>
             <p class="feature-card__desc">Share meals and progress with friends.</p>
           </article>
+          <article class="feature-card">
+            <div class="feature-card__icon" aria-hidden="true">💬</div>
+            <h3 class="feature-card__title">FitWow Buddy</h3>
+            <p class="feature-card__desc">Ask anything about nutrition, get recipe ideas, and get tips tailored to your goals—with optional photo context.</p>
+          </article>
         </div>
       </div>
     </section>
@@ -79,22 +97,44 @@
         <div class="preview__grid">
           <div class="phone-mockup phone-mockup--small">
             <div class="phone-mockup__screen">
-              <div class="phone-mockup__placeholder phone-mockup__placeholder--1">Screen 1</div>
+              <div class="mock-screen mock-screen--preview mock-screen--1">
+                <div class="mock-screen__header">Log meal</div>
+                <div class="mock-screen__cam">📷</div>
+                <div class="mock-screen__hint">Take a photo</div>
+                <div class="mock-screen__row"><span>Oatmeal + banana</span><span>320 kcal</span></div>
+                <div class="mock-screen__row"><span>Chicken salad</span><span>445 kcal</span></div>
+              </div>
             </div>
           </div>
           <div class="phone-mockup phone-mockup--small">
             <div class="phone-mockup__screen">
-              <div class="phone-mockup__placeholder phone-mockup__placeholder--2">Screen 2</div>
+              <div class="mock-screen mock-screen--preview mock-screen--2">
+                <div class="mock-screen__header">Macros</div>
+                <div class="mock-screen__bar"><div class="mock-screen__bar-fill" style="width: 72%"></div><span>Protein 58g</span></div>
+                <div class="mock-screen__bar"><div class="mock-screen__bar-fill" style="width: 45%"></div><span>Carbs 92g</span></div>
+                <div class="mock-screen__bar"><div class="mock-screen__bar-fill" style="width: 60%"></div><span>Fat 38g</span></div>
+              </div>
             </div>
           </div>
           <div class="phone-mockup phone-mockup--small">
             <div class="phone-mockup__screen">
-              <div class="phone-mockup__placeholder phone-mockup__placeholder--3">Screen 3</div>
+              <div class="mock-screen mock-screen--preview mock-screen--3">
+                <div class="mock-screen__header">Progress</div>
+                <div class="mock-screen__chart">
+                  <div class="mock-screen__bar-chart"><div style="height: 40%"></div><div style="height: 65%"></div><div style="height: 55%"></div><div style="height: 80%"></div><div style="height: 70%"></div><div style="height: 90%"></div><div style="height: 85%"></div></div>
+                </div>
+                <div class="mock-screen__label">Calories this week</div>
+              </div>
             </div>
           </div>
           <div class="phone-mockup phone-mockup--small">
             <div class="phone-mockup__screen">
-              <div class="phone-mockup__placeholder phone-mockup__placeholder--4">Screen 4</div>
+              <div class="mock-screen mock-screen--preview mock-screen--4">
+                <div class="mock-screen__header">Buddy</div>
+                <div class="mock-screen__chat mock-screen__chat--them">What’s a good post-workout snack?</div>
+                <div class="mock-screen__chat mock-screen__chat--me">Try Greek yogurt + berries</div>
+                <div class="mock-screen__input">Type a message...</div>
+              </div>
             </div>
           </div>
         </div>

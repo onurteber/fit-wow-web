@@ -2,6 +2,8 @@
   'use strict';
 
   // --- Ref parameter: capture from URL and apply to store links ---
+  // When ref is present, all store buttons point to referral-capture URL; the backend
+  // redirects to App Store or Play Store based on User-Agent.
   var params = new URLSearchParams(window.location.search);
   var ref = params.get('ref');
   if (ref) {
@@ -17,7 +19,7 @@
   var body = document.body;
   var appStoreUrl = body.getAttribute('data-app-store-url') || '#';
   var googlePlayUrl = body.getAttribute('data-google-play-url') || '#';
-  var referralCaptureUrl = body.getAttribute('data-referral-capture-url');
+  var referralCaptureUrl = (body.getAttribute('data-referral-capture-url') || '').trim();
 
   function buildIosHref() {
     if (ref && referralCaptureUrl) {
