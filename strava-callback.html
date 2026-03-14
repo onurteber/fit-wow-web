@@ -8,7 +8,17 @@
     (function() {
       var q = window.location.search || '';
       if (q.charAt(0) === '?') q = q.slice(1);
-      window.location.replace('fitwow://strava-auth' + (q ? '?' + q : ''));
+      var isAndroid = /Android/i.test(navigator.userAgent);
+      var appUrl;
+      if (isAndroid) {
+        // intent URL so Chrome/Android hands off to the app (plain fitwow:// often never reaches the app from browser)
+        appUrl = 'intent://callback' + (q ? '?' + q : '') + '#Intent;scheme=fitwow;package=com.fitwow.fitwow;end';
+        console.log('[FitWow Strava callback] Android intent URL');
+      } else {
+        appUrl = 'fitwow://callback' + (q ? '?' + q : '');
+        console.log('[FitWow Strava callback] redirecting to fitwow://callback');
+      }
+      window.location.replace(appUrl);
     })();
   </script>
 </head>
