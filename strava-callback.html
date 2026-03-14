@@ -11,9 +11,9 @@
       var isAndroid = /Android/i.test(navigator.userAgent);
       var appUrl;
       if (isAndroid) {
-        // intent URL so Chrome/Android hands off to the app (plain fitwow:// often never reaches the app from browser)
-        appUrl = 'intent://callback' + (q ? '?' + q : '') + '#Intent;scheme=fitwow;package=com.fitwow.fitwow;end';
-        console.log('[FitWow Strava callback] Android intent URL');
+        // intent URL: scheme only (no package) so the system opens the app that handles fitwow://, not Play Store
+        appUrl = 'intent://callback' + (q ? '?' + q : '') + '#Intent;scheme=fitwow;end';
+        console.log('[FitWow Strava callback] Android intent URL (scheme=fitwow)');
       } else {
         appUrl = 'fitwow://callback' + (q ? '?' + q : '');
         console.log('[FitWow Strava callback] redirecting to fitwow://callback');
