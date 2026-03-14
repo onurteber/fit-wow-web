@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Strava – FitWow</title>
+  <style>
+    body { font-family: system-ui, sans-serif; text-align: center; padding: 2rem; max-width: 320px; margin: 2rem auto; }
+    p { color: #333; margin: 1rem 0; }
+    a.btn { display: inline-block; margin-top: 1rem; padding: 12px 24px; background: #fc4c02; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; }
+    a.btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <p id="msg">Opening FitWow…</p>
+  <a id="openApp" href="#" style="display: none;" class="btn">Open FitWow</a>
+  <script>
+    (function() {
+      var q = window.location.search || '';
+      if (q.charAt(0) === '?') q = q.slice(1);
+      var appUrl = 'fitwow://strava-auth' + (q ? '?' + q : '');
+      var msg = document.getElementById('msg');
+      var link = document.getElementById('openApp');
+      link.href = appUrl;
+      window.location.replace(appUrl);
+      setTimeout(function() {
+        msg.textContent = 'If the app did not open, tap the button below.';
+        link.style.display = 'inline-block';
+      }, 1500);
+    })();
+  </script>
+</body>
+</html>
