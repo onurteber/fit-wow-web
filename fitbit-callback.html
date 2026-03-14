@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fitbit – FitWow</title>
+  <script>
+    (function() {
+      var q = window.location.search || '';
+      if (q.charAt(0) === '?') q = q.slice(1);
+      var isAndroid = /Android/i.test(navigator.userAgent);
+      var appUrl;
+      if (isAndroid) {
+        appUrl = 'intent://fitbit-auth' + (q ? '?' + q : '') + '#Intent;scheme=fitwow;end';
+      } else {
+        appUrl = 'fitwow://fitbit-auth' + (q ? '?' + q : '');
+      }
+      window.location.replace(appUrl);
+    })();
+  </script>
+</head>
+<body></body>
+</html>
