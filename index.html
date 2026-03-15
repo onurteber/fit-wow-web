@@ -6,7 +6,7 @@
   <title>FitWow – Less Guessing. More Progress.</title>
   <script>
     (function () {
-      var supported = ['en','es','de','fr','it','pt','ar','ru','zh','tr','nl','ja','ko','pl','cs','da','sv','el','nb','fi','az','hi'];
+      var supported = ['en','es','de','fr','it','pt','ar','ru','zh','tr','nl','ja','ko','pl','cs','da','sv','el','nb','fi','az','hi','tl'];
       var params = new URLSearchParams(window.location.search);
       var override = params.get('lang');
       if (override && supported.indexOf(override) !== -1) {
@@ -17,12 +17,14 @@
       var primary = (lang.split('-')[0] || 'en').toLowerCase();
       if (primary === 'zh') { window.location.replace('/zh/'); return; }
       if (primary === 'no') { window.location.replace('/nb/'); return; }
+      if (primary === 'fil') { window.location.replace('/tl/'); return; }
       if (supported.indexOf(primary) !== -1) { window.location.replace('/' + primary + '/'); return; }
       var list = navigator.languages || [lang];
       for (var i = 0; i < list.length; i++) {
         var code = (list[i].split('-')[0] || '').toLowerCase();
         if (code === 'zh') { window.location.replace('/zh/'); return; }
         if (code === 'no') { window.location.replace('/nb/'); return; }
+        if (code === 'fil') { window.location.replace('/tl/'); return; }
         if (supported.indexOf(code) !== -1) { window.location.replace('/' + code + '/'); return; }
       }
       window.location.replace('/en/');
