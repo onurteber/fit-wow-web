@@ -191,6 +191,18 @@ a {
   justify-content: center;
 }
 
+.hero__mockup img {
+  transform: translateY(-10%) scale(1.2);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.hero__mockup_2 img {
+  transform: scale(1.1);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
 /* ===== Phone mockup ===== */
 .phone-mockup {
   width: 100%;
@@ -483,7 +495,7 @@ a {
 .preview__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-xl);
+  gap: var(--space-l);
   justify-items: center;
 }
 
@@ -756,7 +768,7 @@ a {
   .features__grid .feature-card:nth-child(5) { grid-column: 4 / span 2; }
 
   .preview__grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--space-lg);
   }
 
