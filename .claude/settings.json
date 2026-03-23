@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -d /Users/onurteber/workspace/fit-wow-web/*/)",
+      "Bash(python3:*)"
+    ]
+  }
+}
