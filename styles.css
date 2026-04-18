@@ -184,6 +184,20 @@ a {
   justify-content: center;
 }
 
+.hero__coming-soon {
+  display: inline-block;
+  margin-top: var(--space-sm);
+  padding: 0.35rem 1.1rem;
+  background: #FFF7ED;
+  color: var(--color-primary);
+  border: 1.5px solid #FDBA74;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .hero__mockup {
   width: 100%;
   max-width: 280px;
