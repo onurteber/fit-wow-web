@@ -106,6 +106,7 @@ a {
   border-radius: var(--radius-btn);
   border: none;
   cursor: pointer;
+  position: relative;
   transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition);
 }
 
@@ -136,6 +137,38 @@ a {
 .btn--secondary:hover {
   background: var(--color-accent-hover);
   box-shadow: var(--shadow-md);
+}
+
+.btn--soon {
+  background: #CBD5E1;
+  color: #334155;
+}
+
+.btn--soon:hover {
+  background: #CBD5E1;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn--soon::after {
+  content: attr(data-badge);
+  position: absolute;
+  inset-block-start: -0.7rem;
+  inset-inline-end: -0.6rem;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid #FDBA74;
+  border-radius: 999px;
+  background: #FFF7ED;
+  color: var(--color-primary);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--soon[aria-disabled="true"] {
+  cursor: not-allowed;
 }
 
 /* ===== Hero ===== */
@@ -182,20 +215,6 @@ a {
   flex-wrap: wrap;
   gap: var(--space-sm);
   justify-content: center;
-}
-
-.hero__coming-soon {
-  display: inline-block;
-  margin-top: var(--space-sm);
-  padding: 0.35rem 1.1rem;
-  background: #FFF7ED;
-  color: var(--color-primary);
-  border: 1.5px solid #FDBA74;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .hero__mockup {
@@ -578,6 +597,12 @@ a {
 
 .cta .btn--secondary:hover {
   background: var(--color-accent-hover);
+}
+
+.cta .btn--soon,
+.cta .btn--soon:hover {
+  background: #E2E8F0;
+  color: #334155;
 }
 
 /* ===== Footer ===== */

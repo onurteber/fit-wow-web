@@ -20,6 +20,56 @@
   var appStoreUrl = body.getAttribute('data-app-store-url') || '#';
   var googlePlayUrl = body.getAttribute('data-google-play-url') || '#';
   var referralCaptureUrl = (body.getAttribute('data-referral-capture-url') || '').trim();
+  var androidStatus = 'coming-soon';
+  var androidComingSoonLabels = {
+    ar: 'قريبًا',
+    az: 'Tezliklə',
+    cs: 'Brzy',
+    da: 'Snart',
+    de: 'Bald',
+    el: 'Σύντομα',
+    en: 'Soon',
+    es: 'Pronto',
+    fi: 'Pian',
+    fr: 'Bientôt',
+    hi: 'जल्द',
+    it: 'Presto',
+    ja: '近日',
+    ko: '곧',
+    nb: 'Snart',
+    nl: 'Binnenkort',
+    pl: 'Wkrótce',
+    pt: 'Em breve',
+    ru: 'Скоро',
+    sv: 'Snart',
+    tl: 'Malapit na',
+    tr: 'Yakında',
+    zh: '即将推出'
+  };
+
+  function getCurrentLang() {
+    var lang = (document.documentElement.getAttribute('lang') || 'en').toLowerCase();
+    return lang.split('-')[0];
+  }
+
+  function getAndroidBadgeLabel() {
+    var lang = getCurrentLang();
+    return androidComingSoonLabels[lang] || androidComingSoonLabels.en;
+  }
+
+  function setAndroidComingSoonState(link) {
+    var badgeLabel = getAndroidBadgeLabel();
+    var ariaLabel = link.getAttribute('aria-label') || link.textContent.trim();
+
+    link.setAttribute('href', '#');
+    link.setAttribute('aria-disabled', 'true');
+    link.setAttribute('aria-label', ariaLabel + ' (' + badgeLabel + ')');
+    link.setAttribute('data-badge', badgeLabel);
+    link.classList.add('btn--soon');
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+    });
+  }
 
   function buildIosHref() {
     if (ref && referralCaptureUrl) {
@@ -42,6 +92,10 @@
     link.setAttribute('href', buildIosHref());
   });
   document.querySelectorAll('a[data-store="android"]').forEach(function (link) {
+    if (androidStatus === 'coming-soon') {
+      setAndroidComingSoonState(link);
+      return;
+    }
     link.setAttribute('href', buildAndroidHref());
   });
 
