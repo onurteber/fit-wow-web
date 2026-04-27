@@ -20,7 +20,7 @@
   var appStoreUrl = body.getAttribute('data-app-store-url') || '#';
   var googlePlayUrl = body.getAttribute('data-google-play-url') || '#';
   var referralCaptureUrl = (body.getAttribute('data-referral-capture-url') || '').trim();
-  var androidStatus = 'coming-soon';
+  var androidStatus = googlePlayUrl && googlePlayUrl !== '#' ? 'live' : 'coming-soon';
   var androidComingSoonLabels = {
     ar: 'قريبًا',
     az: 'Tezliklə',
