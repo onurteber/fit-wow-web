@@ -215,6 +215,8 @@ a {
   flex-wrap: wrap;
   gap: var(--space-sm);
   justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .hero__mockup {
@@ -228,6 +230,7 @@ a {
   transform: translateY(-10%) scale(1.2);
   transform-origin: center;
   transition: transform 0.3s ease;
+  pointer-events: none;
 }
 
 .hero__mockup_2 img {
