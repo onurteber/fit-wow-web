@@ -30,6 +30,7 @@
     el: 'Σύντομα',
     en: 'Soon',
     es: 'Pronto',
+    et: 'Varsti',
     fi: 'Pian',
     fr: 'Bientôt',
     hi: 'जल्द',
