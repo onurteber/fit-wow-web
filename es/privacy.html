@@ -179,14 +179,74 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">
-      <span class="footer__logo">FitWow</span>
-      <nav class="footer__nav" aria-label="Pie de página">
-        <a href="privacy.html">Política de privacidad</a>
-        <a href="terms.html">Términos</a>
-        <a href="#">Contacto</a>
-      </nav>
-      <p class="footer__copy">© 2026 FitWow</p>
+    <div class="container footer__inner">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a class="footer__logo" href="index.html" aria-label="FitWow">FitWow</a>
+          <p class="footer__download">Descarga FitWow</p>
+          <div class="footer__stores">
+          <a class="footer__store" data-store="ios" href="https://apps.apple.com/app/id6760663683" aria-label="Descargar en App Store">
+            <img src="../assets/app-store-bages/ES/Download_on_App_Store/Black_lockup/SVG/Download_on_the_App_Store_Badge_ES_RGB_blk_100217.svg" alt="Descargar en App Store">
+          </a>
+          <a class="footer__store" data-store="android" href="https://play.google.com/store/apps/details?id=com.fitwow.fitwow" aria-label="Descargar en Google Play">
+            <img src="../assets/Google Play Badge guidelines/Get it on Google Play Badges/Digital/png/GetItOnGooglePlay_Badge_Web_color_Spanish.png" alt="Descargar en Google Play">
+          </a>
+          </div>
+        </div>
+        <nav class="footer__group" aria-label="Legal">
+          <h2 class="footer__heading">Legal</h2>
+          <a href="privacy.html">Política de privacidad</a>
+          <a href="terms.html">Términos</a>
+        </nav>
+        <nav class="footer__group" aria-label="Empresa">
+          <h2 class="footer__heading">Empresa</h2>
+          <a href="mailto:support@fitwowapp.com">Contacto</a>
+        </nav>
+      </div>
+      <div class="footer__bottom">
+        <p class="footer__copy">© 2026 FitWow. Todos los derechos reservados.</p>
+        <div class="footer__actions">
+          <div class="footer__lang">
+            <select onchange="window.location.href='../'+this.value+'/'">
+                      <option value="ar">العربية</option>
+                      <option value="az">Azərbaycan</option>
+                      <option value="cs">Čeština</option>
+                      <option value="da">Dansk</option>
+                      <option value="de">Deutsch</option>
+                      <option value="el">Ελληνικά</option>
+                      <option value="en">English</option>
+                      <option value="es" selected>Español</option>
+                      <option value="et">Eesti</option>
+                      <option value="fi">Suomi</option>
+                      <option value="fr">Français</option>
+                      <option value="hi">हिन्दी</option>
+                      <option value="it">Italiano</option>
+                      <option value="ja">日本語</option>
+                      <option value="ko">한국어</option>
+                      <option value="nb">Norsk</option>
+                      <option value="nl">Nederlands</option>
+                      <option value="pl">Polski</option>
+                      <option value="pt">Português</option>
+                      <option value="ru">Русский</option>
+                      <option value="sv">Svenska</option>
+                      <option value="tl">Filipino</option>
+                      <option value="tr">Türkçe</option>
+                      <option value="zh">中文</option>
+                    </select>
+          </div>
+          <nav class="footer__social" aria-label="Redes sociales">
+            <a class="footer__social-link" href="https://www.instagram.com/fitwowapp/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <span class="footer__social-icon footer__social-icon--instagram" aria-hidden="true"></span>
+            </a>
+            <a class="footer__social-link" href="https://www.facebook.com/profile.php?id=61589018762112" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <span class="footer__social-icon footer__social-icon--facebook" aria-hidden="true"></span>
+            </a>
+            <a class="footer__social-link" href="https://www.tiktok.com/@fitwowapp" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+              <span class="footer__social-icon footer__social-icon--tiktok" aria-hidden="true"></span>
+            </a>
+          </nav>
+        </div>
+      </div>
     </div>
   </footer>
 </body>
