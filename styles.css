@@ -88,9 +88,22 @@ a {
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-weight: 700;
   font-size: 1.25rem;
   color: var(--color-primary);
+}
+
+.logo::before {
+  content: "";
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  background: url("assets/app_icon_ios.png") center / cover no-repeat;
+  box-shadow: var(--shadow-sm);
+  flex: 0 0 auto;
 }
 
 /* ===== Buttons ===== */
@@ -647,11 +660,12 @@ a {
 
 .footer__logo::before {
   content: "";
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: 999px;
-  background: var(--color-primary);
-  box-shadow: 0 0 0 0.28rem #FFEDD5;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 10px;
+  background: url("assets/app_icon_ios.png") center / cover no-repeat;
+  box-shadow: var(--shadow-sm);
+  flex: 0 0 auto;
 }
 
 .footer__download {
