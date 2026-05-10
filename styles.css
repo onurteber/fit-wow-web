@@ -234,13 +234,13 @@ a {
 
 .hero__mockup {
   width: 100%;
-  max-width: 280px;
+  max-width: 230px;
   display: flex;
   justify-content: center;
 }
 
 .hero__mockup img {
-  transform: translateY(-10%) scale(1.2);
+  transform: translateY(-6%) scale(1);
   transform-origin: center;
   transition: transform 0.3s ease;
   pointer-events: none;
@@ -1026,7 +1026,7 @@ a {
 
   .hero__mockup {
     flex: 0 0 auto;
-    max-width: 320px;
+    max-width: 260px;
   }
 
   .features__grid {
