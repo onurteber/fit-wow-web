@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>FitWow - Install</title>
+  <script>
+    (function () {
+      var appStoreUrl = 'https://apps.apple.com/app/id6760663683';
+      var googlePlayUrl = 'https://play.google.com/store/apps/details?id=com.fitwow.fitwow';
+      var homeUrl = '/';
+      var userAgent = navigator.userAgent || navigator.vendor || window.opera || '';
+      var platform = navigator.platform || '';
+      var isAndroid = /Android/i.test(userAgent);
+      var isIos = /iPhone|iPad|iPod/i.test(userAgent) ||
+        (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      function getAndroidUrl() {
+        var params = new URLSearchParams(window.location.search);
+        var ref = params.get('ref');
+        if (!ref) return googlePlayUrl;
+        return googlePlayUrl + '&referrer=' + encodeURIComponent('ref=' + ref);
+      }
+
+      if (isAndroid) {
+        window.location.replace(getAndroidUrl());
+        return;
+      }
+
+      if (isIos) {
+        window.location.replace(appStoreUrl);
+        return;
+      }
+
+      window.location.replace(homeUrl);
+    })();
+  </script>
+  <link rel="icon" type="image/png" href="../assets/app_icon_ios.png" />
+  <link rel="apple-touch-icon" href="../assets/app_icon_ios.png" />
+</head>
+<body>
+  <p>Redirecting to FitWow... <a href="/">Continue to homepage</a></p>
+</body>
+</html>

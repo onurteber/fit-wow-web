@@ -6,6 +6,7 @@ Static site for FitWow (privacy policy, terms, etc.).
 
 - **Root:** `privacy.html` redirects to `en/privacy.html`.
 - **Per language:** `en/`, `tr/`, `de/`, `es/`, `fr/`, `zh/`, `pt/`, `ar/`, `it/`, `ru/` each contain `privacy.html`.
+- **Install link:** `https://www.fitwowapp.com/install` redirects iOS users to the App Store, Android users to Google Play, and desktop users to the homepage.
 - **App:** Opens `https://www.fitwowapp.com/{locale}/privacy.html` using the user’s current app language.
 
 If the site is deployed under a subpath (e.g. `/website/`), the app should use that base (e.g. `https://www.fitwowapp.com/website/{locale}/privacy.html`).
