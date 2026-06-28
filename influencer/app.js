@@ -10,14 +10,20 @@
 
   var els = {
     loginView: document.getElementById('loginView'),
+    resetView: document.getElementById('resetView'),
     dashboardView: document.getElementById('dashboardView'),
     loginForm: document.getElementById('loginForm'),
+    resetForm: document.getElementById('resetForm'),
     emailInput: document.getElementById('emailInput'),
     passwordInput: document.getElementById('passwordInput'),
+    newPasswordInput: document.getElementById('newPasswordInput'),
+    newPasswordConfirmInput: document.getElementById('newPasswordConfirmInput'),
     loginButton: document.getElementById('loginButton'),
-    googleLoginButton: document.getElementById('googleLoginButton'),
-    appleLoginButton: document.getElementById('appleLoginButton'),
+    resetPasswordButton: document.getElementById('resetPasswordButton'),
+    savePasswordButton: document.getElementById('savePasswordButton'),
+    backToLoginButton: document.getElementById('backToLoginButton'),
     loginMessage: document.getElementById('loginMessage'),
+    resetMessage: document.getElementById('resetMessage'),
     logoutButton: document.getElementById('logoutButton'),
     userEmail: document.getElementById('userEmail'),
     accountName: document.getElementById('accountName'),
@@ -49,7 +55,13 @@
       return;
     }
 
-    persistOAuthCallbackSession();
+    var callbackType = persistAuthCallbackSession();
+    if (callbackType === 'recovery') {
+      session = readStoredSession();
+      showReset();
+      return;
+    }
+
     restoreSession().then(renderSession).catch(function () {
       clearStoredSession();
       renderSession(null);
@@ -58,11 +70,11 @@
 
   function bindEvents() {
     els.loginForm.addEventListener('submit', handleLogin);
-    els.googleLoginButton.addEventListener('click', function () {
-      handleOAuthLogin('google');
-    });
-    els.appleLoginButton.addEventListener('click', function () {
-      handleOAuthLogin('apple');
+    els.resetForm.addEventListener('submit', handleSavePassword);
+    els.resetPasswordButton.addEventListener('click', handleSendPasswordReset);
+    els.backToLoginButton.addEventListener('click', function () {
+      setResetMessage('', '');
+      showLogin();
     });
     els.logoutButton.addEventListener('click', handleLogout);
     els.refreshButton.addEventListener('click', loadDashboard);
@@ -106,17 +118,68 @@
     });
   }
 
-  function handleOAuthLogin(provider) {
-    setAuthButtonsDisabled(true);
-    setLoginMessage(providerLabel(provider) + ' ile yönlendiriliyor...', '');
+  function handleSendPasswordReset() {
+    var email = els.emailInput.value.trim();
+    if (!email) {
+      setLoginMessage('Şifre linki için email adresini yaz.', 'error');
+      els.emailInput.focus();
+      return;
+    }
 
-    window.location.assign(
-      supabaseUrl.replace(/\/$/, '') +
-        '/auth/v1/authorize?provider=' +
-        encodeURIComponent(provider) +
-        '&redirect_to=' +
-        encodeURIComponent(getRedirectUrl())
-    );
+    setAuthButtonsDisabled(true);
+    setLoginMessage('Şifre oluşturma linki gönderiliyor...', '');
+
+    authRequest('/recover?redirect_to=' + encodeURIComponent(getRedirectUrl()), {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email
+      })
+    }).then(function () {
+      setLoginMessage('Emailine şifre oluşturma linki gönderdik. Gelen linke tıkla, sonra yeni şifreni belirle.', 'success');
+    }).catch(function (error) {
+      setLoginMessage(error.message || 'Şifre linki gönderilemedi.', 'error');
+    }).finally(function () {
+      setAuthButtonsDisabled(false);
+    });
+  }
+
+  function handleSavePassword(event) {
+    event.preventDefault();
+    var password = els.newPasswordInput.value;
+    var passwordConfirm = els.newPasswordConfirmInput.value;
+
+    if (!session || !session.access_token) {
+      setResetMessage('Şifre belirleme linkinin süresi dolmuş olabilir. Login ekranından tekrar link iste.', 'error');
+      return;
+    }
+    if (password.length < 6) {
+      setResetMessage('Şifre en az 6 karakter olmalı.', 'error');
+      return;
+    }
+    if (password !== passwordConfirm) {
+      setResetMessage('Şifreler aynı değil.', 'error');
+      return;
+    }
+
+    setResetButtonsDisabled(true);
+    setResetMessage('Şifre kaydediliyor...', '');
+
+    authRequest('/user', {
+      method: 'PUT',
+      accessToken: session.access_token,
+      body: JSON.stringify({
+        password: password
+      })
+    }).then(function (user) {
+      session.user = user;
+      saveSession(session);
+      setResetMessage('Şifre kaydedildi. Panele yönlendiriliyorsun.', 'success');
+      renderSession(session);
+    }).catch(function (error) {
+      setResetMessage(error.message || 'Şifre kaydedilemedi.', 'error');
+    }).finally(function () {
+      setResetButtonsDisabled(false);
+    });
   }
 
   function handleLogout() {
@@ -148,11 +211,19 @@
 
   function showLogin() {
     els.loginView.hidden = false;
+    els.resetView.hidden = true;
+    els.dashboardView.hidden = true;
+  }
+
+  function showReset() {
+    els.loginView.hidden = true;
+    els.resetView.hidden = false;
     els.dashboardView.hidden = true;
   }
 
   function showDashboard() {
     els.loginView.hidden = true;
+    els.resetView.hidden = true;
     els.dashboardView.hidden = false;
   }
 
@@ -327,6 +398,11 @@
     els.loginMessage.className = 'message' + (type ? ' ' + type : '');
   }
 
+  function setResetMessage(text, type) {
+    els.resetMessage.textContent = text;
+    els.resetMessage.className = 'message' + (type ? ' ' + type : '');
+  }
+
   function setTableStatus(text, type) {
     els.tableStatus.textContent = text;
     els.tableStatus.className = 'message' + (type ? ' ' + type : '');
@@ -334,12 +410,12 @@
 
   function setAuthButtonsDisabled(disabled) {
     els.loginButton.disabled = disabled;
-    els.googleLoginButton.disabled = disabled;
-    els.appleLoginButton.disabled = disabled;
+    els.resetPasswordButton.disabled = disabled;
   }
 
-  function providerLabel(provider) {
-    return provider === 'apple' ? 'Apple' : 'Google';
+  function setResetButtonsDisabled(disabled) {
+    els.savePasswordButton.disabled = disabled;
+    els.backToLoginButton.disabled = disabled;
   }
 
   function getRedirectUrl() {
@@ -349,7 +425,7 @@
     return window.location.origin + '/influencer/';
   }
 
-  function persistOAuthCallbackSession() {
+  function persistAuthCallbackSession() {
     var hash = window.location.hash ? window.location.hash.slice(1) : '';
     if (!hash) return;
 
@@ -365,6 +441,7 @@
       expires_at: Math.floor(Date.now() / 1000) + expiresIn
     });
     window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+    return params.get('type') || '';
   }
 
   function restoreSession() {

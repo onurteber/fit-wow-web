@@ -20,7 +20,7 @@
         <div class="auth-copy">
           <p class="eyebrow">Influencer Paneli</p>
           <h1>Uygulama hesabınla giriş yap</h1>
-          <p class="muted">FitWow hesabındaki email/şifre, Apple veya Google ile devam et.</p>
+          <p class="muted">FitWow hesabındaki email ve şifre ile devam et.</p>
         </div>
 
         <form id="loginForm" class="login-form">
@@ -33,12 +33,30 @@
             <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
           </div>
           <button id="loginButton" class="button button-primary full-button" type="submit">Giriş yap</button>
-          <div class="divider"><span>veya</span></div>
-          <div class="provider-grid">
-            <button id="googleLoginButton" class="button button-provider" type="button">Google ile giriş</button>
-            <button id="appleLoginButton" class="button button-provider" type="button">Apple ile giriş</button>
-          </div>
+          <button id="resetPasswordButton" class="button button-link" type="button">Şifre oluştur / şifremi unuttum</button>
           <p id="loginMessage" class="message" role="status"></p>
+        </form>
+      </section>
+
+      <section id="resetView" class="auth-panel" hidden>
+        <div class="auth-copy">
+          <p class="eyebrow">Influencer Paneli</p>
+          <h1>Yeni şifre belirle</h1>
+          <p class="muted">Emailine gelen linkten geldikten sonra yeni şifreni burada oluştur.</p>
+        </div>
+
+        <form id="resetForm" class="login-form">
+          <div class="field-stack">
+            <label for="newPasswordInput">Yeni şifre</label>
+            <input id="newPasswordInput" name="password" type="password" autocomplete="new-password" required minlength="6" />
+          </div>
+          <div class="field-stack">
+            <label for="newPasswordConfirmInput">Yeni şifre tekrar</label>
+            <input id="newPasswordConfirmInput" name="passwordConfirm" type="password" autocomplete="new-password" required minlength="6" />
+          </div>
+          <button id="savePasswordButton" class="button button-primary full-button" type="submit">Şifreyi kaydet</button>
+          <button id="backToLoginButton" class="button button-link" type="button">Giriş ekranına dön</button>
+          <p id="resetMessage" class="message" role="status"></p>
         </form>
       </section>
 
@@ -49,9 +67,11 @@
             <h1 id="accountName">Performans</h1>
           </div>
           <div class="account-box" aria-label="Hesap bilgileri">
+            <span id="userEmail" class="account-detail"></span>
             <span id="accountStatus" class="status-pill">Aktif</span>
             <span id="payoutEmail" class="account-detail"></span>
             <span id="ibanText" class="account-detail"></span>
+            <button id="logoutButton" class="button button-secondary compact-button" type="button">Çıkış yap</button>
           </div>
         </div>
 

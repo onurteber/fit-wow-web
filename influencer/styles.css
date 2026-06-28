@@ -204,9 +204,25 @@ input:focus {
   color: #243447;
 }
 
+.button-link {
+  min-height: 28px;
+  align-self: center;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  padding: 0;
+}
+
+.compact-button {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
 .button-secondary:hover,
 .button-ghost:hover,
 .button-provider:hover,
+.button-link:hover,
 .chip:hover {
   border-color: var(--accent);
   color: var(--accent);
