@@ -27,6 +27,7 @@
     resetMessage: document.getElementById('resetMessage'),
     logoutButton: document.getElementById('logoutButton'),
     userEmail: document.getElementById('userEmail'),
+    monthInput: document.getElementById('monthInput'),
     fromDate: document.getElementById('fromDate'),
     toDate: document.getElementById('toDate'),
     refreshButton: document.getElementById('refreshButton'),
@@ -87,6 +88,7 @@
     });
     els.logoutButton.addEventListener('click', handleLogout);
     els.refreshButton.addEventListener('click', loadDashboard);
+    els.monthInput.addEventListener('change', selectMonthRange);
     els.fromDate.addEventListener('change', selectCustomRange);
     els.toDate.addEventListener('change', selectCustomRange);
 
@@ -359,6 +361,8 @@
   }
 
   function setDatesForRange(range) {
+    els.monthInput.value = '';
+
     if (range === 'all') {
       els.fromDate.value = '';
       els.toDate.value = '';
@@ -373,8 +377,29 @@
     els.toDate.value = toDateInputValue(today);
   }
 
+  function selectMonthRange() {
+    if (!els.monthInput.value) return;
+    selectedRange = 'month';
+    applyRangeButtons();
+    setDatesForMonth(els.monthInput.value);
+    loadDashboard();
+  }
+
+  function setDatesForMonth(value) {
+    var parts = value.split('-');
+    var year = Number(parts[0]);
+    var month = Number(parts[1]);
+    if (!year || !month) return;
+
+    var firstDay = new Date(year, month - 1, 1);
+    var lastDay = new Date(year, month, 0);
+    els.fromDate.value = toDateInputValue(firstDay);
+    els.toDate.value = toDateInputValue(lastDay);
+  }
+
   function selectCustomRange() {
     selectedRange = 'custom';
+    els.monthInput.value = '';
     applyRangeButtons();
   }
 
