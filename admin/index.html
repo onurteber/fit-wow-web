@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="fitwow:supabase-url" content="https://rblvsgcluwgtdoblmtfu.supabase.co" />
+  <meta name="fitwow:supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJibHZzZ2NsdXdndGRvYmxtdGZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMjMyMTcsImV4cCI6MjA4NzU5OTIxN30.i-Oh8xYzAGRLCkQNtGcPPg1O4FB-JrgZZwLatsvvIxI" />
+  <title>FitWow Admin Paneli</title>
+  <link rel="icon" type="image/png" href="/assets/app_icon_ios.png" />
+  <link rel="apple-touch-icon" href="/assets/app_icon_ios.png" />
+  <link rel="stylesheet" href="/influencer/styles.css" />
+  <link rel="stylesheet" href="/admin/styles.css" />
+  <script defer src="/admin/app.js"></script>
+</head>
+<body>
+  <div class="shell admin-shell">
+    <main>
+      <section id="loginView" class="auth-panel">
+        <div class="auth-copy">
+          <p class="eyebrow">Admin Paneli</p>
+          <h1>Admin hesabınla giriş yap</h1>
+          <p class="muted">Tüm influencer kodlarını ve ödeme bilgilerini görmek için admin hesabını kullan.</p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="field-stack">
+            <label for="emailInput">Email</label>
+            <input id="emailInput" name="email" type="email" autocomplete="email" placeholder="email@ornek.com" required />
+          </div>
+          <div class="field-stack">
+            <label for="passwordInput">Şifre</label>
+            <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <button id="loginButton" class="button button-primary full-button" type="submit">Giriş yap</button>
+          <button id="resetPasswordButton" class="button button-link" type="button">Şifre oluştur / şifremi unuttum</button>
+          <p id="loginMessage" class="message" role="status"></p>
+        </form>
+      </section>
+
+      <section id="resetView" class="auth-panel" hidden>
+        <div class="auth-copy">
+          <p class="eyebrow">Admin Paneli</p>
+          <h1>Yeni şifre belirle</h1>
+          <p class="muted">Emailine gelen linkten geldikten sonra yeni şifreni burada oluştur.</p>
+        </div>
+
+        <form id="resetForm" class="login-form">
+          <div class="field-stack">
+            <label for="newPasswordInput">Yeni şifre</label>
+            <input id="newPasswordInput" name="password" type="password" autocomplete="new-password" required minlength="6" />
+          </div>
+          <div class="field-stack">
+            <label for="newPasswordConfirmInput">Yeni şifre tekrar</label>
+            <input id="newPasswordConfirmInput" name="passwordConfirm" type="password" autocomplete="new-password" required minlength="6" />
+          </div>
+          <button id="savePasswordButton" class="button button-primary full-button" type="submit">Şifreyi kaydet</button>
+          <button id="backToLoginButton" class="button button-link" type="button">Giriş ekranına dön</button>
+          <p id="resetMessage" class="message" role="status"></p>
+        </form>
+      </section>
+
+      <section id="dashboardView" class="dashboard" hidden>
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">Admin Paneli</p>
+            <h1>Influencer performansı</h1>
+          </div>
+          <div class="account-box" aria-label="Admin hesabı">
+            <span id="userEmail" class="account-detail"></span>
+            <span class="status-pill">Admin</span>
+            <button id="logoutButton" class="button button-secondary compact-button" type="button">Çıkış yap</button>
+          </div>
+        </div>
+
+        <section class="toolbar" aria-label="Filtreler">
+          <div class="range-buttons">
+            <button class="chip" type="button" data-range="7">7 gün</button>
+            <button class="chip active" type="button" data-range="30">30 gün</button>
+            <button class="chip" type="button" data-range="all">Tümü</button>
+          </div>
+          <div class="date-fields">
+            <label>
+              Başlangıç
+              <input id="fromDate" type="date" />
+            </label>
+            <label>
+              Bitiş
+              <input id="toDate" type="date" />
+            </label>
+            <button id="refreshButton" class="button button-secondary" type="button">Yenile</button>
+          </div>
+        </section>
+
+        <section class="metrics" aria-label="Özet">
+          <article class="metric-card">
+            <span>Influencer</span>
+            <strong id="influencerCountMetric">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Toplam kod kullanımı</span>
+            <strong id="totalCodeUsageMetric">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Üyelik alımı</span>
+            <strong id="subscriptionPurchasesMetric">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Aktif ücretsiz deneme</span>
+            <strong id="activeFreeTrialsMetric">0</strong>
+          </article>
+        </section>
+
+        <section class="table-panel">
+          <div class="table-head">
+            <h2>Influencer kodları</h2>
+            <p id="tableStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Influencer</th>
+                  <th>Giriş emaili</th>
+                  <th>Ödeme emaili</th>
+                  <th>IBAN</th>
+                  <th>Durum</th>
+                  <th>Kod</th>
+                  <th>Toplam kod kullanımı</th>
+                  <th>Üyelik alımı</th>
+                  <th>Aktif ücretsiz deneme</th>
+                  <th>İptal edilen ücretsiz deneme</th>
+                </tr>
+              </thead>
+              <tbody id="statsBody">
+                <tr>
+                  <td colspan="10" class="empty-cell">Yükleniyor...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
