@@ -36,10 +36,10 @@
     rangeButtons: Array.prototype.slice.call(document.querySelectorAll('[data-range]')),
     tableStatus: document.getElementById('tableStatus'),
     statsBody: document.getElementById('statsBody'),
-    appliedUsersMetric: document.getElementById('appliedUsersMetric'),
-    convertedUsersMetric: document.getElementById('convertedUsersMetric'),
-    initialPurchasesMetric: document.getElementById('initialPurchasesMetric'),
-    renewalsMetric: document.getElementById('renewalsMetric')
+    totalCodeUsageMetric: document.getElementById('totalCodeUsageMetric'),
+    subscriptionPurchasesMetric: document.getElementById('subscriptionPurchasesMetric'),
+    activeFreeTrialsMetric: document.getElementById('activeFreeTrialsMetric'),
+    cancelledFreeTrialsMetric: document.getElementById('cancelledFreeTrialsMetric')
   };
 
   document.addEventListener('DOMContentLoaded', init);
@@ -301,39 +301,37 @@
       return [
         '<tr>',
         '<td class="code-cell">', escapeHtml(row.promo_code || '-'), '</td>',
-        '<td>', formatNumber(row.applied_users), '</td>',
-        '<td>', formatNumber(row.converted_users), '</td>',
-        '<td>', formatNumber(row.initial_purchases), '</td>',
-        '<td>', formatNumber(row.non_renewing_purchases), '</td>',
-        '<td>', formatNumber(row.renewals), '</td>',
-        '<td>', formatDateTime(row.latest_purchase_at), '</td>',
+        '<td>', formatNumber(row.total_code_usage), '</td>',
+        '<td>', formatNumber(row.subscription_purchases), '</td>',
+        '<td>', formatNumber(row.active_free_trials), '</td>',
+        '<td>', formatNumber(row.cancelled_free_trials), '</td>',
         '</tr>'
       ].join('');
     }).join('');
   }
 
   function renderEmptyRow(text) {
-    els.statsBody.innerHTML = '<tr><td colspan="7" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.statsBody.innerHTML = '<tr><td colspan="5" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderTotals(rows) {
     var totals = rows.reduce(function (acc, row) {
-      acc.appliedUsers += toNumber(row.applied_users);
-      acc.convertedUsers += toNumber(row.converted_users);
-      acc.initialPurchases += toNumber(row.initial_purchases);
-      acc.renewals += toNumber(row.renewals);
+      acc.totalCodeUsage += toNumber(row.total_code_usage);
+      acc.subscriptionPurchases += toNumber(row.subscription_purchases);
+      acc.activeFreeTrials += toNumber(row.active_free_trials);
+      acc.cancelledFreeTrials += toNumber(row.cancelled_free_trials);
       return acc;
     }, {
-      appliedUsers: 0,
-      convertedUsers: 0,
-      initialPurchases: 0,
-      renewals: 0
+      totalCodeUsage: 0,
+      subscriptionPurchases: 0,
+      activeFreeTrials: 0,
+      cancelledFreeTrials: 0
     });
 
-    els.appliedUsersMetric.textContent = formatNumber(totals.appliedUsers);
-    els.convertedUsersMetric.textContent = formatNumber(totals.convertedUsers);
-    els.initialPurchasesMetric.textContent = formatNumber(totals.initialPurchases);
-    els.renewalsMetric.textContent = formatNumber(totals.renewals);
+    els.totalCodeUsageMetric.textContent = formatNumber(totals.totalCodeUsage);
+    els.subscriptionPurchasesMetric.textContent = formatNumber(totals.subscriptionPurchases);
+    els.activeFreeTrialsMetric.textContent = formatNumber(totals.activeFreeTrials);
+    els.cancelledFreeTrialsMetric.textContent = formatNumber(totals.cancelledFreeTrials);
   }
 
   function setDefaultDates() {
@@ -557,14 +555,6 @@
 
   function toNumber(value) {
     return Number(value || 0);
-  }
-
-  function formatDateTime(value) {
-    if (!value) return '-';
-    return new Intl.DateTimeFormat('tr-TR', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    }).format(new Date(value));
   }
 
   function maskIban(value) {
