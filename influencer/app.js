@@ -28,7 +28,6 @@
     userEmail: document.getElementById('userEmail'),
     accountName: document.getElementById('accountName'),
     accountStatus: document.getElementById('accountStatus'),
-    payoutEmail: document.getElementById('payoutEmail'),
     ibanText: document.getElementById('ibanText'),
     fromDate: document.getElementById('fromDate'),
     toDate: document.getElementById('toDate'),
@@ -235,7 +234,7 @@
     renderTotals([]);
 
     var range = getDateRange();
-    var accountRequest = apiRequest('/influencer_accounts?select=full_name,iban,payout_email,status')
+    var accountRequest = apiRequest('/influencer_accounts?select=full_name,iban,status')
       .then(function (rows) {
         return rows && rows.length ? rows[0] : null;
       });
@@ -279,7 +278,6 @@
       els.accountName.textContent = 'Performans';
       els.accountStatus.textContent = 'Hesap yok';
       els.accountStatus.classList.add('paused');
-      els.payoutEmail.textContent = '';
       els.ibanText.textContent = '';
       return;
     }
@@ -287,7 +285,6 @@
     els.accountName.textContent = account.full_name || 'Performans';
     els.accountStatus.textContent = account.status === 'paused' ? 'Duraklatıldı' : 'Aktif';
     els.accountStatus.classList.toggle('paused', account.status === 'paused');
-    els.payoutEmail.textContent = account.payout_email ? account.payout_email : '';
     els.ibanText.textContent = account.iban ? maskIban(account.iban) : '';
   }
 
