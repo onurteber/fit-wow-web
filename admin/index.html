@@ -155,6 +155,39 @@
             </table>
           </div>
         </section>
+
+        <section class="table-panel daily-activity-panel">
+          <div class="table-head">
+            <h2>Günlük kullanıcı davranışı</h2>
+            <div class="daily-controls">
+              <label>
+                Tarih
+                <input id="activityDate" type="date" />
+              </label>
+              <button id="activityRefreshButton" class="button button-secondary" type="button">Yenile</button>
+              <p id="activityStatus" class="message" role="status"></p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table daily-activity-table">
+              <thead>
+                <tr>
+                  <th>Kullanıcı</th>
+                  <th>User UUID</th>
+                  <th>Hedefe kalan kg</th>
+                  <th>Öğün</th>
+                  <th>Su</th>
+                  <th>Buddy</th>
+                </tr>
+              </thead>
+              <tbody id="activityBody">
+                <tr>
+                  <td colspan="6" class="empty-cell">Yükleniyor...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
     </main>
   </div>

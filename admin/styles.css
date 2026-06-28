@@ -23,6 +23,40 @@
   background: #f8fafc;
 }
 
+.daily-activity-panel {
+  margin-top: 18px;
+}
+
+.daily-controls {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.daily-controls label {
+  color: var(--text);
+  display: grid;
+  font-size: 14px;
+  font-weight: 700;
+  gap: 6px;
+}
+
+.daily-controls input {
+  min-width: 170px;
+}
+
+.daily-activity-table {
+  min-width: 900px;
+}
+
+.daily-activity-table .uuid-cell {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+}
+
 @media (max-width: 1180px) {
   .admin-shell .metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -32,6 +66,10 @@
 @media (max-width: 760px) {
   .admin-shell .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daily-controls {
+    justify-content: flex-start;
   }
 }
 

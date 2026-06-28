@@ -34,9 +34,13 @@
     fromDate: document.getElementById('fromDate'),
     toDate: document.getElementById('toDate'),
     refreshButton: document.getElementById('refreshButton'),
+    activityDate: document.getElementById('activityDate'),
+    activityRefreshButton: document.getElementById('activityRefreshButton'),
     rangeButtons: Array.prototype.slice.call(document.querySelectorAll('[data-range]')),
     tableStatus: document.getElementById('tableStatus'),
     statsBody: document.getElementById('statsBody'),
+    activityStatus: document.getElementById('activityStatus'),
+    activityBody: document.getElementById('activityBody'),
     influencerCountMetric: document.getElementById('influencerCountMetric'),
     influencerUsageMetric: document.getElementById('influencerUsageMetric'),
     organicUsageMetric: document.getElementById('organicUsageMetric'),
@@ -94,6 +98,7 @@
     });
     els.logoutButton.addEventListener('click', handleLogout);
     els.refreshButton.addEventListener('click', loadDashboard);
+    els.activityRefreshButton.addEventListener('click', loadDailyActivity);
     els.monthButton.addEventListener('click', toggleMonthMenu);
     els.monthMenu.addEventListener('click', handleMonthOptionClick);
     document.addEventListener('click', closeMonthMenu);
@@ -239,6 +244,7 @@
     els.logoutButton.hidden = false;
     showDashboard();
     loadDashboard();
+    loadDailyActivity();
   }
 
   function showLogin() {
@@ -292,6 +298,37 @@
         return;
       }
       setTableStatus(error.message || 'İstatistikler alınamadı.', 'error');
+    });
+  }
+
+  function loadDailyActivity() {
+    if (!session) return;
+
+    setActivityStatus('Yükleniyor...', '');
+    renderEmptyActivityRow('Yükleniyor...');
+
+    apiRequest('/rpc/get_admin_daily_user_activity', {
+      method: 'POST',
+      body: JSON.stringify({
+        p_date: els.activityDate.value || null
+      })
+    }).then(function (rows) {
+      var activityRows = rows || [];
+      renderActivityRows(activityRows);
+
+      if (!activityRows.length) {
+        setActivityStatus('Bu tarihte aktivite yok.', '');
+        return;
+      }
+
+      setActivityStatus(formatNumber(activityRows.length) + ' kullanıcı', 'success');
+    }).catch(function (error) {
+      renderActivityRows([]);
+      if (isPermissionError(error)) {
+        rejectCurrentSession('Bu panel sadece admin hesaplarına açık.');
+        return;
+      }
+      setActivityStatus(error.message || 'Kullanıcı davranışı alınamadı.', 'error');
     });
   }
 
@@ -380,8 +417,33 @@
     els.cancelledFreeTrialsMetric.textContent = formatNumber(totals.cancelledFreeTrials);
   }
 
+  function renderActivityRows(rows) {
+    if (!rows.length) {
+      renderEmptyActivityRow('Veri yok');
+      return;
+    }
+
+    els.activityBody.innerHTML = rows.map(function (row) {
+      return [
+        '<tr>',
+        '<td class="code-cell">', escapeHtml(row.user_name || '-'), '</td>',
+        '<td class="uuid-cell">', escapeHtml(row.user_uuid || '-'), '</td>',
+        '<td>', formatDecimal(row.kg_to_goal), '</td>',
+        '<td>', formatNumber(row.meal_count), '</td>',
+        '<td>', formatMilliliters(row.water_intake_ml), '</td>',
+        '<td>', row.talked_to_buddy ? 'Konuştu' : '-', '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  function renderEmptyActivityRow(text) {
+    els.activityBody.innerHTML = '<tr><td colspan="6" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+  }
+
   function setDefaultDates() {
     setDatesForRange(selectedRange);
+    els.activityDate.value = toDateInputValue(new Date());
     applyRangeButtons();
   }
 
@@ -532,6 +594,11 @@
   function setTableStatus(text, type) {
     els.tableStatus.textContent = text;
     els.tableStatus.className = 'message' + (type ? ' ' + type : '');
+  }
+
+  function setActivityStatus(text, type) {
+    els.activityStatus.textContent = text;
+    els.activityStatus.className = 'message' + (type ? ' ' + type : '');
   }
 
   function setAuthButtonsDisabled(disabled) {
@@ -713,6 +780,18 @@
 
   function formatNumber(value) {
     return new Intl.NumberFormat('tr-TR').format(toNumber(value));
+  }
+
+  function formatDecimal(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    return new Intl.NumberFormat('tr-TR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 1
+    }).format(Number(value));
+  }
+
+  function formatMilliliters(value) {
+    return formatNumber(value) + ' ml';
   }
 
   function toNumber(value) {
