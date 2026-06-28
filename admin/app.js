@@ -321,7 +321,7 @@
         return;
       }
 
-      setActivityStatus(formatNumber(activityRows.length) + ' kullanıcı', 'success');
+      setActivityStatus(formatActivitySummary(activityRows), 'success');
     }).catch(function (error) {
       renderActivityRows([]);
       if (isPermissionError(error)) {
@@ -792,6 +792,14 @@
 
   function formatMilliliters(value) {
     return formatNumber(value) + ' ml';
+  }
+
+  function formatActivitySummary(rows) {
+    var totalMeals = rows.reduce(function (sum, row) {
+      return sum + toNumber(row.meal_count);
+    }, 0);
+
+    return formatNumber(rows.length) + ' kullanıcı · ' + formatNumber(totalMeals) + ' öğün';
   }
 
   function toNumber(value) {
