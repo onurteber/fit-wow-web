@@ -111,10 +111,15 @@
     client.auth.signInWithOAuth({
       provider: provider,
       options: {
-        redirectTo: getRedirectUrl()
+        redirectTo: getRedirectUrl(),
+        skipBrowserRedirect: true
       }
     }).then(function (result) {
       if (result.error) throw result.error;
+      if (!result.data || !result.data.url) {
+        throw new Error('OAuth yönlendirme adresi alınamadı.');
+      }
+      window.location.assign(result.data.url);
     }).catch(function (error) {
       setLoginMessage(error.message || 'Giriş başlatılamadı.', 'error');
       setAuthButtonsDisabled(false);
