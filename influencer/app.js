@@ -653,6 +653,7 @@
     var requestOptions = options || {};
     var headers = {
       apikey: supabaseAnonKey,
+      Authorization: 'Bearer ' + supabaseAnonKey,
       'Content-Type': 'application/json'
     };
     return requestJson(supabaseUrl.replace(/\/$/, '') + '/functions/v1' + path, {
