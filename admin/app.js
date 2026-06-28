@@ -38,9 +38,11 @@
     tableStatus: document.getElementById('tableStatus'),
     statsBody: document.getElementById('statsBody'),
     influencerCountMetric: document.getElementById('influencerCountMetric'),
-    totalCodeUsageMetric: document.getElementById('totalCodeUsageMetric'),
+    influencerUsageMetric: document.getElementById('influencerUsageMetric'),
+    organicUsageMetric: document.getElementById('organicUsageMetric'),
     subscriptionPurchasesMetric: document.getElementById('subscriptionPurchasesMetric'),
-    activeFreeTrialsMetric: document.getElementById('activeFreeTrialsMetric')
+    activeFreeTrialsMetric: document.getElementById('activeFreeTrialsMetric'),
+    cancelledFreeTrialsMetric: document.getElementById('cancelledFreeTrialsMetric')
   };
 
   document.addEventListener('DOMContentLoaded', init);
@@ -351,21 +353,31 @@
   function renderTotals(rows) {
     var influencerIds = {};
     var totals = rows.reduce(function (acc, row) {
-      if (row.influencer_account_id) influencerIds[row.influencer_account_id] = true;
-      acc.totalCodeUsage += toNumber(row.total_code_usage);
+      var totalCodeUsage = toNumber(row.total_code_usage);
+      if (row.influencer_account_id) {
+        influencerIds[row.influencer_account_id] = true;
+        acc.influencerUsage += totalCodeUsage;
+      } else {
+        acc.organicUsage += totalCodeUsage;
+      }
       acc.subscriptionPurchases += toNumber(row.subscription_purchases);
       acc.activeFreeTrials += toNumber(row.active_free_trials);
+      acc.cancelledFreeTrials += toNumber(row.cancelled_free_trials);
       return acc;
     }, {
-      totalCodeUsage: 0,
+      influencerUsage: 0,
+      organicUsage: 0,
       subscriptionPurchases: 0,
-      activeFreeTrials: 0
+      activeFreeTrials: 0,
+      cancelledFreeTrials: 0
     });
 
     els.influencerCountMetric.textContent = formatNumber(Object.keys(influencerIds).length);
-    els.totalCodeUsageMetric.textContent = formatNumber(totals.totalCodeUsage);
+    els.influencerUsageMetric.textContent = formatNumber(totals.influencerUsage);
+    els.organicUsageMetric.textContent = formatNumber(totals.organicUsage);
     els.subscriptionPurchasesMetric.textContent = formatNumber(totals.subscriptionPurchases);
     els.activeFreeTrialsMetric.textContent = formatNumber(totals.activeFreeTrials);
+    els.cancelledFreeTrialsMetric.textContent = formatNumber(totals.cancelledFreeTrials);
   }
 
   function setDefaultDates() {
@@ -533,10 +545,14 @@
   }
 
   function getRedirectUrl() {
-    if (window.location.protocol === 'file:') {
-      return 'https://fitwowapp.com/admin/';
+    var productionUrl = 'https://www.fitwowapp.com/admin/';
+    var hostname = window.location.hostname;
+
+    if (hostname === 'fitwowapp.com' || hostname === 'www.fitwowapp.com') {
+      return window.location.origin + '/admin/';
     }
-    return window.location.origin + '/admin/';
+
+    return productionUrl;
   }
 
   function persistAuthCallbackSession() {

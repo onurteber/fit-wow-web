@@ -553,10 +553,14 @@
   }
 
   function getRedirectUrl() {
-    if (window.location.protocol === 'file:') {
-      return 'https://fitwowapp.com/influencer/';
+    var productionUrl = 'https://www.fitwowapp.com/influencer/';
+    var hostname = window.location.hostname;
+
+    if (hostname === 'fitwowapp.com' || hostname === 'www.fitwowapp.com') {
+      return window.location.origin + '/influencer/';
     }
-    return window.location.origin + '/influencer/';
+
+    return productionUrl;
   }
 
   function persistAuthCallbackSession() {
