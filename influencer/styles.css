@@ -154,6 +154,12 @@ label {
   font-weight: 700;
 }
 
+.field-label {
+  color: #344054;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .field-stack {
   display: grid;
   gap: 7px;
@@ -381,10 +387,85 @@ select:focus {
   gap: 5px;
 }
 
+.date-fields .field-stack {
+  gap: 5px;
+}
+
 .date-fields input,
 .date-fields select {
   min-height: 38px;
   width: 150px;
+}
+
+.month-field {
+  width: 170px;
+}
+
+.month-picker {
+  position: relative;
+}
+
+.month-trigger {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #c7d2df;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0 12px;
+  font-weight: 800;
+}
+
+.month-trigger::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #475467;
+  border-bottom: 2px solid #475467;
+  margin-left: 10px;
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.month-trigger:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.14);
+  outline: none;
+}
+
+.month-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #c7d2df;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  padding: 5px;
+}
+
+.month-option {
+  width: 100%;
+  min-height: 30px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #263548;
+  padding: 0 9px;
+  text-align: left;
+  font-weight: 700;
+}
+
+.month-option:hover,
+.month-option.active {
+  background: var(--surface-soft);
+  color: var(--brand-dark);
 }
 
 .metrics {
@@ -543,6 +624,7 @@ tbody tr:last-child td {
 
   .date-fields,
   .date-fields label,
+  .date-fields .field-stack,
   .date-fields input,
   .date-fields select,
   .date-fields .button {

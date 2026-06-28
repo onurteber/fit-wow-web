@@ -6,6 +6,7 @@
   var supabaseAnonKey = config.supabaseAnonKey || readMeta('fitwow:supabase-anon-key');
   var session = null;
   var selectedRange = '30';
+  var selectedMonthValue = '';
   var SESSION_KEY = 'fitwow_admin_session';
   var ADMIN_SELECT = '/admin_accounts?select=id';
 
@@ -27,7 +28,9 @@
     resetMessage: document.getElementById('resetMessage'),
     logoutButton: document.getElementById('logoutButton'),
     userEmail: document.getElementById('userEmail'),
-    monthSelect: document.getElementById('monthSelect'),
+    monthPicker: document.getElementById('monthPicker'),
+    monthButton: document.getElementById('monthButton'),
+    monthMenu: document.getElementById('monthMenu'),
     fromDate: document.getElementById('fromDate'),
     toDate: document.getElementById('toDate'),
     refreshButton: document.getElementById('refreshButton'),
@@ -43,7 +46,7 @@
   document.addEventListener('DOMContentLoaded', init);
 
   function init() {
-    populateMonthSelect();
+    populateMonthMenu();
     bindEvents();
     setDefaultDates();
 
@@ -89,7 +92,9 @@
     });
     els.logoutButton.addEventListener('click', handleLogout);
     els.refreshButton.addEventListener('click', loadDashboard);
-    els.monthSelect.addEventListener('change', selectMonthRange);
+    els.monthButton.addEventListener('click', toggleMonthMenu);
+    els.monthMenu.addEventListener('click', handleMonthOptionClick);
+    document.addEventListener('click', closeMonthMenu);
     els.fromDate.addEventListener('change', selectCustomRange);
     els.toDate.addEventListener('change', selectCustomRange);
 
@@ -362,7 +367,7 @@
   }
 
   function setDatesForRange(range) {
-    els.monthSelect.value = '';
+    setSelectedMonth('', 'Ay seç');
 
     if (range === 'all') {
       els.fromDate.value = '';
@@ -379,10 +384,10 @@
   }
 
   function selectMonthRange() {
-    if (!els.monthSelect.value) return;
+    if (!selectedMonthValue) return;
     selectedRange = 'month';
     applyRangeButtons();
-    setDatesForMonth(els.monthSelect.value);
+    setDatesForMonth(selectedMonthValue);
     loadDashboard();
   }
 
@@ -400,26 +405,67 @@
 
   function selectCustomRange() {
     selectedRange = 'custom';
-    els.monthSelect.value = '';
+    setSelectedMonth('', 'Ay seç');
     applyRangeButtons();
   }
 
-  function populateMonthSelect() {
+  function populateMonthMenu() {
     var formatter = new Intl.DateTimeFormat('tr-TR', {
       month: 'long',
       year: 'numeric'
     });
-    var options = ['<option value="">Ay seç</option>'];
+    var options = [];
     var cursor = new Date();
 
     for (var index = 0; index < 36; index += 1) {
       var value = cursor.getFullYear() + '-' + String(cursor.getMonth() + 1).padStart(2, '0');
       var label = formatter.format(cursor);
-      options.push('<option value="' + value + '">' + escapeHtml(label) + '</option>');
+      options.push(
+        '<button class="month-option" type="button" role="option" data-month="' +
+        escapeHtml(value) +
+        '">' +
+        escapeHtml(label) +
+        '</button>'
+      );
       cursor.setMonth(cursor.getMonth() - 1);
     }
 
-    els.monthSelect.innerHTML = options.join('');
+    els.monthMenu.innerHTML = options.join('');
+  }
+
+  function toggleMonthMenu(event) {
+    event.stopPropagation();
+    var isOpen = !els.monthMenu.hidden;
+    setMonthMenuOpen(!isOpen);
+  }
+
+  function closeMonthMenu() {
+    setMonthMenuOpen(false);
+  }
+
+  function setMonthMenuOpen(isOpen) {
+    els.monthMenu.hidden = !isOpen;
+    els.monthButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  function handleMonthOptionClick(event) {
+    var button = event.target.closest('.month-option');
+    if (!button) return;
+
+    event.stopPropagation();
+    setSelectedMonth(button.getAttribute('data-month'), button.textContent);
+    closeMonthMenu();
+    selectMonthRange();
+  }
+
+  function setSelectedMonth(value, label) {
+    selectedMonthValue = value || '';
+    els.monthButton.textContent = label || 'Ay seç';
+    Array.prototype.forEach.call(els.monthMenu.querySelectorAll('.month-option'), function (button) {
+      var isActive = button.getAttribute('data-month') === selectedMonthValue;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
   }
 
   function applyRangeButtons() {

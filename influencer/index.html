@@ -81,10 +81,13 @@
             <button class="chip" type="button" data-range="all">Tümü</button>
           </div>
           <div class="date-fields">
-            <label>
-              Ay
-              <select id="monthSelect"></select>
-            </label>
+            <div class="field-stack month-field">
+              <span class="field-label">Ay</span>
+              <div id="monthPicker" class="month-picker">
+                <button id="monthButton" class="month-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">Ay seç</button>
+                <div id="monthMenu" class="month-menu" role="listbox" hidden></div>
+              </div>
+            </div>
             <label>
               Başlangıç
               <input id="fromDate" type="date" />
