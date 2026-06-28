@@ -153,10 +153,13 @@
     setAuthButtonsDisabled(true);
     setLoginMessage('Şifre oluşturma linki gönderiliyor...', '');
 
-    authRequest('/recover?redirect_to=' + encodeURIComponent(getRedirectUrl()), {
+    functionRequest('/send-localized-reset-email', {
       method: 'POST',
       body: JSON.stringify({
-        email: email
+        email: email,
+        language: 'tr',
+        display_name: null,
+        redirect_to: getRedirectUrl()
       })
     }).then(function () {
       setLoginMessage('Emailine şifre oluşturma linki gönderdik. Gelen linke tıkla, sonra yeni şifreni belirle.', 'success');
@@ -642,6 +645,24 @@
         headers: headers,
         body: requestOptions.body
       });
+    });
+  }
+
+  function functionRequest(path, options) {
+    var requestOptions = options || {};
+    var headers = {
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json'
+    };
+    return requestJson(supabaseUrl.replace(/\/$/, '') + '/functions/v1' + path, {
+      method: requestOptions.method || 'POST',
+      headers: headers,
+      body: requestOptions.body
+    }).then(function (payload) {
+      if (payload && payload.success === false) {
+        throw new Error(payload.error || 'İstek başarısız.');
+      }
+      return payload;
     });
   }
 
