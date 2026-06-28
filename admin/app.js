@@ -376,6 +376,9 @@
         '<td class="code-cell">', escapeHtml(promoCode), '</td>',
         '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
+        '<td>', formatNumber(row.weekly_subscriptions), '</td>',
+        '<td>', formatNumber(row.monthly_subscriptions), '</td>',
+        '<td>', formatNumber(row.yearly_subscriptions), '</td>',
         '<td>', formatNumber(row.active_free_trials), '</td>',
         '<td>', formatNumber(row.cancelled_free_trials), '</td>',
         '</tr>'
@@ -384,7 +387,7 @@
   }
 
   function renderEmptyRow(text) {
-    els.statsBody.innerHTML = '<tr><td colspan="10" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.statsBody.innerHTML = '<tr><td colspan="13" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderTotals(rows) {
