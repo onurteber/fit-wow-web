@@ -27,7 +27,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -158,7 +159,8 @@ label {
   gap: 7px;
 }
 
-input {
+input,
+select {
   width: 100%;
   min-height: 44px;
   border: 1px solid #c7d2df;
@@ -170,6 +172,11 @@ input {
 }
 
 input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.14);
+}
+
+select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.14);
 }
@@ -374,7 +381,8 @@ input:focus {
   gap: 5px;
 }
 
-.date-fields input {
+.date-fields input,
+.date-fields select {
   min-height: 38px;
   width: 150px;
 }
@@ -536,6 +544,7 @@ tbody tr:last-child td {
   .date-fields,
   .date-fields label,
   .date-fields input,
+  .date-fields select,
   .date-fields .button {
     width: 100%;
   }

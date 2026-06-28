@@ -30,7 +30,7 @@
     accountName: document.getElementById('accountName'),
     accountStatus: document.getElementById('accountStatus'),
     ibanText: document.getElementById('ibanText'),
-    monthInput: document.getElementById('monthInput'),
+    monthSelect: document.getElementById('monthSelect'),
     fromDate: document.getElementById('fromDate'),
     toDate: document.getElementById('toDate'),
     refreshButton: document.getElementById('refreshButton'),
@@ -46,6 +46,7 @@
   document.addEventListener('DOMContentLoaded', init);
 
   function init() {
+    populateMonthSelect();
     bindEvents();
     setDefaultDates();
 
@@ -91,7 +92,7 @@
     });
     els.logoutButton.addEventListener('click', handleLogout);
     els.refreshButton.addEventListener('click', loadDashboard);
-    els.monthInput.addEventListener('change', selectMonthRange);
+    els.monthSelect.addEventListener('change', selectMonthRange);
     els.fromDate.addEventListener('change', selectCustomRange);
     els.toDate.addEventListener('change', selectCustomRange);
 
@@ -385,7 +386,7 @@
   }
 
   function setDatesForRange(range) {
-    els.monthInput.value = '';
+    els.monthSelect.value = '';
 
     if (range === 'all') {
       els.fromDate.value = '';
@@ -402,10 +403,10 @@
   }
 
   function selectMonthRange() {
-    if (!els.monthInput.value) return;
+    if (!els.monthSelect.value) return;
     selectedRange = 'month';
     applyRangeButtons();
-    setDatesForMonth(els.monthInput.value);
+    setDatesForMonth(els.monthSelect.value);
     loadDashboard();
   }
 
@@ -423,8 +424,26 @@
 
   function selectCustomRange() {
     selectedRange = 'custom';
-    els.monthInput.value = '';
+    els.monthSelect.value = '';
     applyRangeButtons();
+  }
+
+  function populateMonthSelect() {
+    var formatter = new Intl.DateTimeFormat('tr-TR', {
+      month: 'long',
+      year: 'numeric'
+    });
+    var options = ['<option value="">Ay seç</option>'];
+    var cursor = new Date();
+
+    for (var index = 0; index < 36; index += 1) {
+      var value = cursor.getFullYear() + '-' + String(cursor.getMonth() + 1).padStart(2, '0');
+      var label = formatter.format(cursor);
+      options.push('<option value="' + value + '">' + escapeHtml(label) + '</option>');
+      cursor.setMonth(cursor.getMonth() - 1);
+    }
+
+    els.monthSelect.innerHTML = options.join('');
   }
 
   function applyRangeButtons() {
