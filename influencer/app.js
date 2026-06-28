@@ -4,8 +4,9 @@
   var config = window.FITWOW_INFLUENCER_CONFIG || {};
   var supabaseUrl = config.supabaseUrl || readMeta('fitwow:supabase-url');
   var supabaseAnonKey = config.supabaseAnonKey || readMeta('fitwow:supabase-anon-key');
-  var client = null;
+  var session = null;
   var selectedRange = '30';
+  var SESSION_KEY = 'fitwow_influencer_session';
 
   var els = {
     loginView: document.getElementById('loginView'),
@@ -48,14 +49,10 @@
       return;
     }
 
-    client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-
-    client.auth.getSession().then(function (result) {
-      renderSession(result.data.session);
-    });
-
-    client.auth.onAuthStateChange(function (_event, session) {
-      renderSession(session);
+    persistOAuthCallbackSession();
+    restoreSession().then(renderSession).catch(function () {
+      clearStoredSession();
+      renderSession(null);
     });
   }
 
@@ -91,12 +88,17 @@
     setAuthButtonsDisabled(true);
     setLoginMessage('Giriş yapılıyor...', '');
 
-    client.auth.signInWithPassword({
-      email: email,
-      password: password
+    authRequest('/token?grant_type=password', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
     }).then(function (result) {
-      if (result.error) throw result.error;
+      saveSession(result);
+      session = result;
       setLoginMessage('', '');
+      renderSession(session);
     }).catch(function (error) {
       setLoginMessage(error.message || 'Giriş yapılamadı.', 'error');
     }).finally(function () {
@@ -108,38 +110,37 @@
     setAuthButtonsDisabled(true);
     setLoginMessage(providerLabel(provider) + ' ile yönlendiriliyor...', '');
 
-    client.auth.signInWithOAuth({
-      provider: provider,
-      options: {
-        redirectTo: getRedirectUrl(),
-        skipBrowserRedirect: true
-      }
-    }).then(function (result) {
-      if (result.error) throw result.error;
-      if (!result.data || !result.data.url) {
-        throw new Error('OAuth yönlendirme adresi alınamadı.');
-      }
-      window.location.assign(result.data.url);
-    }).catch(function (error) {
-      setLoginMessage(error.message || 'Giriş başlatılamadı.', 'error');
-      setAuthButtonsDisabled(false);
-    });
+    window.location.assign(
+      supabaseUrl.replace(/\/$/, '') +
+        '/auth/v1/authorize?provider=' +
+        encodeURIComponent(provider) +
+        '&redirect_to=' +
+        encodeURIComponent(getRedirectUrl())
+    );
   }
 
   function handleLogout() {
-    if (!client) return;
-    client.auth.signOut();
+    var activeSession = session;
+    clearStoredSession();
+    session = null;
+    renderSession(null);
+
+    if (!activeSession || !activeSession.access_token) return;
+    authRequest('/logout', {
+      method: 'POST',
+      accessToken: activeSession.access_token
+    }).catch(function () {});
   }
 
-  function renderSession(session) {
-    if (!session) {
+  function renderSession(activeSession) {
+    if (!activeSession) {
       els.userEmail.textContent = '';
       els.logoutButton.hidden = true;
       showLogin();
       return;
     }
 
-    els.userEmail.textContent = session.user.email || '';
+    els.userEmail.textContent = (activeSession.user && activeSession.user.email) || '';
     els.logoutButton.hidden = false;
     showDashboard();
     loadDashboard();
@@ -156,39 +157,39 @@
   }
 
   function loadDashboard() {
-    if (!client) return;
+    if (!session) return;
 
     setTableStatus('Yükleniyor...', '');
     renderEmptyRow('Yükleniyor...');
     renderTotals([]);
 
     var range = getDateRange();
-    var accountRequest = client
-      .from('influencer_accounts')
-      .select('full_name, iban, payout_email, status')
-      .maybeSingle();
-    var statsRequest = client.rpc('get_my_influencer_stats', {
-      p_from: range.from,
-      p_to: range.to
+    var accountRequest = apiRequest('/influencer_accounts?select=full_name,iban,payout_email,status')
+      .then(function (rows) {
+        return rows && rows.length ? rows[0] : null;
+      });
+    var statsRequest = apiRequest('/rpc/get_my_influencer_stats', {
+      method: 'POST',
+      body: JSON.stringify({
+        p_from: range.from,
+        p_to: range.to
+      })
     });
 
     Promise.all([accountRequest, statsRequest]).then(function (results) {
-      var accountResult = results[0];
-      var statsResult = results[1];
+      var account = results[0];
+      var stats = results[1] || [];
 
-      if (accountResult.error) throw accountResult.error;
-      if (statsResult.error) throw statsResult.error;
+      renderAccount(account);
+      renderRows(stats);
+      renderTotals(stats);
 
-      renderAccount(accountResult.data);
-      renderRows(statsResult.data || []);
-      renderTotals(statsResult.data || []);
-
-      if (!accountResult.data) {
+      if (!account) {
         setTableStatus('Bu email için influencer hesabı bulunamadı.', 'error');
         return;
       }
 
-      if (!statsResult.data || statsResult.data.length === 0) {
+      if (!stats.length) {
         setTableStatus('Bu tarih aralığında bağlı promo kodu verisi yok.', '');
         return;
       }
@@ -342,7 +343,135 @@
   }
 
   function getRedirectUrl() {
+    if (window.location.protocol === 'file:') {
+      return 'https://fitwowapp.com/influencer/';
+    }
     return window.location.origin + '/influencer/';
+  }
+
+  function persistOAuthCallbackSession() {
+    var hash = window.location.hash ? window.location.hash.slice(1) : '';
+    if (!hash) return;
+
+    var params = new URLSearchParams(hash);
+    var accessToken = params.get('access_token');
+    if (!accessToken) return;
+
+    var expiresIn = Number(params.get('expires_in') || 3600);
+    saveSession({
+      access_token: accessToken,
+      refresh_token: params.get('refresh_token') || '',
+      token_type: params.get('token_type') || 'bearer',
+      expires_at: Math.floor(Date.now() / 1000) + expiresIn
+    });
+    window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+  }
+
+  function restoreSession() {
+    var stored = readStoredSession();
+    if (!stored || !stored.access_token) return Promise.resolve(null);
+
+    session = stored;
+    return refreshSessionIfNeeded(session).then(function (freshSession) {
+      session = freshSession;
+      return authRequest('/user', {
+        method: 'GET',
+        accessToken: freshSession.access_token
+      }).then(function (user) {
+        freshSession.user = user;
+        saveSession(freshSession);
+        return freshSession;
+      });
+    });
+  }
+
+  function refreshSessionIfNeeded(activeSession) {
+    var now = Math.floor(Date.now() / 1000);
+    if (!activeSession.expires_at || activeSession.expires_at - now > 60) {
+      return Promise.resolve(activeSession);
+    }
+    if (!activeSession.refresh_token) return Promise.resolve(activeSession);
+
+    return authRequest('/token?grant_type=refresh_token', {
+      method: 'POST',
+      body: JSON.stringify({
+        refresh_token: activeSession.refresh_token
+      })
+    }).then(function (freshSession) {
+      saveSession(freshSession);
+      return freshSession;
+    });
+  }
+
+  function authRequest(path, options) {
+    var requestOptions = options || {};
+    var headers = {
+      apikey: supabaseAnonKey,
+      'Content-Type': 'application/json'
+    };
+    if (requestOptions.accessToken) {
+      headers.Authorization = 'Bearer ' + requestOptions.accessToken;
+    }
+
+    return requestJson(supabaseUrl.replace(/\/$/, '') + '/auth/v1' + path, {
+      method: requestOptions.method || 'GET',
+      headers: headers,
+      body: requestOptions.body
+    });
+  }
+
+  function apiRequest(path, options) {
+    var requestOptions = options || {};
+    return refreshSessionIfNeeded(session).then(function (freshSession) {
+      session = freshSession;
+      var headers = {
+        apikey: supabaseAnonKey,
+        Authorization: 'Bearer ' + freshSession.access_token,
+        'Content-Type': 'application/json'
+      };
+      return requestJson(supabaseUrl.replace(/\/$/, '') + '/rest/v1' + path, {
+        method: requestOptions.method || 'GET',
+        headers: headers,
+        body: requestOptions.body
+      });
+    });
+  }
+
+  function requestJson(url, options) {
+    return fetch(url, options).then(function (response) {
+      return response.text().then(function (text) {
+        var payload = text ? JSON.parse(text) : {};
+        if (!response.ok) {
+          throw new Error(payload.msg || payload.message || payload.error_description || payload.error || 'İstek başarısız.');
+        }
+        return payload;
+      });
+    });
+  }
+
+  function saveSession(value) {
+    var nextSession = Object.assign({}, value);
+    if (!nextSession.expires_at && nextSession.expires_in) {
+      nextSession.expires_at = Math.floor(Date.now() / 1000) + Number(nextSession.expires_in);
+    }
+    try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
+    } catch (e) {}
+  }
+
+  function readStoredSession() {
+    try {
+      var raw = localStorage.getItem(SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearStoredSession() {
+    try {
+      localStorage.removeItem(SESSION_KEY);
+    } catch (e) {}
   }
 
   function formatNumber(value) {
@@ -382,6 +511,6 @@
   }
 
   function isConfigured() {
-    return Boolean(window.supabase && supabaseUrl && supabaseAnonKey);
+    return Boolean(supabaseUrl && supabaseAnonKey);
   }
 })();
