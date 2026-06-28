@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="fitwow:supabase-url" content="" />
+  <meta name="fitwow:supabase-anon-key" content="" />
+  <title>FitWow Influencer Paneli</title>
+  <link rel="icon" type="image/png" href="../assets/app_icon_ios.png" />
+  <link rel="apple-touch-icon" href="../assets/app_icon_ios.png" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/tr/" aria-label="FitWow ana sayfa">
+        <img src="../assets/app_icon_ios.png" alt="" />
+        <span>FitWow</span>
+      </a>
+      <div class="session">
+        <span id="userEmail" class="session-email"></span>
+        <button id="logoutButton" class="button button-ghost" type="button" hidden>Çıkış</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="loginView" class="auth-panel">
+        <div class="auth-copy">
+          <p class="eyebrow">Influencer Paneli</p>
+          <h1>Uygulama hesabınla giriş yap</h1>
+          <p class="muted">FitWow hesabındaki email/şifre, Apple veya Google ile devam et.</p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="field-stack">
+            <label for="emailInput">Email</label>
+            <input id="emailInput" name="email" type="email" autocomplete="email" placeholder="email@ornek.com" required />
+          </div>
+          <div class="field-stack">
+            <label for="passwordInput">Şifre</label>
+            <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <button id="loginButton" class="button button-primary full-button" type="submit">Giriş yap</button>
+          <div class="divider"><span>veya</span></div>
+          <div class="provider-grid">
+            <button id="googleLoginButton" class="button button-provider" type="button">Google ile giriş</button>
+            <button id="appleLoginButton" class="button button-provider" type="button">Apple ile giriş</button>
+          </div>
+          <p id="loginMessage" class="message" role="status"></p>
+        </form>
+      </section>
+
+      <section id="dashboardView" class="dashboard" hidden>
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">Influencer Paneli</p>
+            <h1 id="accountName">Performans</h1>
+          </div>
+          <div class="account-box" aria-label="Hesap bilgileri">
+            <span id="accountStatus" class="status-pill">Aktif</span>
+            <span id="payoutEmail" class="account-detail"></span>
+            <span id="ibanText" class="account-detail"></span>
+          </div>
+        </div>
+
+        <section class="toolbar" aria-label="Filtreler">
+          <div class="range-buttons">
+            <button class="chip" type="button" data-range="7">7 gün</button>
+            <button class="chip active" type="button" data-range="30">30 gün</button>
+            <button class="chip" type="button" data-range="all">Tümü</button>
+          </div>
+          <div class="date-fields">
+            <label>
+              Başlangıç
+              <input id="fromDate" type="date" />
+            </label>
+            <label>
+              Bitiş
+              <input id="toDate" type="date" />
+            </label>
+            <button id="refreshButton" class="button button-secondary" type="button">Yenile</button>
+          </div>
+        </section>
+
+        <section class="metrics" aria-label="Özet">
+          <article class="metric-card">
+            <span>Kodu kullanan</span>
+            <strong id="appliedUsersMetric">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Ödeme yapan</span>
+            <strong id="convertedUsersMetric">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>İlk satın alma</span>
+            <strong id="initialPurchasesMetric">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Yenileme</span>
+            <strong id="renewalsMetric">0</strong>
+          </article>
+        </section>
+
+        <section class="table-panel">
+          <div class="table-head">
+            <h2>Promo kodları</h2>
+            <p id="tableStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kod</th>
+                  <th>Kodu kullanan</th>
+                  <th>Ödeme yapan</th>
+                  <th>İlk satın alma</th>
+                  <th>Tek seferlik</th>
+                  <th>Yenileme</th>
+                  <th>Son satın alma</th>
+                </tr>
+              </thead>
+              <tbody id="statsBody">
+                <tr>
+                  <td colspan="7" class="empty-cell">Yükleniyor...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
