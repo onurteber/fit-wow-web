@@ -7,6 +7,7 @@
   var session = null;
   var selectedRange = '30';
   var SESSION_KEY = 'fitwow_influencer_session';
+  var ACCOUNT_SELECT = '/influencer_accounts?select=full_name,iban,status';
 
   var els = {
     loginView: document.getElementById('loginView'),
@@ -61,9 +62,21 @@
       return;
     }
 
-    restoreSession().then(renderSession).catch(function () {
+    restoreSession().then(function (activeSession) {
+      if (!activeSession) {
+        renderSession(null);
+        return null;
+      }
+      return requireInfluencerAccess().then(function () {
+        renderSession(activeSession);
+      });
+    }).catch(function (error) {
       clearStoredSession();
+      session = null;
       renderSession(null);
+      if (error && error.message) {
+        setLoginMessage(error.message, 'error');
+      }
     });
   }
 
@@ -106,11 +119,15 @@
         password: password
       })
     }).then(function (result) {
-      saveSession(result);
       session = result;
-      setLoginMessage('', '');
-      renderSession(session);
+      return requireInfluencerAccess().then(function () {
+        saveSession(session);
+        setLoginMessage('', '');
+        renderSession(session);
+      });
     }).catch(function (error) {
+      clearStoredSession();
+      session = null;
       setLoginMessage(error.message || 'Giriş yapılamadı.', 'error');
     }).finally(function () {
       setAuthButtonsDisabled(false);
@@ -171,10 +188,16 @@
       })
     }).then(function (user) {
       session.user = user;
-      saveSession(session);
-      setResetMessage('Şifre kaydedildi. Panele yönlendiriliyorsun.', 'success');
-      renderSession(session);
+      return requireInfluencerAccess().then(function () {
+        saveSession(session);
+        setResetMessage('Şifre kaydedildi. Panele yönlendiriliyorsun.', 'success');
+        renderSession(session);
+      });
     }).catch(function (error) {
+      if (error && error.code === 'not_influencer') {
+        clearStoredSession();
+        session = null;
+      }
       setResetMessage(error.message || 'Şifre kaydedilemedi.', 'error');
     }).finally(function () {
       setResetButtonsDisabled(false);
@@ -234,7 +257,7 @@
     renderTotals([]);
 
     var range = getDateRange();
-    var accountRequest = apiRequest('/influencer_accounts?select=full_name,iban,status')
+    var accountRequest = apiRequest(ACCOUNT_SELECT)
       .then(function (rows) {
         return rows && rows.length ? rows[0] : null;
       });
@@ -255,7 +278,7 @@
       renderTotals(stats);
 
       if (!account) {
-        setTableStatus('Bu email için influencer hesabı bulunamadı.', 'error');
+        rejectCurrentSession('Bu panel sadece influencer hesaplarına açık.');
         return;
       }
 
@@ -271,6 +294,29 @@
       renderTotals([]);
       setTableStatus(error.message || 'İstatistikler alınamadı.', 'error');
     });
+  }
+
+  function requireInfluencerAccess() {
+    return apiRequest(ACCOUNT_SELECT).then(function (rows) {
+      if (rows && rows.length) return rows[0];
+      var error = new Error('Bu panel sadece influencer hesaplarına açık.');
+      error.code = 'not_influencer';
+      throw error;
+    });
+  }
+
+  function rejectCurrentSession(message) {
+    var activeSession = session;
+    clearStoredSession();
+    session = null;
+    renderSession(null);
+    setLoginMessage(message, 'error');
+
+    if (!activeSession || !activeSession.access_token) return;
+    authRequest('/logout', {
+      method: 'POST',
+      accessToken: activeSession.access_token
+    }).catch(function () {});
   }
 
   function renderAccount(account) {
