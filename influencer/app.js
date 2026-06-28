@@ -42,6 +42,9 @@
     statsBody: document.getElementById('statsBody'),
     totalCodeUsageMetric: document.getElementById('totalCodeUsageMetric'),
     subscriptionPurchasesMetric: document.getElementById('subscriptionPurchasesMetric'),
+    weeklySubscriptionsMetric: document.getElementById('weeklySubscriptionsMetric'),
+    monthlySubscriptionsMetric: document.getElementById('monthlySubscriptionsMetric'),
+    yearlySubscriptionsMetric: document.getElementById('yearlySubscriptionsMetric'),
     activeFreeTrialsMetric: document.getElementById('activeFreeTrialsMetric'),
     cancelledFreeTrialsMetric: document.getElementById('cancelledFreeTrialsMetric')
   };
@@ -357,6 +360,9 @@
         '<td class="code-cell">', escapeHtml(row.promo_code || '-'), '</td>',
         '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
+        '<td>', formatNumber(row.weekly_subscriptions), '</td>',
+        '<td>', formatNumber(row.monthly_subscriptions), '</td>',
+        '<td>', formatNumber(row.yearly_subscriptions), '</td>',
         '<td>', formatNumber(row.active_free_trials), '</td>',
         '<td>', formatNumber(row.cancelled_free_trials), '</td>',
         '</tr>'
@@ -365,25 +371,34 @@
   }
 
   function renderEmptyRow(text) {
-    els.statsBody.innerHTML = '<tr><td colspan="5" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.statsBody.innerHTML = '<tr><td colspan="8" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderTotals(rows) {
     var totals = rows.reduce(function (acc, row) {
       acc.totalCodeUsage += toNumber(row.total_code_usage);
       acc.subscriptionPurchases += toNumber(row.subscription_purchases);
+      acc.weeklySubscriptions += toNumber(row.weekly_subscriptions);
+      acc.monthlySubscriptions += toNumber(row.monthly_subscriptions);
+      acc.yearlySubscriptions += toNumber(row.yearly_subscriptions);
       acc.activeFreeTrials += toNumber(row.active_free_trials);
       acc.cancelledFreeTrials += toNumber(row.cancelled_free_trials);
       return acc;
     }, {
       totalCodeUsage: 0,
       subscriptionPurchases: 0,
+      weeklySubscriptions: 0,
+      monthlySubscriptions: 0,
+      yearlySubscriptions: 0,
       activeFreeTrials: 0,
       cancelledFreeTrials: 0
     });
 
     els.totalCodeUsageMetric.textContent = formatNumber(totals.totalCodeUsage);
     els.subscriptionPurchasesMetric.textContent = formatNumber(totals.subscriptionPurchases);
+    els.weeklySubscriptionsMetric.textContent = formatNumber(totals.weeklySubscriptions);
+    els.monthlySubscriptionsMetric.textContent = formatNumber(totals.monthlySubscriptions);
+    els.yearlySubscriptionsMetric.textContent = formatNumber(totals.yearlySubscriptions);
     els.activeFreeTrialsMetric.textContent = formatNumber(totals.activeFreeTrials);
     els.cancelledFreeTrialsMetric.textContent = formatNumber(totals.cancelledFreeTrials);
   }
