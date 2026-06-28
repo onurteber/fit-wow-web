@@ -323,14 +323,18 @@
     }
 
     els.statsBody.innerHTML = rows.map(function (row) {
+      var isNoPromoRow = !row.influencer_account_id && !row.promo_code;
+      var rowClass = isNoPromoRow ? ' class="organic-row"' : '';
+      var promoCode = isNoPromoRow ? 'Kodsuz' : (row.promo_code || '-');
+
       return [
-        '<tr>',
+        '<tr', rowClass, '>',
         '<td class="code-cell">', escapeHtml(row.full_name || '-'), '</td>',
         '<td>', escapeHtml(row.user_email || '-'), '</td>',
         '<td>', escapeHtml(row.payout_email || '-'), '</td>',
         '<td>', escapeHtml(row.iban || '-'), '</td>',
         '<td>', formatStatus(row.status), '</td>',
-        '<td class="code-cell">', escapeHtml(row.promo_code || '-'), '</td>',
+        '<td class="code-cell">', escapeHtml(promoCode), '</td>',
         '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
         '<td>', formatNumber(row.active_free_trials), '</td>',

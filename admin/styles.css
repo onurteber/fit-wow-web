@@ -15,6 +15,10 @@
   color: var(--muted);
 }
 
+.admin-table .organic-row td {
+  background: #f8fafc;
+}
+
 @media (max-width: 560px) {
   .admin-shell {
     width: min(100% - 20px, 1440px);
