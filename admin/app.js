@@ -9,6 +9,12 @@
   var selectedMonthValue = '';
   var SESSION_KEY = 'fitwow_admin_session';
   var ADMIN_SELECT = '/admin_accounts?select=id';
+  var INFLUENCER_ACCOUNT_FIELD_SETS = [
+    ['id', 'full_name', 'payout_email', 'iban', 'status'],
+    ['id', 'full_name', 'iban', 'status'],
+    ['id', 'full_name', 'status'],
+    ['id']
+  ];
   var COMMISSION_FIELD_CANDIDATES = [
     'commission_rate_percent',
     'commission_rate',
@@ -296,9 +302,13 @@
       })
     }).then(function (rows) {
       var stats = rows || [];
-      if (!needsCommissionLookup(stats)) return stats;
-      return fetchInfluencerCommissionRates().then(function (commissionRates) {
-        return mergeRowsWithCommissionRates(stats, commissionRates);
+      return fetchInfluencerAccountsWithCommission().then(function (accounts) {
+        return mergeStatsWithInfluencerAccounts(stats, accounts);
+      }).catch(function () {
+        if (!needsCommissionLookup(stats)) return stats;
+        return fetchInfluencerCommissionRates().then(function (commissionRates) {
+          return mergeRowsWithCommissionRates(stats, commissionRates);
+        });
       });
     }).then(function (stats) {
       renderRows(stats);
@@ -348,6 +358,29 @@
     });
   }
 
+  function fetchInfluencerAccountsWithCommission(attemptIndex) {
+    var attempts = getInfluencerAccountSelectAttempts();
+    var index = attemptIndex || 0;
+    var select = attempts[index];
+    if (!select) {
+      return [];
+    }
+
+    return apiRequest('/influencer_accounts?select=' + select).catch(function () {
+      return fetchInfluencerAccountsWithCommission(index + 1);
+    });
+  }
+
+  function getInfluencerAccountSelectAttempts() {
+    return INFLUENCER_ACCOUNT_FIELD_SETS.reduce(function (attempts, fields) {
+      COMMISSION_FIELD_CANDIDATES.forEach(function (field) {
+        attempts.push(fields.concat(field).join(','));
+      });
+      attempts.push(fields.join(','));
+      return attempts;
+    }, []);
+  }
+
   function fetchInfluencerCommissionRates(fieldIndex) {
     var index = fieldIndex || 0;
     var field = COMMISSION_FIELD_CANDIDATES[index];
@@ -376,6 +409,65 @@
         commission_rate: commissionRates[row.influencer_account_id]
       });
     });
+  }
+
+  function mergeStatsWithInfluencerAccounts(rows, accounts) {
+    var accountById = (accounts || []).reduce(function (map, account) {
+      map[account.id] = account;
+      return map;
+    }, {});
+    var visibleAccountIds = {};
+
+    var mergedRows = rows.map(function (row) {
+      var accountId = row.influencer_account_id;
+      var account = accountById[accountId];
+      if (!accountId || !account) return row;
+
+      visibleAccountIds[accountId] = true;
+      return mergeRowWithAccount(row, account);
+    });
+
+    var emptyAccountRows = (accounts || []).filter(function (account) {
+      return !visibleAccountIds[account.id];
+    }).map(createEmptyInfluencerRow).sort(compareInfluencerRows);
+
+    return mergedRows.concat(emptyAccountRows);
+  }
+
+  function mergeRowWithAccount(row, account) {
+    var merged = Object.assign({}, row);
+    ['full_name', 'payout_email', 'iban', 'status'].forEach(function (field) {
+      if ((merged[field] === null || merged[field] === undefined || merged[field] === '') && account[field] !== undefined) {
+        merged[field] = account[field];
+      }
+    });
+
+    if (!hasCommissionRate(merged)) {
+      merged.commission_rate = getCommissionRate(account);
+    }
+
+    return merged;
+  }
+
+  function createEmptyInfluencerRow(account) {
+    var row = mergeRowWithAccount({
+      influencer_account_id: account.id,
+      user_email: '',
+      promo_code: '',
+      total_code_usage: 0,
+      subscription_purchases: 0,
+      weekly_subscriptions: 0,
+      monthly_subscriptions: 0,
+      yearly_subscriptions: 0,
+      active_free_trials: 0,
+      cancelled_free_trials: 0
+    }, account);
+
+    return row;
+  }
+
+  function compareInfluencerRows(a, b) {
+    return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'tr');
   }
 
   function loadDailyActivity() {
@@ -942,7 +1034,8 @@
   }
 
   function hasCommissionRate(row) {
-    return getCommissionRate(row) !== undefined;
+    var rate = getCommissionRate(row);
+    return rate !== undefined && rate !== null && rate !== '';
   }
 
   function getCommissionRate(row) {
