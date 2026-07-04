@@ -322,7 +322,7 @@
   }
 
   function loadCountryBreakdown(range) {
-    apiRequest('/rpc/get_admin_subscription_country_stats', {
+    apiRequest('/rpc/get_admin_influencer_country_stats', {
       method: 'POST',
       body: JSON.stringify({
         p_from: range.from,
@@ -333,7 +333,7 @@
       renderCountryRows(countryRows);
 
       if (!countryRows.length) {
-        setCountryStatus('Bu tarih aralığında ülke bazlı abonelik verisi yok.', '');
+        setCountryStatus('Bu tarih aralığında influencer ülke kırılımı yok.', '');
         return;
       }
 
@@ -344,7 +344,7 @@
         rejectCurrentSession('Bu panel sadece admin hesaplarına açık.');
         return;
       }
-      setCountryStatus(error.message || 'Ülke kırılımı alınamadı.', 'error');
+      setCountryStatus(error.message || 'Influencer ülke kırılımı alınamadı.', 'error');
     });
   }
 
@@ -477,8 +477,10 @@
     els.countryBody.innerHTML = rows.map(function (row) {
       return [
         '<tr>',
+        '<td class="code-cell">', escapeHtml(row.full_name || '-'), '</td>',
+        '<td class="code-cell">', escapeHtml(row.promo_code || '-'), '</td>',
         '<td class="code-cell">', formatCountryCode(row.country_code), '</td>',
-        '<td>', formatNumber(row.total_initial_purchases), '</td>',
+        '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.free_trials), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
         '<td>', formatNumber(row.weekly_subscriptions), '</td>',
@@ -492,7 +494,7 @@
   }
 
   function renderEmptyCountryRow(text) {
-    els.countryBody.innerHTML = '<tr><td colspan="9" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.countryBody.innerHTML = '<tr><td colspan="11" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderTotals(rows) {
