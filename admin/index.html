@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="/assets/app_icon_ios.png" />
   <link rel="stylesheet" href="/influencer/styles.css" />
   <link rel="stylesheet" href="/admin/styles.css" />
-  <script defer src="/admin/app.js?v=20260628-reset"></script>
+  <script defer src="/admin/app.js?v=20260704-country"></script>
 </head>
 <body>
   <div class="shell admin-shell">
@@ -126,6 +126,35 @@
           </article>
         </section>
 
+        <section class="table-panel country-panel">
+          <div class="table-head">
+            <h2>Ülke kırılımı</h2>
+            <p id="countryStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table country-table">
+              <thead>
+                <tr>
+                  <th>Ülke</th>
+                  <th>Toplam başlangıç</th>
+                  <th>Ücretsiz deneme</th>
+                  <th>Üyelik alımı</th>
+                  <th>Haftalık</th>
+                  <th>Aylık</th>
+                  <th>Yıllık</th>
+                  <th>Aktif ücretsiz deneme</th>
+                  <th>İptal edilen ücretsiz deneme</th>
+                </tr>
+              </thead>
+              <tbody id="countryBody">
+                <tr>
+                  <td colspan="9" class="empty-cell">Yükleniyor...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
         <section class="table-panel">
           <div class="table-head">
             <h2>Influencer kodları</h2>
@@ -140,6 +169,7 @@
                   <th>Ödeme emaili</th>
                   <th>IBAN</th>
                   <th>Durum</th>
+                  <th>Komisyon</th>
                   <th>Kod</th>
                   <th>Toplam kullanım</th>
                   <th>Üyelik alımı</th>
@@ -152,7 +182,7 @@
               </thead>
               <tbody id="statsBody">
                 <tr>
-                  <td colspan="13" class="empty-cell">Yükleniyor...</td>
+                  <td colspan="14" class="empty-cell">Yükleniyor...</td>
                 </tr>
               </tbody>
             </table>

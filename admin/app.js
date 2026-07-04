@@ -9,6 +9,15 @@
   var selectedMonthValue = '';
   var SESSION_KEY = 'fitwow_admin_session';
   var ADMIN_SELECT = '/admin_accounts?select=id';
+  var COMMISSION_FIELD_CANDIDATES = [
+    'commission_rate_percent',
+    'commission_rate',
+    'influencer_commission_rate',
+    'commission_percentage',
+    'influencer_commission_percentage',
+    'commission',
+    'commission_percent'
+  ];
 
   var els = {
     loginView: document.getElementById('loginView'),
@@ -39,6 +48,8 @@
     rangeButtons: Array.prototype.slice.call(document.querySelectorAll('[data-range]')),
     tableStatus: document.getElementById('tableStatus'),
     statsBody: document.getElementById('statsBody'),
+    countryStatus: document.getElementById('countryStatus'),
+    countryBody: document.getElementById('countryBody'),
     activityStatus: document.getElementById('activityStatus'),
     activityBody: document.getElementById('activityBody'),
     influencerCountMetric: document.getElementById('influencerCountMetric'),
@@ -270,9 +281,13 @@
 
     setTableStatus('Yükleniyor...', '');
     renderEmptyRow('Yükleniyor...');
+    setCountryStatus('Yükleniyor...', '');
+    renderEmptyCountryRow('Yükleniyor...');
     renderTotals([]);
 
     var range = getDateRange();
+    loadCountryBreakdown(range);
+
     apiRequest('/rpc/get_admin_influencer_stats', {
       method: 'POST',
       body: JSON.stringify({
@@ -281,6 +296,11 @@
       })
     }).then(function (rows) {
       var stats = rows || [];
+      if (!needsCommissionLookup(stats)) return stats;
+      return fetchInfluencerCommissionRates().then(function (commissionRates) {
+        return mergeRowsWithCommissionRates(stats, commissionRates);
+      });
+    }).then(function (stats) {
       renderRows(stats);
       renderTotals(stats);
 
@@ -298,6 +318,63 @@
         return;
       }
       setTableStatus(error.message || 'İstatistikler alınamadı.', 'error');
+    });
+  }
+
+  function loadCountryBreakdown(range) {
+    apiRequest('/rpc/get_admin_subscription_country_stats', {
+      method: 'POST',
+      body: JSON.stringify({
+        p_from: range.from,
+        p_to: range.to
+      })
+    }).then(function (rows) {
+      var countryRows = rows || [];
+      renderCountryRows(countryRows);
+
+      if (!countryRows.length) {
+        setCountryStatus('Bu tarih aralığında ülke bazlı abonelik verisi yok.', '');
+        return;
+      }
+
+      setCountryStatus('Güncel', 'success');
+    }).catch(function (error) {
+      renderCountryRows([]);
+      if (isPermissionError(error)) {
+        rejectCurrentSession('Bu panel sadece admin hesaplarına açık.');
+        return;
+      }
+      setCountryStatus(error.message || 'Ülke kırılımı alınamadı.', 'error');
+    });
+  }
+
+  function fetchInfluencerCommissionRates(fieldIndex) {
+    var index = fieldIndex || 0;
+    var field = COMMISSION_FIELD_CANDIDATES[index];
+    if (!field) return Promise.resolve({});
+
+    return apiRequest('/influencer_accounts?select=id,' + field).then(function (accounts) {
+      return (accounts || []).reduce(function (rates, account) {
+        rates[account.id] = account[field];
+        return rates;
+      }, {});
+    }).catch(function () {
+      return fetchInfluencerCommissionRates(index + 1);
+    });
+  }
+
+  function needsCommissionLookup(rows) {
+    return rows.some(function (row) {
+      return row.influencer_account_id && !hasCommissionRate(row);
+    });
+  }
+
+  function mergeRowsWithCommissionRates(rows, commissionRates) {
+    return rows.map(function (row) {
+      if (!row.influencer_account_id || hasCommissionRate(row)) return row;
+      return Object.assign({}, row, {
+        commission_rate: commissionRates[row.influencer_account_id]
+      });
     });
   }
 
@@ -373,6 +450,7 @@
         '<td>', escapeHtml(row.payout_email || '-'), '</td>',
         '<td>', escapeHtml(row.iban || '-'), '</td>',
         '<td>', formatStatus(row.status), '</td>',
+        '<td>', formatCommissionRate(getCommissionRate(row)), '</td>',
         '<td class="code-cell">', escapeHtml(promoCode), '</td>',
         '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
@@ -387,7 +465,34 @@
   }
 
   function renderEmptyRow(text) {
-    els.statsBody.innerHTML = '<tr><td colspan="13" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.statsBody.innerHTML = '<tr><td colspan="14" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+  }
+
+  function renderCountryRows(rows) {
+    if (!rows.length) {
+      renderEmptyCountryRow('Veri yok');
+      return;
+    }
+
+    els.countryBody.innerHTML = rows.map(function (row) {
+      return [
+        '<tr>',
+        '<td class="code-cell">', formatCountryCode(row.country_code), '</td>',
+        '<td>', formatNumber(row.total_initial_purchases), '</td>',
+        '<td>', formatNumber(row.free_trials), '</td>',
+        '<td>', formatNumber(row.subscription_purchases), '</td>',
+        '<td>', formatNumber(row.weekly_subscriptions), '</td>',
+        '<td>', formatNumber(row.monthly_subscriptions), '</td>',
+        '<td>', formatNumber(row.yearly_subscriptions), '</td>',
+        '<td>', formatNumber(row.active_free_trials), '</td>',
+        '<td>', formatNumber(row.cancelled_free_trials), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  function renderEmptyCountryRow(text) {
+    els.countryBody.innerHTML = '<tr><td colspan="9" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderTotals(rows) {
@@ -599,6 +704,11 @@
     els.tableStatus.className = 'message' + (type ? ' ' + type : '');
   }
 
+  function setCountryStatus(text, type) {
+    els.countryStatus.textContent = text;
+    els.countryStatus.className = 'message' + (type ? ' ' + type : '');
+  }
+
   function setActivityStatus(text, type) {
     els.activityStatus.textContent = text;
     els.activityStatus.className = 'message' + (type ? ' ' + type : '');
@@ -785,6 +895,26 @@
     return new Intl.NumberFormat('tr-TR').format(toNumber(value));
   }
 
+  function formatCommissionRate(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    if (typeof value === 'string' && value.indexOf('%') !== -1) return escapeHtml(value);
+
+    var rate = Number(value);
+    if (!Number.isFinite(rate)) return escapeHtml(value);
+    var percent = Math.abs(rate) <= 1 ? rate * 100 : rate;
+
+    return new Intl.NumberFormat('tr-TR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(percent) + '%';
+  }
+
+  function formatCountryCode(value) {
+    var code = String(value || '').trim().toUpperCase();
+    if (!code || code === 'UNKNOWN') return 'Bilinmiyor';
+    return escapeHtml(code);
+  }
+
   function formatDecimal(value) {
     if (value === null || value === undefined || value === '') return '-';
     return new Intl.NumberFormat('tr-TR', {
@@ -807,6 +937,20 @@
 
   function toNumber(value) {
     return Number(value || 0);
+  }
+
+  function hasCommissionRate(row) {
+    return getCommissionRate(row) !== undefined;
+  }
+
+  function getCommissionRate(row) {
+    for (var index = 0; index < COMMISSION_FIELD_CANDIDATES.length; index += 1) {
+      var field = COMMISSION_FIELD_CANDIDATES[index];
+      if (Object.prototype.hasOwnProperty.call(row, field)) {
+        return row[field];
+      }
+    }
+    return undefined;
   }
 
   function isPermissionError(error) {

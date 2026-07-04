@@ -3,7 +3,7 @@
 }
 
 .admin-table {
-  min-width: 1720px;
+  min-width: 1820px;
 }
 
 .admin-shell .metrics {
@@ -21,6 +21,14 @@
 
 .admin-table .organic-row td {
   background: #f8fafc;
+}
+
+.country-panel {
+  margin-top: 18px;
+}
+
+.country-table {
+  min-width: 1120px;
 }
 
 .daily-activity-panel {
