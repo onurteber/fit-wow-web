@@ -9,6 +9,30 @@
   var selectedMonthValue = '';
   var SESSION_KEY = 'fitwow_influencer_session';
   var ACCOUNT_SELECT = '/influencer_accounts?select=full_name,iban,status';
+  var REVENUECAT_EVENT_TABLE_CANDIDATES = [
+    'revenuecat_events',
+    'revenuecat_subscription_events',
+    'subscription_events'
+  ];
+  var REVENUECAT_EVENT_SELECT = [
+    'user_id',
+    'event_type',
+    'event_at',
+    'purchased_at',
+    'product_id',
+    'promo_code_id',
+    'promo_code'
+  ].join(',');
+  var PURCHASE_EVENT_TYPES = {
+    INITIAL_PURCHASE: true,
+    NON_RENEWING_PURCHASE: true,
+    RENEWAL: true
+  };
+  var PURCHASE_REVERSAL_EVENT_TYPES = {
+    CANCELLATION: true,
+    EXPIRATION: true,
+    REFUND: true
+  };
 
   var els = {
     loginView: document.getElementById('loginView'),
@@ -42,6 +66,7 @@
     statsBody: document.getElementById('statsBody'),
     totalCodeUsageMetric: document.getElementById('totalCodeUsageMetric'),
     subscriptionPurchasesMetric: document.getElementById('subscriptionPurchasesMetric'),
+    refundedSubscriptionsMetric: document.getElementById('refundedSubscriptionsMetric'),
     weeklySubscriptionsMetric: document.getElementById('weeklySubscriptionsMetric'),
     monthlySubscriptionsMetric: document.getElementById('monthlySubscriptionsMetric'),
     yearlySubscriptionsMetric: document.getElementById('yearlySubscriptionsMetric'),
@@ -282,10 +307,13 @@
         p_to: range.to
       })
     });
+    var refundCountsRequest = fetchRefundCounts(range).catch(function () {
+      return null;
+    });
 
-    Promise.all([accountRequest, statsRequest]).then(function (results) {
+    Promise.all([accountRequest, statsRequest, refundCountsRequest]).then(function (results) {
       var account = results[0];
-      var stats = results[1] || [];
+      var stats = applyRefundCounts(results[1] || [], results[2]);
 
       renderAccount(account);
       renderRows(stats);
@@ -308,6 +336,135 @@
       renderTotals([]);
       setTableStatus(error.message || 'İstatistikler alınamadı.', 'error');
     });
+  }
+
+  function fetchRefundCounts(range) {
+    return fetchRevenueCatEvents(range).then(buildRefundCounts);
+  }
+
+  function fetchRevenueCatEvents(range, tableIndex) {
+    var index = tableIndex || 0;
+    var table = REVENUECAT_EVENT_TABLE_CANDIDATES[index];
+    if (!table) return Promise.reject(new Error('RevenueCat event tablosu okunamadı.'));
+
+    return apiRequest('/' + table + buildRevenueCatEventQuery(range)).catch(function () {
+      return fetchRevenueCatEvents(range, index + 1);
+    });
+  }
+
+  function buildRevenueCatEventQuery(range) {
+    var params = [
+      'select=' + REVENUECAT_EVENT_SELECT,
+      'event_type=in.(INITIAL_PURCHASE,NON_RENEWING_PURCHASE,RENEWAL,CANCELLATION,EXPIRATION,REFUND,UNCANCELLATION)',
+      'order=purchased_at.asc'
+    ];
+
+    if (range.from) {
+      params.push('purchased_at=gte.' + encodeURIComponent(range.from));
+    }
+    if (range.to) {
+      params.push('purchased_at=lt.' + encodeURIComponent(range.to));
+    }
+
+    return '?' + params.join('&');
+  }
+
+  function buildRefundCounts(events) {
+    var transactions = (events || []).reduce(function (map, event) {
+      var key = getTransactionKey(event);
+      if (!key) return map;
+
+      var transaction = map[key] || {
+        purchase: null,
+        latestLifecycleEvent: null
+      };
+
+      if (PURCHASE_EVENT_TYPES[event.event_type] && getPromoKey(event)) {
+        transaction.purchase = event;
+      }
+      if (isLifecycleEvent(event.event_type) && isLaterEvent(event, transaction.latestLifecycleEvent)) {
+        transaction.latestLifecycleEvent = event;
+      }
+
+      map[key] = transaction;
+      return map;
+    }, {});
+
+    return Object.keys(transactions).reduce(function (counts, key) {
+      addRefundCounts(counts, transactions[key]);
+      return counts;
+    }, {
+      eventCount: (events || []).length,
+      byPromo: {}
+    });
+  }
+
+  function addRefundCounts(counts, transaction) {
+    var purchase = transaction.purchase;
+    if (!purchase || !isReversedTransaction(transaction)) return;
+
+    var promoKeys = getPromoKeys(purchase);
+    if (!promoKeys.length) return;
+
+    promoKeys.forEach(function (promoKey) {
+      var refundCounts = counts.byPromo[promoKey] || emptyRefundCounts();
+      refundCounts.refunded_subscriptions += 1;
+      counts.byPromo[promoKey] = refundCounts;
+    });
+  }
+
+  function applyRefundCounts(rows, refundCounts) {
+    if (!refundCounts || refundCounts.eventCount === 0) return rows;
+
+    return rows.map(function (row) {
+      var promoKey = getPromoKey(row);
+      if (!promoKey) return row;
+      return Object.assign({}, row, getRefundCountsForRow(refundCounts.byPromo, row));
+    });
+  }
+
+  function getRefundCountsForRow(map, row) {
+    var keys = getPromoKeys(row);
+    for (var index = 0; index < keys.length; index += 1) {
+      if (map[keys[index]]) return map[keys[index]];
+    }
+    return emptyRefundCounts();
+  }
+
+  function emptyRefundCounts() {
+    return {
+      refunded_subscriptions: 0
+    };
+  }
+
+  function getTransactionKey(event) {
+    if (!event.user_id || !event.product_id || !event.purchased_at) return '';
+    return [event.user_id, event.product_id, event.purchased_at].join('|');
+  }
+
+  function getPromoKey(row) {
+    return getPromoKeys(row)[0] || '';
+  }
+
+  function getPromoKeys(row) {
+    var keys = [];
+    if (row.promo_code_id) keys.push('id:' + row.promo_code_id);
+    if (row.promo_code) keys.push('code:' + String(row.promo_code).trim().toUpperCase());
+    return keys;
+  }
+
+  function isLifecycleEvent(eventType) {
+    return Boolean(PURCHASE_REVERSAL_EVENT_TYPES[eventType] || eventType === 'UNCANCELLATION');
+  }
+
+  function isLaterEvent(event, previousEvent) {
+    if (!previousEvent) return true;
+    return new Date(event.event_at || 0).getTime() >= new Date(previousEvent.event_at || 0).getTime();
+  }
+
+  function isReversedTransaction(transaction) {
+    var latestEvent = transaction.latestLifecycleEvent;
+    return Boolean(latestEvent && PURCHASE_REVERSAL_EVENT_TYPES[latestEvent.event_type]);
   }
 
   function requireInfluencerAccess() {
@@ -360,6 +517,7 @@
         '<td class="code-cell">', escapeHtml(row.promo_code || '-'), '</td>',
         '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
+        '<td>', formatNumber(row.refunded_subscriptions), '</td>',
         '<td>', formatNumber(row.weekly_subscriptions), '</td>',
         '<td>', formatNumber(row.monthly_subscriptions), '</td>',
         '<td>', formatNumber(row.yearly_subscriptions), '</td>',
@@ -371,13 +529,14 @@
   }
 
   function renderEmptyRow(text) {
-    els.statsBody.innerHTML = '<tr><td colspan="8" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.statsBody.innerHTML = '<tr><td colspan="9" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderTotals(rows) {
     var totals = rows.reduce(function (acc, row) {
       acc.totalCodeUsage += toNumber(row.total_code_usage);
       acc.subscriptionPurchases += toNumber(row.subscription_purchases);
+      acc.refundedSubscriptions += toNumber(row.refunded_subscriptions);
       acc.weeklySubscriptions += toNumber(row.weekly_subscriptions);
       acc.monthlySubscriptions += toNumber(row.monthly_subscriptions);
       acc.yearlySubscriptions += toNumber(row.yearly_subscriptions);
@@ -387,6 +546,7 @@
     }, {
       totalCodeUsage: 0,
       subscriptionPurchases: 0,
+      refundedSubscriptions: 0,
       weeklySubscriptions: 0,
       monthlySubscriptions: 0,
       yearlySubscriptions: 0,
@@ -396,6 +556,7 @@
 
     els.totalCodeUsageMetric.textContent = formatNumber(totals.totalCodeUsage);
     els.subscriptionPurchasesMetric.textContent = formatNumber(totals.subscriptionPurchases);
+    els.refundedSubscriptionsMetric.textContent = formatNumber(totals.refundedSubscriptions);
     els.weeklySubscriptionsMetric.textContent = formatNumber(totals.weeklySubscriptions);
     els.monthlySubscriptionsMetric.textContent = formatNumber(totals.monthlySubscriptions);
     els.yearlySubscriptionsMetric.textContent = formatNumber(totals.yearlySubscriptions);

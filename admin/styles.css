@@ -3,11 +3,11 @@
 }
 
 .admin-table {
-  min-width: 1820px;
+  min-width: 1940px;
 }
 
 .admin-shell .metrics {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
 .admin-table td:nth-child(4) {
@@ -28,7 +28,7 @@
 }
 
 .country-table {
-  min-width: 1480px;
+  min-width: 1600px;
 }
 
 .daily-activity-panel {

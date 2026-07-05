@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="/assets/app_icon_ios.png" />
   <link rel="apple-touch-icon" href="/assets/app_icon_ios.png" />
   <link rel="stylesheet" href="/influencer/styles.css" />
-  <script defer src="/influencer/app.js?v=20260628-reset"></script>
+  <script defer src="/influencer/app.js?v=20260705-refund"></script>
 </head>
 <body>
   <div class="shell">
@@ -110,6 +110,10 @@
             <strong id="subscriptionPurchasesMetric">0</strong>
           </article>
           <article class="metric-card">
+            <span>Refund / iptal</span>
+            <strong id="refundedSubscriptionsMetric">0</strong>
+          </article>
+          <article class="metric-card">
             <span>Haftalık</span>
             <strong id="weeklySubscriptionsMetric">0</strong>
           </article>
@@ -143,6 +147,7 @@
                   <th>Kod</th>
                   <th>Toplam kod kullanımı</th>
                   <th>Üyelik alımı</th>
+                  <th>Refund / iptal</th>
                   <th>Haftalık</th>
                   <th>Aylık</th>
                   <th>Yıllık</th>
@@ -152,7 +157,7 @@
               </thead>
               <tbody id="statsBody">
                 <tr>
-                  <td colspan="8" class="empty-cell">Yükleniyor...</td>
+                  <td colspan="9" class="empty-cell">Yükleniyor...</td>
                 </tr>
               </tbody>
             </table>

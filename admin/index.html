@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="/assets/app_icon_ios.png" />
   <link rel="stylesheet" href="/influencer/styles.css" />
   <link rel="stylesheet" href="/admin/styles.css" />
-  <script defer src="/admin/app.js?v=20260704-commission"></script>
+  <script defer src="/admin/app.js?v=20260705-refund"></script>
 </head>
 <body>
   <div class="shell admin-shell">
@@ -117,6 +117,10 @@
             <strong id="subscriptionPurchasesMetric">0</strong>
           </article>
           <article class="metric-card">
+            <span>Refund / iptal</span>
+            <strong id="refundedSubscriptionsMetric">0</strong>
+          </article>
+          <article class="metric-card">
             <span>Toplam aktif ücretsiz deneme</span>
             <strong id="activeFreeTrialsMetric">0</strong>
           </article>
@@ -141,6 +145,7 @@
                   <th>Toplam kullanım</th>
                   <th>Ücretsiz deneme</th>
                   <th>Üyelik alımı</th>
+                  <th>Refund / iptal</th>
                   <th>Haftalık</th>
                   <th>Aylık</th>
                   <th>Yıllık</th>
@@ -150,7 +155,7 @@
               </thead>
               <tbody id="countryBody">
                 <tr>
-                  <td colspan="11" class="empty-cell">Yükleniyor...</td>
+                  <td colspan="12" class="empty-cell">Yükleniyor...</td>
                 </tr>
               </tbody>
             </table>
@@ -175,6 +180,7 @@
                   <th>Kod</th>
                   <th>Toplam kullanım</th>
                   <th>Üyelik alımı</th>
+                  <th>Refund / iptal</th>
                   <th>Haftalık</th>
                   <th>Aylık</th>
                   <th>Yıllık</th>
@@ -184,7 +190,7 @@
               </thead>
               <tbody id="statsBody">
                 <tr>
-                  <td colspan="14" class="empty-cell">Yükleniyor...</td>
+                  <td colspan="15" class="empty-cell">Yükleniyor...</td>
                 </tr>
               </tbody>
             </table>

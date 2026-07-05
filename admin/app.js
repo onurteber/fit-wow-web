@@ -24,6 +24,32 @@
     'commission',
     'commission_percent'
   ];
+  var REVENUECAT_EVENT_TABLE_CANDIDATES = [
+    'revenuecat_events',
+    'revenuecat_subscription_events',
+    'subscription_events'
+  ];
+  var REVENUECAT_EVENT_SELECT = [
+    'user_id',
+    'event_type',
+    'event_at',
+    'purchased_at',
+    'expires_at',
+    'product_id',
+    'promo_code_id',
+    'promo_code',
+    'country_code'
+  ].join(',');
+  var PURCHASE_EVENT_TYPES = {
+    INITIAL_PURCHASE: true,
+    NON_RENEWING_PURCHASE: true,
+    RENEWAL: true
+  };
+  var PURCHASE_REVERSAL_EVENT_TYPES = {
+    CANCELLATION: true,
+    EXPIRATION: true,
+    REFUND: true
+  };
 
   var els = {
     loginView: document.getElementById('loginView'),
@@ -62,6 +88,7 @@
     influencerUsageMetric: document.getElementById('influencerUsageMetric'),
     organicUsageMetric: document.getElementById('organicUsageMetric'),
     subscriptionPurchasesMetric: document.getElementById('subscriptionPurchasesMetric'),
+    refundedSubscriptionsMetric: document.getElementById('refundedSubscriptionsMetric'),
     activeFreeTrialsMetric: document.getElementById('activeFreeTrialsMetric'),
     cancelledFreeTrialsMetric: document.getElementById('cancelledFreeTrialsMetric')
   };
@@ -292,7 +319,10 @@
     renderTotals([]);
 
     var range = getDateRange();
-    loadCountryBreakdown(range);
+    var refundCountsRequest = fetchRefundCounts(range).catch(function () {
+      return null;
+    });
+    loadCountryBreakdown(range, refundCountsRequest);
 
     apiRequest('/rpc/get_admin_influencer_stats', {
       method: 'POST',
@@ -302,13 +332,13 @@
       })
     }).then(function (rows) {
       var stats = rows || [];
-      return fetchInfluencerAccountsWithCommission().then(function (accounts) {
-        return mergeStatsWithInfluencerAccounts(stats, accounts);
-      }).catch(function () {
-        if (!needsCommissionLookup(stats)) return stats;
-        return fetchInfluencerCommissionRates().then(function (commissionRates) {
-          return mergeRowsWithCommissionRates(stats, commissionRates);
-        });
+      return Promise.all([
+        fetchInfluencerAccountsWithCommission(),
+        refundCountsRequest
+      ]).then(function (results) {
+        var accounts = results[0];
+        var refundCounts = results[1];
+        return applyRefundCounts(mergeStatsWithInfluencerAccounts(stats, accounts), refundCounts);
       });
     }).then(function (stats) {
       renderRows(stats);
@@ -331,7 +361,7 @@
     });
   }
 
-  function loadCountryBreakdown(range) {
+  function loadCountryBreakdown(range, refundCountsRequest) {
     apiRequest('/rpc/get_admin_influencer_country_stats', {
       method: 'POST',
       body: JSON.stringify({
@@ -340,6 +370,12 @@
       })
     }).then(function (rows) {
       var countryRows = rows || [];
+      return (refundCountsRequest || fetchRefundCounts(range).catch(function () {
+        return null;
+      })).then(function (refundCounts) {
+        return applyCountryRefundCounts(countryRows, refundCounts);
+      });
+    }).then(function (countryRows) {
       renderCountryRows(countryRows);
 
       if (!countryRows.length) {
@@ -356,6 +392,165 @@
       }
       setCountryStatus(error.message || 'Influencer ülke kırılımı alınamadı.', 'error');
     });
+  }
+
+  function fetchRefundCounts(range) {
+    return fetchRevenueCatEvents(range).then(buildRefundCounts);
+  }
+
+  function fetchRevenueCatEvents(range, tableIndex) {
+    var index = tableIndex || 0;
+    var table = REVENUECAT_EVENT_TABLE_CANDIDATES[index];
+    if (!table) return Promise.reject(new Error('RevenueCat event tablosu okunamadı.'));
+
+    return apiRequest('/' + table + buildRevenueCatEventQuery(range)).catch(function () {
+      return fetchRevenueCatEvents(range, index + 1);
+    });
+  }
+
+  function buildRevenueCatEventQuery(range) {
+    var params = [
+      'select=' + REVENUECAT_EVENT_SELECT,
+      'event_type=in.(INITIAL_PURCHASE,NON_RENEWING_PURCHASE,RENEWAL,CANCELLATION,EXPIRATION,REFUND,UNCANCELLATION)',
+      'order=purchased_at.asc'
+    ];
+
+    if (range.from) {
+      params.push('purchased_at=gte.' + encodeURIComponent(range.from));
+    }
+    if (range.to) {
+      params.push('purchased_at=lt.' + encodeURIComponent(range.to));
+    }
+
+    return '?' + params.join('&');
+  }
+
+  function buildRefundCounts(events) {
+    var transactions = (events || []).reduce(function (map, event) {
+      var key = getTransactionKey(event);
+      if (!key) return map;
+
+      var transaction = map[key] || {
+        purchase: null,
+        latestLifecycleEvent: null
+      };
+
+      if (PURCHASE_EVENT_TYPES[event.event_type] && getPromoKey(event)) {
+        transaction.purchase = event;
+      }
+      if (isLifecycleEvent(event.event_type) && isLaterEvent(event, transaction.latestLifecycleEvent)) {
+        transaction.latestLifecycleEvent = event;
+      }
+
+      map[key] = transaction;
+      return map;
+    }, {});
+
+    return Object.keys(transactions).reduce(function (counts, key) {
+      addRefundCounts(counts, transactions[key]);
+      return counts;
+    }, {
+      eventCount: (events || []).length,
+      byPromo: {},
+      byPromoCountry: {}
+    });
+  }
+
+  function addRefundCounts(counts, transaction) {
+    var purchase = transaction.purchase;
+    if (!purchase || !isReversedTransaction(transaction)) return;
+
+    var promoKeys = getPromoKeys(purchase);
+    if (!promoKeys.length) return;
+
+    promoKeys.forEach(function (promoKey) {
+      incrementRefundCounts(counts.byPromo, promoKey);
+    });
+
+    var countryCode = normalizeCountryCode(purchase.country_code);
+    if (countryCode) {
+      promoKeys.forEach(function (promoKey) {
+        incrementRefundCounts(counts.byPromoCountry, promoKey + '|' + countryCode);
+      });
+    }
+  }
+
+  function applyRefundCounts(rows, refundCounts) {
+    if (!refundCounts || refundCounts.eventCount === 0) return rows;
+
+    return rows.map(function (row) {
+      var promoKey = getPromoKey(row);
+      if (!promoKey) return row;
+      return Object.assign({}, row, getRefundCountsForRow(refundCounts.byPromo, row));
+    });
+  }
+
+  function applyCountryRefundCounts(rows, refundCounts) {
+    if (!refundCounts || refundCounts.eventCount === 0) return rows;
+
+    return rows.map(function (row) {
+      var promoKey = getPromoKey(row);
+      var countryCode = normalizeCountryCode(row.country_code);
+      if (!promoKey || !countryCode) return row;
+      return Object.assign({}, row, getRefundCountsForRow(refundCounts.byPromoCountry, row, countryCode));
+    });
+  }
+
+  function getRefundCountsForRow(map, row, suffix) {
+    var keys = getPromoKeys(row);
+    for (var index = 0; index < keys.length; index += 1) {
+      var key = suffix ? keys[index] + '|' + suffix : keys[index];
+      if (map[key]) return map[key];
+    }
+    return emptyRefundCounts();
+  }
+
+  function incrementRefundCounts(map, key) {
+    var counts = map[key] || emptyRefundCounts();
+    counts.refunded_subscriptions += 1;
+    map[key] = counts;
+  }
+
+  function emptyRefundCounts() {
+    return {
+      refunded_subscriptions: 0
+    };
+  }
+
+  function getTransactionKey(event) {
+    if (!event.user_id || !event.product_id || !event.purchased_at) return '';
+    return [event.user_id, event.product_id, event.purchased_at].join('|');
+  }
+
+  function getPromoKey(row) {
+    return getPromoKeys(row)[0] || '';
+  }
+
+  function getPromoKeys(row) {
+    var keys = [];
+    if (row.promo_code_id) keys.push('id:' + row.promo_code_id);
+    if (row.promo_code) keys.push('code:' + String(row.promo_code).trim().toUpperCase());
+    return keys;
+  }
+
+  function isLifecycleEvent(eventType) {
+    return Boolean(PURCHASE_REVERSAL_EVENT_TYPES[eventType] || eventType === 'UNCANCELLATION');
+  }
+
+  function isLaterEvent(event, previousEvent) {
+    if (!previousEvent) return true;
+    return new Date(event.event_at || event.created_at || 0).getTime() >= new Date(previousEvent.event_at || previousEvent.created_at || 0).getTime();
+  }
+
+  function isReversedTransaction(transaction) {
+    var latestEvent = transaction.latestLifecycleEvent;
+    return Boolean(latestEvent && PURCHASE_REVERSAL_EVENT_TYPES[latestEvent.event_type]);
+  }
+
+  function normalizeCountryCode(value) {
+    var code = String(value || '').trim().toUpperCase();
+    if (!code || code === 'UNKNOWN') return '';
+    return code;
   }
 
   function fetchInfluencerAccountsWithCommission(attemptIndex) {
@@ -459,6 +654,7 @@
       weekly_subscriptions: 0,
       monthly_subscriptions: 0,
       yearly_subscriptions: 0,
+      refunded_subscriptions: 0,
       active_free_trials: 0,
       cancelled_free_trials: 0
     }, account);
@@ -546,6 +742,7 @@
         '<td class="code-cell">', escapeHtml(promoCode), '</td>',
         '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
+        '<td>', formatNumber(row.refunded_subscriptions), '</td>',
         '<td>', formatNumber(row.weekly_subscriptions), '</td>',
         '<td>', formatNumber(row.monthly_subscriptions), '</td>',
         '<td>', formatNumber(row.yearly_subscriptions), '</td>',
@@ -557,7 +754,7 @@
   }
 
   function renderEmptyRow(text) {
-    els.statsBody.innerHTML = '<tr><td colspan="14" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.statsBody.innerHTML = '<tr><td colspan="15" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderCountryRows(rows) {
@@ -575,6 +772,7 @@
         '<td>', formatNumber(row.total_code_usage), '</td>',
         '<td>', formatNumber(row.free_trials), '</td>',
         '<td>', formatNumber(row.subscription_purchases), '</td>',
+        '<td>', formatNumber(row.refunded_subscriptions), '</td>',
         '<td>', formatNumber(row.weekly_subscriptions), '</td>',
         '<td>', formatNumber(row.monthly_subscriptions), '</td>',
         '<td>', formatNumber(row.yearly_subscriptions), '</td>',
@@ -586,7 +784,7 @@
   }
 
   function renderEmptyCountryRow(text) {
-    els.countryBody.innerHTML = '<tr><td colspan="11" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.countryBody.innerHTML = '<tr><td colspan="12" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderTotals(rows) {
@@ -600,6 +798,7 @@
         acc.organicUsage += totalCodeUsage;
       }
       acc.subscriptionPurchases += toNumber(row.subscription_purchases);
+      acc.refundedSubscriptions += toNumber(row.refunded_subscriptions);
       acc.activeFreeTrials += toNumber(row.active_free_trials);
       acc.cancelledFreeTrials += toNumber(row.cancelled_free_trials);
       return acc;
@@ -607,6 +806,7 @@
       influencerUsage: 0,
       organicUsage: 0,
       subscriptionPurchases: 0,
+      refundedSubscriptions: 0,
       activeFreeTrials: 0,
       cancelledFreeTrials: 0
     });
@@ -615,6 +815,7 @@
     els.influencerUsageMetric.textContent = formatNumber(totals.influencerUsage);
     els.organicUsageMetric.textContent = formatNumber(totals.organicUsage);
     els.subscriptionPurchasesMetric.textContent = formatNumber(totals.subscriptionPurchases);
+    els.refundedSubscriptionsMetric.textContent = formatNumber(totals.refundedSubscriptions);
     els.activeFreeTrialsMetric.textContent = formatNumber(totals.activeFreeTrials);
     els.cancelledFreeTrialsMetric.textContent = formatNumber(totals.cancelledFreeTrials);
   }
