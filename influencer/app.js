@@ -8,7 +8,7 @@
   var selectedRange = '30';
   var selectedMonthValue = '';
   var SESSION_KEY = 'fitwow_influencer_session';
-  var ACCOUNT_SELECT = '/influencer_accounts?select=full_name,iban,status';
+  var ACCOUNT_SELECT = '/influencer_accounts?select=full_name,iban,status,commission_rate_percent';
   var REVENUECAT_EVENT_TABLE_CANDIDATES = [
     'revenuecat_subscription_events',
     'revenuecat_events',
@@ -55,6 +55,7 @@
     userEmail: document.getElementById('userEmail'),
     accountName: document.getElementById('accountName'),
     accountStatus: document.getElementById('accountStatus'),
+    commissionText: document.getElementById('commissionText'),
     ibanText: document.getElementById('ibanText'),
     monthPicker: document.getElementById('monthPicker'),
     monthButton: document.getElementById('monthButton'),
@@ -420,7 +421,16 @@
     return rows.map(function (row) {
       var promoKey = getPromoKey(row);
       if (!promoKey) return row;
-      return Object.assign({}, row, getRefundCountsForRow(refundCounts.byPromo, row));
+      return mergeRefundCounts(row, getRefundCountsForRow(refundCounts.byPromo, row));
+    });
+  }
+
+  function mergeRefundCounts(row, counts) {
+    return Object.assign({}, row, {
+      refunded_subscriptions: Math.max(
+        toNumber(row.refunded_subscriptions),
+        toNumber(counts.refunded_subscriptions)
+      )
     });
   }
 
@@ -506,6 +516,7 @@
       els.accountName.textContent = 'Performans';
       els.accountStatus.textContent = 'Hesap yok';
       els.accountStatus.classList.add('paused');
+      els.commissionText.textContent = '';
       els.ibanText.textContent = '';
       return;
     }
@@ -513,6 +524,7 @@
     els.accountName.textContent = account.full_name || 'Performans';
     els.accountStatus.textContent = account.status === 'paused' ? 'Duraklatıldı' : 'Aktif';
     els.accountStatus.classList.toggle('paused', account.status === 'paused');
+    els.commissionText.textContent = hasCommissionRate(account) ? 'Komisyon ' + formatCommissionRate(getCommissionRate(account)) : '';
     els.ibanText.textContent = account.iban ? maskIban(account.iban) : '';
   }
 
@@ -900,8 +912,31 @@
     return new Intl.NumberFormat('tr-TR').format(toNumber(value));
   }
 
+  function formatCommissionRate(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    if (typeof value === 'string' && value.indexOf('%') !== -1) return value;
+
+    var rate = Number(value);
+    if (!Number.isFinite(rate)) return String(value);
+    var percent = Math.abs(rate) <= 1 ? rate * 100 : rate;
+
+    return new Intl.NumberFormat('tr-TR', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(percent) + '%';
+  }
+
   function toNumber(value) {
     return Number(value || 0);
+  }
+
+  function hasCommissionRate(row) {
+    return getCommissionRate(row) !== undefined && getCommissionRate(row) !== null && getCommissionRate(row) !== '';
+  }
+
+  function getCommissionRate(row) {
+    if (!row) return undefined;
+    return row.commission_rate_percent;
   }
 
   function maskIban(value) {

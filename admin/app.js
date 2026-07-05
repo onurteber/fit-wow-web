@@ -482,7 +482,7 @@
     return rows.map(function (row) {
       var promoKey = getPromoKey(row);
       if (!promoKey) return row;
-      return Object.assign({}, row, getRefundCountsForRow(refundCounts.byPromo, row));
+      return mergeRefundCounts(row, getRefundCountsForRow(refundCounts.byPromo, row));
     });
   }
 
@@ -493,7 +493,16 @@
       var promoKey = getPromoKey(row);
       var countryCode = normalizeCountryCode(row.country_code);
       if (!promoKey || !countryCode) return row;
-      return Object.assign({}, row, getRefundCountsForRow(refundCounts.byPromoCountry, row, countryCode));
+      return mergeRefundCounts(row, getRefundCountsForRow(refundCounts.byPromoCountry, row, countryCode));
+    });
+  }
+
+  function mergeRefundCounts(row, counts) {
+    return Object.assign({}, row, {
+      refunded_subscriptions: Math.max(
+        toNumber(row.refunded_subscriptions),
+        toNumber(counts.refunded_subscriptions)
+      )
     });
   }
 
