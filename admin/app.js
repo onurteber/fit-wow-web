@@ -25,14 +25,15 @@
     'commission_percent'
   ];
   var REVENUECAT_EVENT_TABLE_CANDIDATES = [
-    'revenuecat_events',
     'revenuecat_subscription_events',
+    'revenuecat_events',
     'subscription_events'
   ];
   var REVENUECAT_EVENT_SELECT = [
     'user_id',
     'event_type',
     'event_at',
+    'created_at',
     'purchased_at',
     'expires_at',
     'product_id',
@@ -412,7 +413,7 @@
     var params = [
       'select=' + REVENUECAT_EVENT_SELECT,
       'event_type=in.(INITIAL_PURCHASE,NON_RENEWING_PURCHASE,RENEWAL,CANCELLATION,EXPIRATION,REFUND,UNCANCELLATION)',
-      'order=purchased_at.asc'
+      'order=created_at.asc'
     ];
 
     if (range.from) {
@@ -518,8 +519,18 @@
   }
 
   function getTransactionKey(event) {
-    if (!event.user_id || !event.product_id || !event.purchased_at) return '';
-    return [event.user_id, event.product_id, event.purchased_at].join('|');
+    if (!event.user_id || !event.product_id) return '';
+    return [
+      event.user_id,
+      event.product_id,
+      normalizeTimestamp(event.purchased_at || event.event_at || event.created_at)
+    ].join('|');
+  }
+
+  function normalizeTimestamp(value) {
+    if (!value) return '';
+    var time = new Date(value).getTime();
+    return Number.isFinite(time) ? String(time) : String(value);
   }
 
   function getPromoKey(row) {

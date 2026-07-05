@@ -10,14 +10,15 @@
   var SESSION_KEY = 'fitwow_influencer_session';
   var ACCOUNT_SELECT = '/influencer_accounts?select=full_name,iban,status';
   var REVENUECAT_EVENT_TABLE_CANDIDATES = [
-    'revenuecat_events',
     'revenuecat_subscription_events',
+    'revenuecat_events',
     'subscription_events'
   ];
   var REVENUECAT_EVENT_SELECT = [
     'user_id',
     'event_type',
     'event_at',
+    'created_at',
     'purchased_at',
     'product_id',
     'promo_code_id',
@@ -356,7 +357,7 @@
     var params = [
       'select=' + REVENUECAT_EVENT_SELECT,
       'event_type=in.(INITIAL_PURCHASE,NON_RENEWING_PURCHASE,RENEWAL,CANCELLATION,EXPIRATION,REFUND,UNCANCELLATION)',
-      'order=purchased_at.asc'
+      'order=created_at.asc'
     ];
 
     if (range.from) {
@@ -438,8 +439,18 @@
   }
 
   function getTransactionKey(event) {
-    if (!event.user_id || !event.product_id || !event.purchased_at) return '';
-    return [event.user_id, event.product_id, event.purchased_at].join('|');
+    if (!event.user_id || !event.product_id) return '';
+    return [
+      event.user_id,
+      event.product_id,
+      normalizeTimestamp(event.purchased_at || event.event_at || event.created_at)
+    ].join('|');
+  }
+
+  function normalizeTimestamp(value) {
+    if (!value) return '';
+    var time = new Date(value).getTime();
+    return Number.isFinite(time) ? String(time) : String(value);
   }
 
   function getPromoKey(row) {
@@ -459,7 +470,7 @@
 
   function isLaterEvent(event, previousEvent) {
     if (!previousEvent) return true;
-    return new Date(event.event_at || 0).getTime() >= new Date(previousEvent.event_at || 0).getTime();
+    return new Date(event.event_at || event.created_at || 0).getTime() >= new Date(previousEvent.event_at || previousEvent.created_at || 0).getTime();
   }
 
   function isReversedTransaction(transaction) {
