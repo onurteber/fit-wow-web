@@ -746,7 +746,7 @@
       body: JSON.stringify({
         p_from_date: els.costFromDate.value || null,
         p_to_date: els.costToDate.value || null,
-        p_timezone: 'America/Los_Angeles'
+        p_timezone: 'Europe/Madrid'
       })
     }).then(function (rows) {
       var costRows = rows || [];
@@ -971,11 +971,11 @@
 
   function setDefaultDates() {
     setDatesForRange(selectedRange);
-    var billingToday = dateInputValueInTimeZone(new Date(), 'America/Los_Angeles');
-    var costFrom = new Date(billingToday + 'T12:00:00');
+    var madridToday = dateInputValueInTimeZone(new Date(), 'Europe/Madrid');
+    var costFrom = new Date(madridToday + 'T12:00:00');
     costFrom.setDate(costFrom.getDate() - 29);
     els.costFromDate.value = toDateInputValue(costFrom);
-    els.costToDate.value = billingToday;
+    els.costToDate.value = madridToday;
     els.activityDate.value = toDateInputValue(new Date());
     applyRangeButtons();
   }
