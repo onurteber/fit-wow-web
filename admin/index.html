@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="/assets/app_icon_ios.png" />
   <link rel="stylesheet" href="/influencer/styles.css" />
   <link rel="stylesheet" href="/admin/styles.css" />
-  <script defer src="/admin/app.js?v=20260705-iade"></script>
+  <script defer src="/admin/app.js?v=20260720-gemini-cost"></script>
 </head>
 <body>
   <div class="shell admin-shell">
@@ -128,6 +128,69 @@
             <span>Toplam iptal edilen ücretsiz deneme</span>
             <strong id="cancelledFreeTrialsMetric">0</strong>
           </article>
+        </section>
+
+        <section class="table-panel cost-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Gemini Google Search maliyeti</h2>
+              <p class="table-description">Gemini 2.5 grounding kullanımı · Google faturalandırma günü (Pacific Time)</p>
+            </div>
+            <div class="daily-controls cost-controls">
+              <label>
+                Başlangıç
+                <input id="costFromDate" type="date" />
+              </label>
+              <label>
+                Bitiş
+                <input id="costToDate" type="date" />
+              </label>
+              <button id="costRefreshButton" class="button button-secondary" type="button">Yenile</button>
+              <p id="costStatus" class="message" role="status"></p>
+            </div>
+          </div>
+          <div class="cost-metrics" aria-label="Gemini maliyet özeti">
+            <article class="cost-metric">
+              <span>Grounded prompt</span>
+              <strong id="costGroundedMetric">0</strong>
+            </article>
+            <article class="cost-metric">
+              <span>Gerçek arama sorgusu</span>
+              <strong id="costSearchQueriesMetric">0</strong>
+            </article>
+            <article class="cost-metric">
+              <span>Ücretli prompt</span>
+              <strong id="costBillableMetric">0</strong>
+            </article>
+            <article class="cost-metric cost-metric-accent">
+              <span>Tahmini search maliyeti</span>
+              <strong id="costUsdMetric">$0,00</strong>
+            </article>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table cost-table">
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Deneme</th>
+                  <th>Başarılı</th>
+                  <th>Grounded prompt</th>
+                  <th>Arama sorgusu</th>
+                  <th>Ground edilmedi</th>
+                  <th>Başarısız</th>
+                  <th>Ücretsiz kalan</th>
+                  <th>Ücretli prompt</th>
+                  <th>Toplam token</th>
+                  <th>Tahmini maliyet</th>
+                </tr>
+              </thead>
+              <tbody id="costBody">
+                <tr>
+                  <td colspan="11" class="empty-cell">Yükleniyor...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section class="table-panel country-panel">

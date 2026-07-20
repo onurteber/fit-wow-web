@@ -76,6 +76,9 @@
     fromDate: document.getElementById('fromDate'),
     toDate: document.getElementById('toDate'),
     refreshButton: document.getElementById('refreshButton'),
+    costFromDate: document.getElementById('costFromDate'),
+    costToDate: document.getElementById('costToDate'),
+    costRefreshButton: document.getElementById('costRefreshButton'),
     activityDate: document.getElementById('activityDate'),
     activityRefreshButton: document.getElementById('activityRefreshButton'),
     rangeButtons: Array.prototype.slice.call(document.querySelectorAll('[data-range]')),
@@ -85,6 +88,12 @@
     countryBody: document.getElementById('countryBody'),
     activityStatus: document.getElementById('activityStatus'),
     activityBody: document.getElementById('activityBody'),
+    costStatus: document.getElementById('costStatus'),
+    costBody: document.getElementById('costBody'),
+    costGroundedMetric: document.getElementById('costGroundedMetric'),
+    costSearchQueriesMetric: document.getElementById('costSearchQueriesMetric'),
+    costBillableMetric: document.getElementById('costBillableMetric'),
+    costUsdMetric: document.getElementById('costUsdMetric'),
     influencerCountMetric: document.getElementById('influencerCountMetric'),
     influencerUsageMetric: document.getElementById('influencerUsageMetric'),
     organicUsageMetric: document.getElementById('organicUsageMetric'),
@@ -143,6 +152,7 @@
     });
     els.logoutButton.addEventListener('click', handleLogout);
     els.refreshButton.addEventListener('click', loadDashboard);
+    els.costRefreshButton.addEventListener('click', loadGeminiCost);
     els.activityRefreshButton.addEventListener('click', loadDailyActivity);
     els.monthButton.addEventListener('click', toggleMonthMenu);
     els.monthMenu.addEventListener('click', handleMonthOptionClick);
@@ -289,6 +299,7 @@
     els.logoutButton.hidden = false;
     showDashboard();
     loadDashboard();
+    loadGeminiCost();
     loadDailyActivity();
   }
 
@@ -717,6 +728,51 @@
     });
   }
 
+  function loadGeminiCost() {
+    if (!session) return;
+
+    setCostStatus('Yükleniyor...', '');
+    renderEmptyCostRow('Yükleniyor...');
+    renderCostTotals([]);
+
+    if (els.costFromDate.value && els.costToDate.value && els.costFromDate.value > els.costToDate.value) {
+      setCostStatus('Bitiş tarihi başlangıç tarihinden önce olamaz.', 'error');
+      renderEmptyCostRow('Geçerli bir tarih aralığı seç.');
+      return;
+    }
+
+    apiRequest('/rpc/get_admin_daily_gemini_grounding_usage', {
+      method: 'POST',
+      body: JSON.stringify({
+        p_from_date: els.costFromDate.value || null,
+        p_to_date: els.costToDate.value || null,
+        p_timezone: 'America/Los_Angeles'
+      })
+    }).then(function (rows) {
+      var costRows = rows || [];
+      renderCostRows(costRows);
+      renderCostTotals(costRows);
+
+      var hasUsage = costRows.some(function (row) {
+        return toNumber(row.grounding_attempts) > 0;
+      });
+      if (!hasUsage) {
+        setCostStatus('Bu tarih aralığında grounding kullanımı yok.', '');
+        return;
+      }
+
+      setCostStatus(formatCostSummary(costRows), 'success');
+    }).catch(function (error) {
+      renderCostRows([]);
+      renderCostTotals([]);
+      if (isPermissionError(error)) {
+        rejectCurrentSession('Bu panel sadece admin hesaplarına açık.');
+        return;
+      }
+      setCostStatus(error.message || 'Gemini maliyet verisi alınamadı.', 'error');
+    });
+  }
+
   function requireAdminAccess() {
     return apiRequest(ADMIN_SELECT).then(function (rows) {
       if (rows && rows.length) return rows[0];
@@ -864,8 +920,62 @@
     els.activityBody.innerHTML = '<tr><td colspan="6" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
+  function renderCostRows(rows) {
+    if (!rows.length) {
+      renderEmptyCostRow('Veri yok');
+      return;
+    }
+
+    els.costBody.innerHTML = rows.map(function (row) {
+      return [
+        '<tr>',
+        '<td class="code-cell">', formatReportDate(row.usage_date), '</td>',
+        '<td>', formatNumber(row.grounding_attempts), '</td>',
+        '<td>', formatNumber(row.successful_requests), '</td>',
+        '<td>', formatNumber(row.grounded_prompts), '</td>',
+        '<td>', formatNumber(row.search_queries), '</td>',
+        '<td>', formatNumber(row.not_grounded_requests), '</td>',
+        '<td>', formatNumber(row.failed_requests), '</td>',
+        '<td>', formatNumber(row.free_grounded_prompts_remaining), '</td>',
+        '<td>', formatNumber(row.billable_grounded_prompts), '</td>',
+        '<td>', formatNumber(row.total_tokens), '</td>',
+        '<td class="cost-cell">', formatUsd(row.estimated_search_cost_usd), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  function renderEmptyCostRow(text) {
+    els.costBody.innerHTML = '<tr><td colspan="11" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+  }
+
+  function renderCostTotals(rows) {
+    var totals = rows.reduce(function (acc, row) {
+      acc.grounded += toNumber(row.grounded_prompts);
+      acc.searchQueries += toNumber(row.search_queries);
+      acc.billable += toNumber(row.billable_grounded_prompts);
+      acc.cost += toNumber(row.estimated_search_cost_usd);
+      return acc;
+    }, {
+      grounded: 0,
+      searchQueries: 0,
+      billable: 0,
+      cost: 0
+    });
+
+    els.costGroundedMetric.textContent = formatNumber(totals.grounded);
+    els.costSearchQueriesMetric.textContent = formatNumber(totals.searchQueries);
+    els.costBillableMetric.textContent = formatNumber(totals.billable);
+    els.costUsdMetric.textContent = formatUsd(totals.cost);
+  }
+
   function setDefaultDates() {
     setDatesForRange(selectedRange);
+    var billingToday = dateInputValueInTimeZone(new Date(), 'America/Los_Angeles');
+    var costFrom = new Date(billingToday + 'T12:00:00');
+    costFrom.setDate(costFrom.getDate() - 29);
+    els.costFromDate.value = toDateInputValue(costFrom);
+    els.costToDate.value = billingToday;
     els.activityDate.value = toDateInputValue(new Date());
     applyRangeButtons();
   }
@@ -1004,6 +1114,20 @@
     return year + '-' + month + '-' + day;
   }
 
+  function dateInputValueInTimeZone(date, timeZone) {
+    var parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(date);
+    var values = parts.reduce(function (result, part) {
+      if (part.type !== 'literal') result[part.type] = part.value;
+      return result;
+    }, {});
+    return values.year + '-' + values.month + '-' + values.day;
+  }
+
   function setLoginMessage(text, type) {
     els.loginMessage.textContent = text;
     els.loginMessage.className = 'message' + (type ? ' ' + type : '');
@@ -1027,6 +1151,11 @@
   function setActivityStatus(text, type) {
     els.activityStatus.textContent = text;
     els.activityStatus.className = 'message' + (type ? ' ' + type : '');
+  }
+
+  function setCostStatus(text, type) {
+    els.costStatus.textContent = text;
+    els.costStatus.className = 'message' + (type ? ' ' + type : '');
   }
 
   function setAuthButtonsDisabled(disabled) {
@@ -1242,12 +1371,40 @@
     return formatNumber(value) + ' ml';
   }
 
+  function formatUsd(value) {
+    return new Intl.NumberFormat('tr-TR', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 4
+    }).format(toNumber(value));
+  }
+
+  function formatReportDate(value) {
+    if (!value) return '-';
+    var date = new Date(String(value) + 'T12:00:00');
+    if (Number.isNaN(date.getTime())) return escapeHtml(value);
+    return new Intl.DateTimeFormat('tr-TR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).format(date);
+  }
+
   function formatActivitySummary(rows) {
     var totalMeals = rows.reduce(function (sum, row) {
       return sum + toNumber(row.meal_count);
     }, 0);
 
     return formatNumber(rows.length) + ' kullanıcı · ' + formatNumber(totalMeals) + ' öğün';
+  }
+
+  function formatCostSummary(rows) {
+    var grounded = rows.reduce(function (sum, row) {
+      return sum + toNumber(row.grounded_prompts);
+    }, 0);
+
+    return formatNumber(grounded) + ' grounded prompt · ' + formatNumber(rows.length) + ' gün';
   }
 
   function toNumber(value) {
