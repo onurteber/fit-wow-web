@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Gündəlik kalori ehtiyacım necə hesablanır?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bu kalkulyator yaş, boy, çəki və cinsə əsasən Mifflin-St Jeor düsturu ilə əsas mübadilə sürətinizi (BMR) təxmin edir, sonra onu fəaliyyət əmsalına vuraraq ümumi gündəlik enerji sərfinizi (TDEE) — saxlama kaloriyanızı hesablayır."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "TDEE nədir?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (ümumi gündəlik enerji sərfi) əsas metabolizm, həzm və fiziki fəaliyyət daxil olmaqla gündə yandırdığınız ümumi kaloriya miqdarıdır. Çəki itkisi, saxlama və ya çəki artımı üçün baza dəyəridir."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kalori hədəfimi necə avtomatik izləyə bilərəm?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fərdi kalori və makro hədəflərinizi təyin etmək üçün FitWow-u yükləyin, sonra yeməklərinizin fotosunu çəkərək ani AI dəstəkli qida izləməsi əldə edin."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalori Kalkulyatoru</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Tez-tez Verilən Suallar</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Gündəlik kalori ehtiyacım necə hesablanır?</summary>
+              <p>Bu kalkulyator yaş, boy, çəki və cinsə əsasən Mifflin-St Jeor düsturu ilə əsas mübadilə sürətinizi (BMR) təxmin edir, sonra onu fəaliyyət əmsalına vuraraq ümumi gündəlik enerji sərfinizi (TDEE) — saxlama kaloriyanızı hesablayır.</p>
+            </details>
+            <details class="faq-item">
+              <summary>TDEE nədir?</summary>
+              <p>TDEE (ümumi gündəlik enerji sərfi) əsas metabolizm, həzm və fiziki fəaliyyət daxil olmaqla gündə yandırdığınız ümumi kaloriya miqdarıdır. Çəki itkisi, saxlama və ya çəki artımı üçün baza dəyəridir.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Kalori hədəfimi necə avtomatik izləyə bilərəm?</summary>
+              <p>Fərdi kalori və makro hədəflərinizi təyin etmək üçün FitWow-u yükləyin, sonra yeməklərinizin fotosunu çəkərək ani AI dəstəkli qida izləməsi əldə edin.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

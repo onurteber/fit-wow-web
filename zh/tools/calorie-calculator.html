@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "我的每日热量需求是如何计算的？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "此计算器根据年龄、身高、体重和性别，使用Mifflin-St Jeor公式估算你的基础代谢率（BMR），再乘以活动系数得出每日总能量消耗（TDEE），即你的维持热量。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "什么是TDEE？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE（每日总能量消耗）是你每天消耗的总热量，包括基础代谢、消化和身体活动。它是减重、维持或增重的基准值。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "如何自动追踪我的热量目标？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "下载FitWow设置个性化的热量和宏量营养素目标，然后拍摄你的餐食照片即可获得即时AI营养追踪。"
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">卡路里计算器</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">常见问题</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>我的每日热量需求是如何计算的？</summary>
+              <p>此计算器根据年龄、身高、体重和性别，使用Mifflin-St Jeor公式估算你的基础代谢率（BMR），再乘以活动系数得出每日总能量消耗（TDEE），即你的维持热量。</p>
+            </details>
+            <details class="faq-item">
+              <summary>什么是TDEE？</summary>
+              <p>TDEE（每日总能量消耗）是你每天消耗的总热量，包括基础代谢、消化和身体活动。它是减重、维持或增重的基准值。</p>
+            </details>
+            <details class="faq-item">
+              <summary>如何自动追踪我的热量目标？</summary>
+              <p>下载FitWow设置个性化的热量和宏量营养素目标，然后拍摄你的餐食照片即可获得即时AI营养追踪。</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

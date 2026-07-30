@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Paano kinakalkula ang aking araw-araw na pangangailangan sa calories?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tinatantya ng calculator na ito ang iyong Basal Metabolic Rate (BMR) gamit ang Mifflin-St Jeor formula batay sa edad, taas, timbang, at kasarian, pagkatapos ay pinaparami ito ng activity factor para makuha ang iyong Total Daily Energy Expenditure (TDEE) — ang iyong maintenance calories."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Ano ang TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ang TDEE (Total Daily Energy Expenditure) ay ang kabuuang bilang ng calories na nasusunog mo araw-araw, kasama ang basal metabolism, pagtunaw, at pisikal na aktibidad. Ito ang batayang halaga para sa pagbaba, pagpapanatili, o pagtaas ng timbang."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Paano ko masusubaybayan ang aking calorie target nang awtomatiko?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "I-download ang FitWow para itakda ang iyong personalized na calorie at macro targets, pagkatapos ay kunan ng larawan ang iyong mga pagkain para sa agarang AI-powered nutrition tracking."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Calorie Calculator</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Mga Madalas Itanong</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Paano kinakalkula ang aking araw-araw na pangangailangan sa calories?</summary>
+              <p>Tinatantya ng calculator na ito ang iyong Basal Metabolic Rate (BMR) gamit ang Mifflin-St Jeor formula batay sa edad, taas, timbang, at kasarian, pagkatapos ay pinaparami ito ng activity factor para makuha ang iyong Total Daily Energy Expenditure (TDEE) — ang iyong maintenance calories.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Ano ang TDEE?</summary>
+              <p>Ang TDEE (Total Daily Energy Expenditure) ay ang kabuuang bilang ng calories na nasusunog mo araw-araw, kasama ang basal metabolism, pagtunaw, at pisikal na aktibidad. Ito ang batayang halaga para sa pagbaba, pagpapanatili, o pagtaas ng timbang.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Paano ko masusubaybayan ang aking calorie target nang awtomatiko?</summary>
+              <p>I-download ang FitWow para itakda ang iyong personalized na calorie at macro targets, pagkatapos ay kunan ng larawan ang iyong mga pagkain para sa agarang AI-powered nutrition tracking.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

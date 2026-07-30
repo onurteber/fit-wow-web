@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Come viene calcolato il mio fabbisogno calorico giornaliero?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Questo calcolatore stima il tuo metabolismo basale (BMR) con la formula Mifflin-St Jeor in base a età, altezza, peso e sesso, poi lo moltiplica per un fattore di attività per ottenere il tuo dispendio energetico totale giornaliero (TDEE), le tue calorie di mantenimento."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Cos'è il TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Il TDEE (dispendio energetico totale giornaliero) è il numero totale di calorie che bruci al giorno, incluso metabolismo basale, digestione e attività fisica. È il valore di riferimento per perdere, mantenere o aumentare di peso."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Come posso monitorare automaticamente il mio obiettivo calorico?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scarica FitWow per impostare i tuoi obiettivi personalizzati di calorie e macro, poi fotografa i tuoi pasti per un monitoraggio nutrizionale istantaneo con l'IA."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Calcolatore Calorie</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Domande Frequenti</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Come viene calcolato il mio fabbisogno calorico giornaliero?</summary>
+              <p>Questo calcolatore stima il tuo metabolismo basale (BMR) con la formula Mifflin-St Jeor in base a età, altezza, peso e sesso, poi lo moltiplica per un fattore di attività per ottenere il tuo dispendio energetico totale giornaliero (TDEE), le tue calorie di mantenimento.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Cos'è il TDEE?</summary>
+              <p>Il TDEE (dispendio energetico totale giornaliero) è il numero totale di calorie che bruci al giorno, incluso metabolismo basale, digestione e attività fisica. È il valore di riferimento per perdere, mantenere o aumentare di peso.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Come posso monitorare automaticamente il mio obiettivo calorico?</summary>
+              <p>Scarica FitWow per impostare i tuoi obiettivi personalizzati di calorie e macro, poi fotografa i tuoi pasti per un monitoraggio nutrizionale istantaneo con l'IA.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

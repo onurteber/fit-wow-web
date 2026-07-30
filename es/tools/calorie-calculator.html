@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Cómo se calcula mi necesidad calórica diaria?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Esta calculadora estima tu tasa metabólica basal (TMB) con la fórmula Mifflin-St Jeor según edad, altura, peso y sexo, y la multiplica por un factor de actividad para obtener tu gasto energético total diario (TDEE), tus calorías de mantenimiento."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué es el TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El TDEE (gasto energético total diario) es el número total de calorías que quemas al día, incluyendo metabolismo basal, digestión y actividad física. Es el valor base para perder, mantener o ganar peso."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cómo puedo seguir mi objetivo calórico automáticamente?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Descarga FitWow para establecer tus objetivos personalizados de calorías y macros, luego fotografía tus comidas para un seguimiento nutricional instantáneo con IA."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Calculadora de Calorías</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Preguntas Frecuentes</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>¿Cómo se calcula mi necesidad calórica diaria?</summary>
+              <p>Esta calculadora estima tu tasa metabólica basal (TMB) con la fórmula Mifflin-St Jeor según edad, altura, peso y sexo, y la multiplica por un factor de actividad para obtener tu gasto energético total diario (TDEE), tus calorías de mantenimiento.</p>
+            </details>
+            <details class="faq-item">
+              <summary>¿Qué es el TDEE?</summary>
+              <p>El TDEE (gasto energético total diario) es el número total de calorías que quemas al día, incluyendo metabolismo basal, digestión y actividad física. Es el valor base para perder, mantener o ganar peso.</p>
+            </details>
+            <details class="faq-item">
+              <summary>¿Cómo puedo seguir mi objetivo calórico automáticamente?</summary>
+              <p>Descarga FitWow para establecer tus objetivos personalizados de calorías y macros, luego fotografía tus comidas para un seguimiento nutricional instantáneo con IA.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

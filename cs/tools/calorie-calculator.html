@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Jak se počítá moje denní kalorická potřeba?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tato kalkulačka odhaduje váš bazální metabolismus (BMR) pomocí vzorce Mifflin-St Jeor na základě věku, výšky, váhy a pohlaví a poté jej násobí faktorem aktivity, čímž získáte celkový denní energetický výdej (TDEE) – vaše udržovací kalorie."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Co je TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (celkový denní energetický výdej) je celkový počet kalorií, které denně spálíte, včetně bazálního metabolismu, trávení a fyzické aktivity. Je to výchozí hodnota pro hubnutí, udržení váhy nebo přibírání."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Jak mohu automaticky sledovat svůj kalorický cíl?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Stáhněte si FitWow a nastavte si personalizované kalorické a makro cíle, poté vyfoťte svá jídla pro okamžité sledování výživy pomocí AI."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalorická Kalkulačka</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Často Kladené Otázky</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Jak se počítá moje denní kalorická potřeba?</summary>
+              <p>Tato kalkulačka odhaduje váš bazální metabolismus (BMR) pomocí vzorce Mifflin-St Jeor na základě věku, výšky, váhy a pohlaví a poté jej násobí faktorem aktivity, čímž získáte celkový denní energetický výdej (TDEE) – vaše udržovací kalorie.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Co je TDEE?</summary>
+              <p>TDEE (celkový denní energetický výdej) je celkový počet kalorií, které denně spálíte, včetně bazálního metabolismu, trávení a fyzické aktivity. Je to výchozí hodnota pro hubnutí, udržení váhy nebo přibírání.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Jak mohu automaticky sledovat svůj kalorický cíl?</summary>
+              <p>Stáhněte si FitWow a nastavte si personalizované kalorické a makro cíle, poté vyfoťte svá jídla pro okamžité sledování výživy pomocí AI.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "كيف يتم حساب احتياجي اليومي من السعرات الحرارية؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "تقدّر هذه الحاسبة معدل الأيض الأساسي (BMR) باستخدام معادلة Mifflin-St Jeor بناءً على العمر والطول والوزن والجنس، ثم تضربه في معامل النشاط للحصول على إجمالي إنفاقك اليومي من الطاقة (TDEE) — سعراتك الحرارية للحفاظ على الوزن."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "ما هو TDEE؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (إجمالي الإنفاق اليومي من الطاقة) هو إجمالي عدد السعرات الحرارية التي تحرقها يوميًا، بما في ذلك الأيض الأساسي والهضم والنشاط البدني. إنه القيمة الأساسية لفقدان الوزن أو الحفاظ عليه أو زيادته."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "كيف يمكنني تتبع هدفي من السعرات الحرارية تلقائيًا؟",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "حمّل تطبيق FitWow لتحديد أهدافك الشخصية من السعرات الحرارية والمغذيات الكبرى، ثم صوّر وجباتك للحصول على تتبع تغذية فوري بالذكاء الاصطناعي."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">حاسبة السعرات الحرارية</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">الأسئلة الشائعة</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>كيف يتم حساب احتياجي اليومي من السعرات الحرارية؟</summary>
+              <p>تقدّر هذه الحاسبة معدل الأيض الأساسي (BMR) باستخدام معادلة Mifflin-St Jeor بناءً على العمر والطول والوزن والجنس، ثم تضربه في معامل النشاط للحصول على إجمالي إنفاقك اليومي من الطاقة (TDEE) — سعراتك الحرارية للحفاظ على الوزن.</p>
+            </details>
+            <details class="faq-item">
+              <summary>ما هو TDEE؟</summary>
+              <p>TDEE (إجمالي الإنفاق اليومي من الطاقة) هو إجمالي عدد السعرات الحرارية التي تحرقها يوميًا، بما في ذلك الأيض الأساسي والهضم والنشاط البدني. إنه القيمة الأساسية لفقدان الوزن أو الحفاظ عليه أو زيادته.</p>
+            </details>
+            <details class="faq-item">
+              <summary>كيف يمكنني تتبع هدفي من السعرات الحرارية تلقائيًا؟</summary>
+              <p>حمّل تطبيق FitWow لتحديد أهدافك الشخصية من السعرات الحرارية والمغذيات الكبرى، ثم صوّر وجباتك للحصول على تتبع تغذية فوري بالذكاء الاصطناعي.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

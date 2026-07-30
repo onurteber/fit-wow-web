@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Hoe wordt mijn dagelijkse caloriebehoefte berekend?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Deze calculator schat je basaalmetabolisme (BMR) met de Mifflin-St Jeor-formule op basis van leeftijd, lengte, gewicht en geslacht, en vermenigvuldigt dit met een activiteitsfactor voor je totale dagelijkse energieverbruik (TDEE), je onderhoudscalorieën."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wat is TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (totaal dagelijks energieverbruik) is het totale aantal calorieën dat je per dag verbrandt, inclusief basaalmetabolisme, vertering en lichamelijke activiteit. Het is de basiswaarde voor afvallen, op gewicht blijven of aankomen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Hoe kan ik mijn caloriedoel automatisch volgen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Download FitWow om je persoonlijke calorie- en macrodoelen in te stellen en maak dan een foto van je maaltijden voor directe AI-gestuurde voedingstracking."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Caloriecalculator</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Veelgestelde Vragen</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Hoe wordt mijn dagelijkse caloriebehoefte berekend?</summary>
+              <p>Deze calculator schat je basaalmetabolisme (BMR) met de Mifflin-St Jeor-formule op basis van leeftijd, lengte, gewicht en geslacht, en vermenigvuldigt dit met een activiteitsfactor voor je totale dagelijkse energieverbruik (TDEE), je onderhoudscalorieën.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Wat is TDEE?</summary>
+              <p>TDEE (totaal dagelijks energieverbruik) is het totale aantal calorieën dat je per dag verbrandt, inclusief basaalmetabolisme, vertering en lichamelijke activiteit. Het is de basiswaarde voor afvallen, op gewicht blijven of aankomen.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Hoe kan ik mijn caloriedoel automatisch volgen?</summary>
+              <p>Download FitWow om je persoonlijke calorie- en macrodoelen in te stellen en maak dan een foto van je maaltijden voor directe AI-gestuurde voedingstracking.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

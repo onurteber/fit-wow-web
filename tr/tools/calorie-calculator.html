@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Günlük kalori ihtiyacım nasıl hesaplanır?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bu hesaplayıcı, yaş, boy, kilo ve cinsiyetinize göre Mifflin-St Jeor formülüyle bazal metabolizma hızınızı (BMR) tahmin eder, ardından aktivite düzeyinize göre çarparak günlük toplam enerji harcamanızı (TDEE), yani koruma kalorinizi hesaplar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "TDEE (hedef kalori) nedir?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE, bazal metabolizma, sindirim ve fiziksel aktivite dahil olmak üzere günde yaktığınız toplam kalori miktarıdır. Kilo verme, koruma veya kilo alma hedefleriniz için başlangıç noktası olarak kullanılan hedef kalori değeridir."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Hedef kalorimi nasıl otomatik takip edebilirim?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "FitWow'u indirerek kişisel kalori ve makro hedeflerinizi belirleyin, ardından öğünlerinizin fotoğrafını çekerek bu hedeflere göre anlık AI destekli beslenme takibi yapın."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalori Hesaplama</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Sıkça Sorulan Sorular</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Günlük kalori ihtiyacım nasıl hesaplanır?</summary>
+              <p>Bu hesaplayıcı, yaş, boy, kilo ve cinsiyetinize göre Mifflin-St Jeor formülüyle bazal metabolizma hızınızı (BMR) tahmin eder, ardından aktivite düzeyinize göre çarparak günlük toplam enerji harcamanızı (TDEE), yani koruma kalorinizi hesaplar.</p>
+            </details>
+            <details class="faq-item">
+              <summary>TDEE (hedef kalori) nedir?</summary>
+              <p>TDEE, bazal metabolizma, sindirim ve fiziksel aktivite dahil olmak üzere günde yaktığınız toplam kalori miktarıdır. Kilo verme, koruma veya kilo alma hedefleriniz için başlangıç noktası olarak kullanılan hedef kalori değeridir.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Hedef kalorimi nasıl otomatik takip edebilirim?</summary>
+              <p>FitWow'u indirerek kişisel kalori ve makro hedeflerinizi belirleyin, ardından öğünlerinizin fotoğrafını çekerek bu hedeflere göre anlık AI destekli beslenme takibi yapın.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "하루 칼로리 필요량은 어떻게 계산되나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "이 계산기는 나이, 키, 체중, 성별을 기반으로 Mifflin-St Jeor 공식을 사용해 기초대사량(BMR)을 추정한 다음, 활동 계수를 곱해 하루 총 에너지 소비량(TDEE), 즉 유지 칼로리를 계산합니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "TDEE란 무엇인가요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE(총 일일 에너지 소비량)는 기초대사, 소화, 신체 활동을 포함해 하루에 소비하는 총 칼로리입니다. 체중 감량, 유지, 증가를 위한 기준값입니다."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "칼로리 목표를 자동으로 추적하려면 어떻게 하나요?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "FitWow를 다운로드해 맞춤형 칼로리 및 매크로 목표를 설정한 다음, 식사 사진을 찍으면 즉시 AI 기반 영양 추적이 가능합니다."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">칼로리 계산기</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">자주 묻는 질문</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>하루 칼로리 필요량은 어떻게 계산되나요?</summary>
+              <p>이 계산기는 나이, 키, 체중, 성별을 기반으로 Mifflin-St Jeor 공식을 사용해 기초대사량(BMR)을 추정한 다음, 활동 계수를 곱해 하루 총 에너지 소비량(TDEE), 즉 유지 칼로리를 계산합니다.</p>
+            </details>
+            <details class="faq-item">
+              <summary>TDEE란 무엇인가요?</summary>
+              <p>TDEE(총 일일 에너지 소비량)는 기초대사, 소화, 신체 활동을 포함해 하루에 소비하는 총 칼로리입니다. 체중 감량, 유지, 증가를 위한 기준값입니다.</p>
+            </details>
+            <details class="faq-item">
+              <summary>칼로리 목표를 자동으로 추적하려면 어떻게 하나요?</summary>
+              <p>FitWow를 다운로드해 맞춤형 칼로리 및 매크로 목표를 설정한 다음, 식사 사진을 찍으면 즉시 AI 기반 영양 추적이 가능합니다.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Kuidas arvutatakse minu igapäevane kalorivajadus?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "See kalkulaator hindab teie baasainevahetust (BMR) Mifflin-St Jeori valemiga vanuse, pikkuse, kaalu ja soo põhjal ning korrutab selle aktiivsusteguriga, et saada teie kogu päevane energiakulu (TDEE) — säilituskalorid."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Mis on TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (kogu päevane energiakulu) on kalorite koguarv, mille põletate päevas, sealhulgas baasainevahetus, seedimine ja füüsiline aktiivsus. See on lähteväärtus kaalulangetuseks, säilitamiseks või kaalutõusuks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kuidas saan oma kalorieesmärki automaatselt jälgida?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Laadi alla FitWow, et seada oma isiklikud kalori- ja makroeesmärgid, ning tee siis oma toitudest foto kohese tehisintellektipõhise toitumisjälgimise saamiseks."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalorikalkulaator</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Korduma Kippuvad Küsimused</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Kuidas arvutatakse minu igapäevane kalorivajadus?</summary>
+              <p>See kalkulaator hindab teie baasainevahetust (BMR) Mifflin-St Jeori valemiga vanuse, pikkuse, kaalu ja soo põhjal ning korrutab selle aktiivsusteguriga, et saada teie kogu päevane energiakulu (TDEE) — säilituskalorid.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Mis on TDEE?</summary>
+              <p>TDEE (kogu päevane energiakulu) on kalorite koguarv, mille põletate päevas, sealhulgas baasainevahetus, seedimine ja füüsiline aktiivsus. See on lähteväärtus kaalulangetuseks, säilitamiseks või kaalutõusuks.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Kuidas saan oma kalorieesmärki automaatselt jälgida?</summary>
+              <p>Laadi alla FitWow, et seada oma isiklikud kalori- ja makroeesmärgid, ning tee siis oma toitudest foto kohese tehisintellektipõhise toitumisjälgimise saamiseks.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is my daily calorie need calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator estimates your Basal Metabolic Rate (BMR) with the Mifflin-St Jeor formula from your age, height, weight, and sex, then multiplies it by an activity factor to get your Total Daily Energy Expenditure (TDEE) — your maintenance calories."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (Total Daily Energy Expenditure) is the total number of calories you burn per day, including your basal metabolism, digestion, and physical activity. It's the number you use as a baseline for weight loss, maintenance, or weight gain."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I track my calorie target automatically?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Download FitWow to set your personalized calorie and macro targets, then snap a photo of your meals for instant AI-powered nutrition tracking against those targets."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Calorie Calculator</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>How is my daily calorie need calculated?</summary>
+              <p>This calculator estimates your Basal Metabolic Rate (BMR) with the Mifflin-St Jeor formula from your age, height, weight, and sex, then multiplies it by an activity factor to get your Total Daily Energy Expenditure (TDEE) — your maintenance calories.</p>
+            </details>
+            <details class="faq-item">
+              <summary>What is TDEE?</summary>
+              <p>TDEE (Total Daily Energy Expenditure) is the total number of calories you burn per day, including your basal metabolism, digestion, and physical activity. It's the number you use as a baseline for weight loss, maintenance, or weight gain.</p>
+            </details>
+            <details class="faq-item">
+              <summary>How can I track my calorie target automatically?</summary>
+              <p>Download FitWow to set your personalized calorie and macro targets, then snap a photo of your meals for instant AI-powered nutrition tracking against those targets.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

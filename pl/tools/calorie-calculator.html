@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Jak obliczane jest moje dzienne zapotrzebowanie kaloryczne?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ten kalkulator szacuje Twoją podstawową przemianę materii (BMR) za pomocą wzoru Mifflin-St Jeor na podstawie wieku, wzrostu, wagi i płci, a następnie mnoży ją przez współczynnik aktywności, aby uzyskać całkowite dzienne zapotrzebowanie energetyczne (TDEE) – Twoje kalorie utrzymania."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Czym jest TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (całkowite dzienne zapotrzebowanie energetyczne) to łączna liczba kalorii spalanych dziennie, uwzględniająca podstawową przemianę materii, trawienie i aktywność fizyczną. To wartość bazowa do chudnięcia, utrzymania wagi lub przybierania na wadze."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Jak mogę automatycznie śledzić mój cel kaloryczny?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pobierz FitWow, aby ustawić spersonalizowane cele kaloryczne i makroskładniki, a następnie fotografuj posiłki, aby uzyskać natychmiastowe śledzenie żywienia wspierane przez AI."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalkulator Kalorii</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Najczęściej Zadawane Pytania</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Jak obliczane jest moje dzienne zapotrzebowanie kaloryczne?</summary>
+              <p>Ten kalkulator szacuje Twoją podstawową przemianę materii (BMR) za pomocą wzoru Mifflin-St Jeor na podstawie wieku, wzrostu, wagi i płci, a następnie mnoży ją przez współczynnik aktywności, aby uzyskać całkowite dzienne zapotrzebowanie energetyczne (TDEE) – Twoje kalorie utrzymania.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Czym jest TDEE?</summary>
+              <p>TDEE (całkowite dzienne zapotrzebowanie energetyczne) to łączna liczba kalorii spalanych dziennie, uwzględniająca podstawową przemianę materii, trawienie i aktywność fizyczną. To wartość bazowa do chudnięcia, utrzymania wagi lub przybierania na wadze.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Jak mogę automatycznie śledzić mój cel kaloryczny?</summary>
+              <p>Pobierz FitWow, aby ustawić spersonalizowane cele kaloryczne i makroskładniki, a następnie fotografuj posiłki, aby uzyskać natychmiastowe śledzenie żywienia wspierane przez AI.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

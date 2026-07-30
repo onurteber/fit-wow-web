@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "मेरी दैनिक कैलोरी आवश्यकता की गणना कैसे होती है?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "यह कैलकुलेटर उम्र, ऊंचाई, वज़न और लिंग के आधार पर Mifflin-St Jeor फॉर्मूले से आपकी बेसल मेटाबॉलिक रेट (BMR) का अनुमान लगाता है, फिर इसे गतिविधि कारक से गुणा करके आपका कुल दैनिक ऊर्जा व्यय (TDEE) यानी रखरखाव कैलोरी प्राप्त करता है।"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "TDEE क्या है?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (कुल दैनिक ऊर्जा व्यय) वह कुल कैलोरी है जो आप प्रतिदिन बर्न करते हैं, जिसमें बेसल मेटाबॉलिज्म, पाचन और शारीरिक गतिविधि शामिल है। यह वज़न घटाने, बनाए रखने या बढ़ाने के लिए आधार मान है।"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "मैं अपने कैलोरी लक्ष्य को स्वचालित रूप से कैसे ट्रैक करूं?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "अपने व्यक्तिगत कैलोरी और मैक्रो लक्ष्य सेट करने के लिए FitWow डाउनलोड करें, फिर तुरंत AI-संचालित पोषण ट्रैकिंग के लिए अपने भोजन की फ़ोटो लें।"
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">कैलोरी कैलकुलेटर</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">अक्सर पूछे जाने वाले प्रश्न</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>मेरी दैनिक कैलोरी आवश्यकता की गणना कैसे होती है?</summary>
+              <p>यह कैलकुलेटर उम्र, ऊंचाई, वज़न और लिंग के आधार पर Mifflin-St Jeor फॉर्मूले से आपकी बेसल मेटाबॉलिक रेट (BMR) का अनुमान लगाता है, फिर इसे गतिविधि कारक से गुणा करके आपका कुल दैनिक ऊर्जा व्यय (TDEE) यानी रखरखाव कैलोरी प्राप्त करता है।</p>
+            </details>
+            <details class="faq-item">
+              <summary>TDEE क्या है?</summary>
+              <p>TDEE (कुल दैनिक ऊर्जा व्यय) वह कुल कैलोरी है जो आप प्रतिदिन बर्न करते हैं, जिसमें बेसल मेटाबॉलिज्म, पाचन और शारीरिक गतिविधि शामिल है। यह वज़न घटाने, बनाए रखने या बढ़ाने के लिए आधार मान है।</p>
+            </details>
+            <details class="faq-item">
+              <summary>मैं अपने कैलोरी लक्ष्य को स्वचालित रूप से कैसे ट्रैक करूं?</summary>
+              <p>अपने व्यक्तिगत कैलोरी और मैक्रो लक्ष्य सेट करने के लिए FitWow डाउनलोड करें, फिर तुरंत AI-संचालित पोषण ट्रैकिंग के लिए अपने भोजन की फ़ोटो लें।</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Wie wird mein täglicher Kalorienbedarf berechnet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dieser Rechner schätzt Ihren Grundumsatz (BMR) mit der Mifflin-St-Jeor-Formel anhand von Alter, Größe, Gewicht und Geschlecht und multipliziert ihn dann mit einem Aktivitätsfaktor, um Ihren Gesamtumsatz (TDEE) – Ihre Erhaltungskalorien – zu ermitteln."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was ist TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (Total Daily Energy Expenditure) ist die Gesamtzahl der Kalorien, die Sie pro Tag verbrennen, einschließlich Grundumsatz, Verdauung und körperlicher Aktivität. Es ist der Ausgangswert für Abnehmen, Halten oder Zunehmen."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wie kann ich mein Kalorienziel automatisch verfolgen?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Laden Sie FitWow herunter, um Ihre persönlichen Kalorien- und Makroziele festzulegen, und fotografieren Sie dann Ihre Mahlzeiten für eine sofortige KI-gestützte Ernährungsverfolgung."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalorienrechner</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Häufig gestellte Fragen</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Wie wird mein täglicher Kalorienbedarf berechnet?</summary>
+              <p>Dieser Rechner schätzt Ihren Grundumsatz (BMR) mit der Mifflin-St-Jeor-Formel anhand von Alter, Größe, Gewicht und Geschlecht und multipliziert ihn dann mit einem Aktivitätsfaktor, um Ihren Gesamtumsatz (TDEE) – Ihre Erhaltungskalorien – zu ermitteln.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Was ist TDEE?</summary>
+              <p>TDEE (Total Daily Energy Expenditure) ist die Gesamtzahl der Kalorien, die Sie pro Tag verbrennen, einschließlich Grundumsatz, Verdauung und körperlicher Aktivität. Es ist der Ausgangswert für Abnehmen, Halten oder Zunehmen.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Wie kann ich mein Kalorienziel automatisch verfolgen?</summary>
+              <p>Laden Sie FitWow herunter, um Ihre persönlichen Kalorien- und Makroziele festzulegen, und fotografieren Sie dann Ihre Mahlzeiten für eine sofortige KI-gestützte Ernährungsverfolgung.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

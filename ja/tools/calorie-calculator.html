@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1日の必要カロリーはどのように計算されますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "この計算機は、年齢・身長・体重・性別からMifflin-St Jeor式で基礎代謝量（BMR）を推定し、活動係数を掛けて1日の総消費カロリー（TDEE）、つまり維持カロリーを算出します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "TDEEとは何ですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE（総消費カロリー）とは、基礎代謝、消化、身体活動を含めて1日に消費するカロリーの合計です。減量、維持、増量の基準となる値です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "カロリー目標を自動的に記録するにはどうすればよいですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "FitWowをダウンロードしてパーソナライズされたカロリーとマクロの目標を設定し、食事の写真を撮るだけで瞬時にAIによる栄養記録ができます。"
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">カロリー計算機</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">よくある質問</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>1日の必要カロリーはどのように計算されますか？</summary>
+              <p>この計算機は、年齢・身長・体重・性別からMifflin-St Jeor式で基礎代謝量（BMR）を推定し、活動係数を掛けて1日の総消費カロリー（TDEE）、つまり維持カロリーを算出します。</p>
+            </details>
+            <details class="faq-item">
+              <summary>TDEEとは何ですか？</summary>
+              <p>TDEE（総消費カロリー）とは、基礎代謝、消化、身体活動を含めて1日に消費するカロリーの合計です。減量、維持、増量の基準となる値です。</p>
+            </details>
+            <details class="faq-item">
+              <summary>カロリー目標を自動的に記録するにはどうすればよいですか？</summary>
+              <p>FitWowをダウンロードしてパーソナライズされたカロリーとマクロの目標を設定し、食事の写真を撮るだけで瞬時にAIによる栄養記録ができます。</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

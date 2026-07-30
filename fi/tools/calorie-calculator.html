@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Miten päivittäinen kaloritarpeeni lasketaan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tämä laskuri arvioi perusaineenvaihduntasi (BMR) Mifflin-St Jeor -kaavalla iän, pituuden, painon ja sukupuolen perusteella ja kertoo sen aktiivisuuskertoimella, jolloin saadaan kokonaisenergiankulutuksesi (TDEE) – ylläpitokalorisi."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Mikä on TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (kokonaisenergiankulutus) on kokonaiskalorimäärä, jonka poltat päivässä, mukaan lukien perusaineenvaihdunta, ruoansulatus ja fyysinen aktiivisuus. Se on lähtöarvo painonpudotukseen, ylläpitoon tai painonnousuun."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Miten voin seurata kalorien tavoitettani automaattisesti?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Lataa FitWow asettaaksesi henkilökohtaiset kalori- ja makrotavoitteesi, ja ota sitten kuva aterioistasi saadaksesi välittömän tekoälypohjaisen ravinnonseurannan."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalorilaskuri</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Usein Kysytyt Kysymykset</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Miten päivittäinen kaloritarpeeni lasketaan?</summary>
+              <p>Tämä laskuri arvioi perusaineenvaihduntasi (BMR) Mifflin-St Jeor -kaavalla iän, pituuden, painon ja sukupuolen perusteella ja kertoo sen aktiivisuuskertoimella, jolloin saadaan kokonaisenergiankulutuksesi (TDEE) – ylläpitokalorisi.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Mikä on TDEE?</summary>
+              <p>TDEE (kokonaisenergiankulutus) on kokonaiskalorimäärä, jonka poltat päivässä, mukaan lukien perusaineenvaihdunta, ruoansulatus ja fyysinen aktiivisuus. Se on lähtöarvo painonpudotukseen, ylläpitoon tai painonnousuun.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Miten voin seurata kalorien tavoitettani automaattisesti?</summary>
+              <p>Lataa FitWow asettaaksesi henkilökohtaiset kalori- ja makrotavoitteesi, ja ota sitten kuva aterioistasi saadaksesi välittömän tekoälypohjaisen ravinnonseurannan.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

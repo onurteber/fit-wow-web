@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Hur beräknas mitt dagliga kaloribehov?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Denna kalkylator uppskattar din basalmetabolism (BMR) med Mifflin-St Jeor-formeln utifrån ålder, längd, vikt och kön, och multiplicerar den sedan med en aktivitetsfaktor för att få ditt totala dagliga energibehov (TDEE) – dina underhållskalorier."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Vad är TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (totalt dagligt energibehov) är det totala antalet kalorier du förbränner per dag, inklusive basalmetabolism, matsmältning och fysisk aktivitet. Det är basvärdet för viktminskning, viktbibehållande eller viktökning."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Hur kan jag automatiskt följa mitt kalorimål?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ladda ner FitWow för att ställa in dina personliga kalori- och makromål, och fotografera sedan dina måltider för omedelbar AI-driven näringsspårning."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalorikalkylator</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Vanliga Frågor</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Hur beräknas mitt dagliga kaloribehov?</summary>
+              <p>Denna kalkylator uppskattar din basalmetabolism (BMR) med Mifflin-St Jeor-formeln utifrån ålder, längd, vikt och kön, och multiplicerar den sedan med en aktivitetsfaktor för att få ditt totala dagliga energibehov (TDEE) – dina underhållskalorier.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Vad är TDEE?</summary>
+              <p>TDEE (totalt dagligt energibehov) är det totala antalet kalorier du förbränner per dag, inklusive basalmetabolism, matsmältning och fysisk aktivitet. Det är basvärdet för viktminskning, viktbibehållande eller viktökning.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Hur kan jag automatiskt följa mitt kalorimål?</summary>
+              <p>Ladda ner FitWow för att ställa in dina personliga kalori- och makromål, och fotografera sedan dina måltider för omedelbar AI-driven näringsspårning.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>

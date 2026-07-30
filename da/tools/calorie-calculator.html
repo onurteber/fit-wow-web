@@ -69,6 +69,38 @@
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Hvordan beregnes mit daglige kaloriebehov?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Denne beregner estimerer dit basalstofskifte (BMR) med Mifflin-St Jeor-formlen ud fra alder, højde, vægt og køn, og ganger det derefter med en aktivitetsfaktor for at få dit samlede daglige energiforbrug (TDEE) – dine vedligeholdelseskalorier."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Hvad er TDEE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TDEE (samlet dagligt energiforbrug) er det samlede antal kalorier, du forbrænder om dagen, inklusive basalstofskifte, fordøjelse og fysisk aktivitet. Det er udgangsværdien for vægttab, vedligeholdelse eller vægtøgning."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Hvordan kan jeg automatisk følge mit kaloriemål?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Download FitWow for at indstille dine personlige kalorie- og makromål, og tag derefter et billede af dine måltider for øjeblikkelig AI-drevet ernæringssporing."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body
   data-app-store-url="https://apps.apple.com/app/id6760663683"
@@ -77,6 +109,7 @@
   <header class="site-header">
     <div class="container">
       <a class="logo" href="../index.html">FitWow</a>
+      <nav class="site-nav" aria-label="Primary"><a href="calorie-calculator.html" aria-current="page">Kalorieberegner</a></nav>
     </div>
   </header>
 
@@ -159,6 +192,24 @@
             </a>
           </div>
         </div>
+
+        <section class="faq-section calc-faq">
+          <h2 class="section-title">Ofte Stillede Spørgsmål</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Hvordan beregnes mit daglige kaloriebehov?</summary>
+              <p>Denne beregner estimerer dit basalstofskifte (BMR) med Mifflin-St Jeor-formlen ud fra alder, højde, vægt og køn, og ganger det derefter med en aktivitetsfaktor for at få dit samlede daglige energiforbrug (TDEE) – dine vedligeholdelseskalorier.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Hvad er TDEE?</summary>
+              <p>TDEE (samlet dagligt energiforbrug) er det samlede antal kalorier, du forbrænder om dagen, inklusive basalstofskifte, fordøjelse og fysisk aktivitet. Det er udgangsværdien for vægttab, vedligeholdelse eller vægtøgning.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Hvordan kan jeg automatisk følge mit kaloriemål?</summary>
+              <p>Download FitWow for at indstille dine personlige kalorie- og makromål, og tag derefter et billede af dine måltider for øjeblikkelig AI-drevet ernæringssporing.</p>
+            </details>
+          </div>
+        </section>
       </div>
     </section>
   </main>
