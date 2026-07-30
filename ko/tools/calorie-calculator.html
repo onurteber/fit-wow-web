@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="무료 일일 칼로리 계산기. 나이, 키, 체중, 활동 수준을 기반으로 Mifflin-St Jeor 공식을 사용해 유지 칼로리(TDEE)를 계산하세요." />
+  <title>칼로리 계산기 – 하루 칼로리 필요량 | FitWow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../styles.css" />
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <link rel="icon" type="image/png" href="../../assets/app_icon_ios.png" />
+  <link rel="apple-touch-icon" href="../../assets/app_icon_ios.png" />
+  <link rel="canonical" href="https://www.fitwowapp.com/ko/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="ar" href="https://www.fitwowapp.com/ar/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="az" href="https://www.fitwowapp.com/az/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="cs" href="https://www.fitwowapp.com/cs/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="da" href="https://www.fitwowapp.com/da/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="de" href="https://www.fitwowapp.com/de/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="el" href="https://www.fitwowapp.com/el/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="en" href="https://www.fitwowapp.com/en/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="es" href="https://www.fitwowapp.com/es/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="et" href="https://www.fitwowapp.com/et/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="fi" href="https://www.fitwowapp.com/fi/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="fr" href="https://www.fitwowapp.com/fr/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="hi" href="https://www.fitwowapp.com/hi/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="it" href="https://www.fitwowapp.com/it/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="ja" href="https://www.fitwowapp.com/ja/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="ko" href="https://www.fitwowapp.com/ko/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="no" href="https://www.fitwowapp.com/nb/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="nl" href="https://www.fitwowapp.com/nl/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="pl" href="https://www.fitwowapp.com/pl/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="pt" href="https://www.fitwowapp.com/pt/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="ru" href="https://www.fitwowapp.com/ru/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="sv" href="https://www.fitwowapp.com/sv/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="fil" href="https://www.fitwowapp.com/tl/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="tr" href="https://www.fitwowapp.com/tr/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://www.fitwowapp.com/zh/tools/calorie-calculator.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.fitwowapp.com/en/tools/calorie-calculator.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="칼로리 계산기 – 하루 칼로리 필요량 | FitWow" />
+  <meta property="og:description" content="무료 일일 칼로리 계산기. Mifflin-St Jeor 공식으로 유지 칼로리(TDEE)를 계산하세요." />
+  <meta property="og:url" content="https://www.fitwowapp.com/ko/tools/calorie-calculator.html" />
+  <meta property="og:image" content="https://www.fitwowapp.com/assets/og_banner_ko.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="칼로리 계산기 – 하루 칼로리 필요량 | FitWow" />
+  <meta name="twitter:description" content="무료 일일 칼로리 계산기. Mifflin-St Jeor 공식으로 유지 칼로리(TDEE)를 계산하세요." />
+  <meta name="twitter:image" content="https://www.fitwowapp.com/assets/og_banner_ko.png" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "FitWow", "item": "https://www.fitwowapp.com/ko/" },
+    { "@type": "ListItem", "position": 2, "name": "칼로리 계산기", "item": "https://www.fitwowapp.com/ko/tools/calorie-calculator.html" }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FitWow 칼로리 계산기",
+  "url": "https://www.fitwowapp.com/ko/tools/calorie-calculator.html",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+  </script>
+</head>
+<body
+  data-app-store-url="https://apps.apple.com/app/id6760663683"
+  data-google-play-url="https://play.google.com/store/apps/details?id=com.fitwow.fitwow">
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="../index.html">FitWow</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="calc-page">
+      <div class="container calc-content">
+        <nav class="calc-breadcrumb" aria-label="Breadcrumb"><a href="../index.html">FitWow</a> › <strong>칼로리 계산기</strong></nav>
+        <h1 class="calc-title">하루 칼로리 계산기</h1>
+        <p class="calc-subtitle">나이, 키, 체중, 활동 수준을 기반으로 Mifflin-St Jeor 공식을 사용해 하루 칼로리 필요량(TDEE)을 계산하세요.</p>
+
+        <div class="calc-card">
+          <div class="calc-tabs" role="tablist">
+            <button type="button" class="calc-tab is-active" data-gender="male">남성</button>
+            <button type="button" class="calc-tab" data-gender="female">여성</button>
+          </div>
+          <div class="calc-fields">
+            <label class="calc-field">
+              <span>나이</span>
+              <input type="number" id="calc-age" value="30" min="15" max="100" />
+            </label>
+            <label class="calc-field">
+              <span>키 (cm)</span>
+              <input type="number" id="calc-height" value="175" min="100" max="250" />
+            </label>
+            <label class="calc-field">
+              <span>체중 (kg)</span>
+              <input type="number" id="calc-weight" value="75" min="30" max="300" />
+            </label>
+          </div>
+          <label class="calc-field calc-field--full">
+            <span>활동 수준</span>
+            <select id="calc-activity">
+              <option value="1.2">거의 활동 없음 (운동 적음 또는 없음)</option>
+              <option value="1.375" selected>가벼운 활동 (주 1-3일)</option>
+              <option value="1.55">보통 활동 (주 3-5일)</option>
+              <option value="1.725">활발한 활동 (주 6-7일)</option>
+              <option value="1.9">매우 활발한 활동 (육체노동/훈련)</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="calc-result-main">
+          <p class="calc-result-main__label">하루 유지 칼로리</p>
+          <p class="calc-result-main__value"><span id="calc-maintenance">0</span> <small>kcal/일</small></p>
+        </div>
+
+        <div class="calc-results-grid">
+          <div class="calc-result-card calc-result-card--pink">
+            <p class="calc-result-card__label">체중 감량</p>
+            <p class="calc-result-card__value"><span id="calc-loss">0</span> <small>kcal</small></p>
+          </div>
+          <div class="calc-result-card calc-result-card--amber">
+            <p class="calc-result-card__label">약간의 적자</p>
+            <p class="calc-result-card__value"><span id="calc-mild-deficit">0</span> <small>kcal</small></p>
+          </div>
+          <div class="calc-result-card calc-result-card--green">
+            <p class="calc-result-card__label">유지</p>
+            <p class="calc-result-card__value"><span id="calc-maintenance-2">0</span> <small>kcal</small></p>
+          </div>
+          <div class="calc-result-card calc-result-card--indigo">
+            <p class="calc-result-card__label">체중 증가</p>
+            <p class="calc-result-card__value"><span id="calc-gain">0</span> <small>kcal</small></p>
+          </div>
+        </div>
+
+        <p class="calc-disclaimer">이 계산은 추정값이며 의학적 조언을 대체하지 않습니다. 맞춤 영양 계획은 전문가와 상담하세요.</p>
+
+        <div class="calc-app-cta">
+          <div class="calc-app-cta__icon" aria-hidden="true">📸</div>
+          <div class="calc-app-cta__text">
+            <h2>사진으로 칼로리 스캔하기</h2>
+            <p>FitWow로 즉시 AI 영양 분석을 받고 이 목표를 자동으로 추적하세요.</p>
+          </div>
+          <div class="calc-app-cta__buttons">
+            <a href="https://apps.apple.com/app/id6760663683" aria-label="Download on App Store">
+              <img src="../../assets/app-store-bages/US/Download_on_App_Store/Black_lockup/SVG/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on App Store" style="height: 44px;">
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.fitwow.fitwow" aria-label="Get it on Google Play">
+              <img src="../../assets/Google Play Badge guidelines/Get it on Google Play Badges/Digital/png/GetItOnGooglePlay_Badge_Web_color_English.png" alt="Get it on Google Play" style="height: 44px;">
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__inner">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a class="footer__logo" href="../index.html" aria-label="FitWow">FitWow</a>
+          <p class="footer__download">Download FitWow</p>
+          <div class="footer__stores">
+          <a class="footer__store" data-store="ios" href="https://apps.apple.com/app/id6760663683" aria-label="Download on App Store">
+            <img src="../../assets/app-store-bages/US/Download_on_App_Store/Black_lockup/SVG/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on App Store">
+          </a>
+          <a class="footer__store" data-store="android" href="https://play.google.com/store/apps/details?id=com.fitwow.fitwow" aria-label="Get it on Google Play">
+            <img src="../../assets/Google Play Badge guidelines/Get it on Google Play Badges/Digital/png/GetItOnGooglePlay_Badge_Web_color_English.png" alt="Get it on Google Play">
+          </a>
+          </div>
+        </div>
+        <nav class="footer__group" aria-label="Legal">
+          <h2 class="footer__heading">Legal</h2>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms</a>
+        </nav>
+        <nav class="footer__group" aria-label="Company">
+          <h2 class="footer__heading">Company</h2>
+          <a href="../faq.html">FAQ</a>
+          <a href="calorie-calculator.html">칼로리 계산기</a>
+          <a href="mailto:support@fitwowapp.com">Contact</a>
+        </nav>
+      </div>
+      <div class="footer__bottom">
+        <p class="footer__copy">© 2026 FitWow. All rights reserved.</p>
+        <div class="footer__actions">
+          <div class="footer__lang">
+            <select onchange="window.location.href='../../'+this.value+'/tools/calorie-calculator.html'">
+                      <option value="ar">العربية</option>
+                      <option value="az">Azərbaycan</option>
+                      <option value="cs">Čeština</option>
+                      <option value="da">Dansk</option>
+                      <option value="de">Deutsch</option>
+                      <option value="el">Ελληνικά</option>
+                      <option value="en">English</option>
+                      <option value="es">Español</option>
+                      <option value="et">Eesti</option>
+                      <option value="fi">Suomi</option>
+                      <option value="fr">Français</option>
+                      <option value="hi">हिन्दी</option>
+                      <option value="it">Italiano</option>
+                      <option value="ja">日本語</option>
+                      <option value="ko" selected>한국어</option>
+                      <option value="nb">Norsk</option>
+                      <option value="nl">Nederlands</option>
+                      <option value="pl">Polski</option>
+                      <option value="pt">Português</option>
+                      <option value="ru">Русский</option>
+                      <option value="sv">Svenska</option>
+                      <option value="tl">Filipino</option>
+                      <option value="tr">Türkçe</option>
+                      <option value="zh">中文</option>
+            </select>
+          </div>
+          <nav class="footer__social" aria-label="Social media">
+            <a class="footer__social-link" href="https://www.instagram.com/fitwowapp/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <span class="footer__social-icon footer__social-icon--instagram" aria-hidden="true"></span>
+            </a>
+            <a class="footer__social-link" href="https://www.tiktok.com/@fitwowapp" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+              <span class="footer__social-icon footer__social-icon--tiktok" aria-hidden="true"></span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../assets/calorie-calculator.js" defer></script>
+</body>
+</html>

@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>FitWow - Install</title>
+  <link rel="icon" type="image/png" href="../assets/app_icon_ios.png" />
+  <link rel="apple-touch-icon" href="../assets/app_icon_ios.png" />
+</head>
+<body>
+  <p>
+    Redirecting to FitWow...
+    <a id="store-link" href="/">Continue</a>
+  </p>
   <script>
     (function () {
       var appStoreUrl = 'https://apps.apple.com/app/id6760663683';
@@ -23,23 +31,17 @@
         return googlePlayUrl + '&referrer=' + encodeURIComponent('ref=' + ref);
       }
 
-      if (isAndroid) {
-        window.location.replace(getAndroidUrl());
-        return;
-      }
+      var targetUrl = isAndroid ? getAndroidUrl() : (isIos ? appStoreUrl : homeUrl);
 
-      if (isIos) {
-        window.location.replace(appStoreUrl);
-        return;
-      }
-
-      window.location.replace(homeUrl);
+      // Some in-app browsers (Instagram, Threads, Facebook) block a silent
+      // location.replace() to App Store / Play Store links and show a blank
+      // page instead. Point the visible link at the real target and trigger
+      // it via a simulated click, which those webviews allow, and leave the
+      // link on screen as a manual fallback if the auto-click is blocked.
+      var link = document.getElementById('store-link');
+      link.href = targetUrl;
+      link.click();
     })();
   </script>
-  <link rel="icon" type="image/png" href="../assets/app_icon_ios.png" />
-  <link rel="apple-touch-icon" href="../assets/app_icon_ios.png" />
-</head>
-<body>
-  <p>Redirecting to FitWow... <a href="/">Continue to homepage</a></p>
 </body>
 </html>
