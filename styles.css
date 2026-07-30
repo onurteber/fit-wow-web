@@ -131,6 +131,124 @@ a {
   color: var(--color-primary);
 }
 
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+}
+
+.nav-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-dropdown summary::after {
+  content: "▾";
+  margin-left: 4px;
+  font-size: 0.7em;
+}
+
+.nav-dropdown summary:hover,
+.nav-dropdown[open] summary {
+  color: var(--color-primary);
+}
+
+.nav-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 200px;
+  padding: 0.4rem;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  z-index: 20;
+}
+
+.nav-dropdown__menu a {
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.nav-dropdown__menu a:hover,
+.nav-dropdown__menu a[aria-current="page"] {
+  background: #F9FAFB;
+  color: var(--color-primary);
+}
+
+[dir="rtl"] .nav-dropdown__menu {
+  left: auto;
+  right: 0;
+}
+
+.calc-fields--2 {
+  grid-template-columns: 1fr;
+}
+
+.calc-badge {
+  display: inline-block;
+  margin-top: var(--space-sm);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
+
+.calc-badge--under { background: #E0E7FF; color: var(--color-accent); }
+.calc-badge--normal { background: #D1FAE5; color: #16A34A; }
+.calc-badge--over { background: #FEF3C7; color: #C2660C; }
+.calc-badge--obese { background: #FCE7F3; color: #DB2777; }
+
+.calc-bmi-legend {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm) var(--space-lg);
+  margin: 0 0 var(--space-lg);
+}
+
+.calc-bmi-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.calc-bmi-legend__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.calc-bmi-legend__dot--under { background: var(--color-accent); }
+.calc-bmi-legend__dot--normal { background: #16A34A; }
+.calc-bmi-legend__dot--over { background: var(--color-primary); }
+.calc-bmi-legend__dot--obese { background: #DB2777; }
+
+@media (min-width: 640px) {
+  .calc-fields--2 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .calc-bmi-legend {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 /* ===== Buttons ===== */
 .btn {
   display: inline-flex;
