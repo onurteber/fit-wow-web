@@ -10,8 +10,7 @@
 </head>
 <body>
   <p>
-    Redirecting to FitWow...
-    <a id="store-link" href="/">Continue</a>
+    <a id="store-link" href="/">Tap here to install FitWow</a>
   </p>
   <script>
     (function () {
@@ -33,14 +32,13 @@
 
       var targetUrl = isAndroid ? getAndroidUrl() : (isIos ? appStoreUrl : homeUrl);
 
-      // Some in-app browsers (Instagram, Threads, Facebook) block a silent
-      // location.replace() to App Store / Play Store links and show a blank
-      // page instead. Point the visible link at the real target and trigger
-      // it via a simulated click, which those webviews allow, and leave the
-      // link on screen as a manual fallback if the auto-click is blocked.
-      var link = document.getElementById('store-link');
-      link.href = targetUrl;
-      link.click();
+      // Instagram's in-app browser flags any page that redirects on its own
+      // (location.replace, or even a synthetic click on load) as an unwanted
+      // redirect and blocks navigation on that page instance entirely - even
+      // a real tap afterwards stops working. So do nothing automatic here:
+      // just point the visible link at the right target and let the user's
+      // own tap perform the navigation.
+      document.getElementById('store-link').href = targetUrl;
     })();
   </script>
 </body>
