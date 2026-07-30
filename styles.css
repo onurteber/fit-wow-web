@@ -162,7 +162,8 @@ a {
 .nav-dropdown__menu {
   position: absolute;
   top: calc(100% + 10px);
-  left: 0;
+  right: 0;
+  left: auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -190,8 +191,8 @@ a {
 }
 
 [dir="rtl"] .nav-dropdown__menu {
-  left: auto;
-  right: 0;
+  right: auto;
+  left: 0;
 }
 
 .calc-fields--2 {
