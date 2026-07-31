@@ -112,4 +112,20 @@
       }
     });
   });
+
+  // Sticky mobile download bar: reveal once the hero is scrolled past
+  var stickyBar = document.querySelector('.sticky-download');
+  if (stickyBar) {
+    var hero = document.getElementById('hero');
+    var revealSticky = function () {
+      var threshold = hero ? hero.offsetTop + hero.offsetHeight : 400;
+      if (window.scrollY > threshold) {
+        stickyBar.classList.add('is-visible');
+      } else {
+        stickyBar.classList.remove('is-visible');
+      }
+    };
+    window.addEventListener('scroll', revealSticky, { passive: true });
+    revealSticky();
+  }
 })();
