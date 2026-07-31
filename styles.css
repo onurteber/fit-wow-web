@@ -1656,6 +1656,40 @@ a {
   text-decoration: underline;
 }
 
+.article-body__table-wrap {
+  margin: 0 0 var(--space-md);
+  overflow-x: auto;
+}
+
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.article-body th,
+.article-body td {
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.article-body th {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.article-body td {
+  color: var(--color-text-muted);
+}
+
+.article-body tr.article-body__row--highlight td {
+  color: var(--color-text);
+  font-weight: 600;
+  background: rgba(249, 115, 22, 0.08);
+}
+
 .blog-grid {
   display: grid;
   grid-template-columns: 1fr;
