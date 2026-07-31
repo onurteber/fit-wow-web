@@ -922,6 +922,14 @@ a {
   object-fit: contain;
 }
 
+.footer__store--qr {
+  height: 56px;
+  margin-top: 0.7rem;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
 .footer__group {
   display: flex;
   flex-direction: column;
