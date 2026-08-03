@@ -100,23 +100,24 @@
     link.setAttribute('href', buildAndroidHref());
   });
 
-  // Some in-app browsers (Instagram, Threads, Facebook) silently block
-  // navigation triggered by a direct tap on an apps.apple.com link. Re-firing
-  // the navigation as a synthetic click on a detached anchor (the same trick
-  // used in /install/) works around it. Google Play links are unaffected.
-  document.querySelectorAll('a[data-store="ios"], a[href*="apps.apple.com"]').forEach(function (link) {
-    link.addEventListener('click', function (e) {
+  // Instagram/Facebook/Threads in-app browsers on iOS block navigation to
+  // https://apps.apple.com (their WKWebView delegate suppresses the App
+  // Store handoff). itms-apps:// is a custom URL scheme handled directly by
+  // iOS rather than as a web navigation, which those in-app browsers do not
+  // intercept. Google Play is unaffected and untouched.
+  var uaString = navigator.userAgent || navigator.vendor || window.opera || '';
+  var isIosDevice = /iPhone|iPad|iPod/i.test(uaString) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var isInAppBrowser = /Instagram|FBAN|FBAV|Threads/i.test(uaString);
+
+  if (isIosDevice && isInAppBrowser) {
+    document.querySelectorAll('a[data-store="ios"], a[href*="apps.apple.com"]').forEach(function (link) {
       var url = link.getAttribute('href');
-      if (!url || url === '#') return;
-      e.preventDefault();
-      var proxy = document.createElement('a');
-      proxy.href = url;
-      proxy.style.display = 'none';
-      document.body.appendChild(proxy);
-      proxy.click();
-      document.body.removeChild(proxy);
+      if (url && url.indexOf('https://apps.apple.com') === 0) {
+        link.setAttribute('href', url.replace('https://apps.apple.com', 'itms-apps://apps.apple.com'));
+      }
     });
-  });
+  }
 
   // Smooth scroll for anchor links (supplements CSS scroll-behavior for broader support)
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
