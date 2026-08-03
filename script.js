@@ -100,6 +100,24 @@
     link.setAttribute('href', buildAndroidHref());
   });
 
+  // Some in-app browsers (Instagram, Threads, Facebook) silently block
+  // navigation triggered by a direct tap on an apps.apple.com link. Re-firing
+  // the navigation as a synthetic click on a detached anchor (the same trick
+  // used in /install/) works around it. Google Play links are unaffected.
+  document.querySelectorAll('a[data-store="ios"], a[href*="apps.apple.com"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var url = link.getAttribute('href');
+      if (!url || url === '#') return;
+      e.preventDefault();
+      var proxy = document.createElement('a');
+      proxy.href = url;
+      proxy.style.display = 'none';
+      document.body.appendChild(proxy);
+      proxy.click();
+      document.body.removeChild(proxy);
+    });
+  });
+
   // Smooth scroll for anchor links (supplements CSS scroll-behavior for broader support)
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
