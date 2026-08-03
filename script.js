@@ -17,6 +17,7 @@
   }
 
   var body = document.body;
+  var appStoreUrl = body.getAttribute('data-app-store-url') || '#';
   var googlePlayUrl = body.getAttribute('data-google-play-url') || '#';
   var referralCaptureUrl = (body.getAttribute('data-referral-capture-url') || '').trim();
   var androidStatus = googlePlayUrl && googlePlayUrl !== '#' ? 'live' : 'coming-soon';
@@ -75,7 +76,7 @@
     if (ref && referralCaptureUrl) {
       return referralCaptureUrl + '?ref=' + encodeURIComponent(ref) + '&platform=ios';
     }
-    return '/go/ios';
+    return appStoreUrl;
   }
 
   function buildAndroidHref() {

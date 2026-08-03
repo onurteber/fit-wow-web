@@ -1,9 +1,0 @@
-{
-  "redirects": [
-    {
-      "source": "/go/ios",
-      "destination": "https://apps.apple.com/app/id6760663683",
-      "permanent": false
-    }
-  ]
-}
