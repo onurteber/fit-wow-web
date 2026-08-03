@@ -100,6 +100,34 @@
     link.setAttribute('href', buildAndroidHref());
   });
 
+  // Instagram/Facebook/Threads in-app browsers intercept short taps on
+  // App Store anchors and swallow the navigation (long-press "Open Link"
+  // still works, proving the href itself is fine). Re-dispatching the
+  // navigation as a native .click() on a freshly created anchor works
+  // around per-element tap interception, but the proxy must stay part of
+  // the rendered layout (not display:none/visibility:hidden) or WebKit
+  // refuses to treat the resulting navigation as user-activated.
+  document.querySelectorAll('a[data-store="ios"], a[href*="apps.apple.com"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var url = link.getAttribute('href');
+      if (!url || url === '#') return;
+      e.preventDefault();
+      var proxy = document.createElement('a');
+      proxy.href = url;
+      proxy.style.position = 'fixed';
+      proxy.style.top = '-1000px';
+      proxy.style.left = '-1000px';
+      proxy.style.width = '1px';
+      proxy.style.height = '1px';
+      proxy.style.opacity = '0.01';
+      document.body.appendChild(proxy);
+      proxy.click();
+      setTimeout(function () {
+        document.body.removeChild(proxy);
+      }, 500);
+    });
+  });
+
   // Smooth scroll for anchor links (supplements CSS scroll-behavior for broader support)
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
