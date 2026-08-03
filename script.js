@@ -100,26 +100,6 @@
     link.setAttribute('href', buildAndroidHref());
   });
 
-  // Instagram/Facebook/Threads in-app browsers on iOS block navigation to
-  // https://apps.apple.com (their WKWebView delegate suppresses the App
-  // Store handoff), and itms-apps:// gets swallowed the same way. The only
-  // reliable escape is forcing the link out to the real Safari app via the
-  // x-safari-https:// scheme, which those in-app browsers hand off to iOS
-  // instead of intercepting. Google Play is unaffected and untouched.
-  var uaString = navigator.userAgent || navigator.vendor || window.opera || '';
-  var isIosDevice = /iPhone|iPad|iPod/i.test(uaString) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var isInAppBrowser = /Instagram|FBAN|FBAV|Threads/i.test(uaString);
-
-  if (isIosDevice && isInAppBrowser) {
-    document.querySelectorAll('a[data-store="ios"], a[href*="apps.apple.com"]').forEach(function (link) {
-      var url = link.getAttribute('href');
-      if (url && url.indexOf('https://apps.apple.com') === 0) {
-        link.setAttribute('href', url.replace('https://', 'x-safari-https://'));
-      }
-    });
-  }
-
   // Smooth scroll for anchor links (supplements CSS scroll-behavior for broader support)
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
