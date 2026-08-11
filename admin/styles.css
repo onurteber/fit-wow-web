@@ -126,6 +126,53 @@
   font-size: 12px;
 }
 
+.progress-panel {
+  margin-top: 18px;
+}
+
+.progress-table {
+  min-width: 1720px;
+}
+
+.progress-panel select {
+  min-width: 170px;
+}
+
+.progress-badge {
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.progress-ilerleme {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.progress-hedefe_ulasti {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.progress-kotuye_gidiyor {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.progress-stabil {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.progress-yetersiz_veri,
+.progress-belirsiz {
+  background: #f1f5f9;
+  color: #475569;
+}
+
 @media (max-width: 1180px) {
   .admin-shell .metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));

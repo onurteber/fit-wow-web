@@ -7,6 +7,21 @@
   var session = null;
   var selectedRange = '30';
   var selectedMonthValue = '';
+  var progressRows = [];
+  var PROGRESS_STATUS_LABELS = {
+    ilerleme: 'İlerleme',
+    kotuye_gidiyor: 'Kötüye gidiyor',
+    stabil: 'Stabil',
+    hedefe_ulasti: 'Hedefte',
+    yetersiz_veri: 'Yetersiz veri',
+    belirsiz: 'Belirsiz'
+  };
+  var GOAL_TYPE_LABELS = {
+    weight_loss: 'Kilo verme',
+    weight_gain: 'Kilo alma',
+    muscle_gain: 'Kas kazanımı',
+    maintain: 'Koruma'
+  };
   var SESSION_KEY = 'fitwow_admin_session';
   var ADMIN_SELECT = '/admin_accounts?select=id';
   var INFLUENCER_ACCOUNT_FIELD_SETS = [
@@ -88,6 +103,10 @@
     countryBody: document.getElementById('countryBody'),
     activityStatus: document.getElementById('activityStatus'),
     activityBody: document.getElementById('activityBody'),
+    progressStatusFilter: document.getElementById('progressStatusFilter'),
+    progressRefreshButton: document.getElementById('progressRefreshButton'),
+    progressStatus: document.getElementById('progressStatus'),
+    progressBody: document.getElementById('progressBody'),
     costStatus: document.getElementById('costStatus'),
     costBody: document.getElementById('costBody'),
     costGroundedMetric: document.getElementById('costGroundedMetric'),
@@ -154,6 +173,10 @@
     els.refreshButton.addEventListener('click', loadDashboard);
     els.costRefreshButton.addEventListener('click', loadGeminiCost);
     els.activityRefreshButton.addEventListener('click', loadDailyActivity);
+    els.progressRefreshButton.addEventListener('click', loadUserProgress);
+    els.progressStatusFilter.addEventListener('change', function () {
+      renderProgressRows(progressRows);
+    });
     els.monthButton.addEventListener('click', toggleMonthMenu);
     els.monthMenu.addEventListener('click', handleMonthOptionClick);
     document.addEventListener('click', closeMonthMenu);
@@ -301,6 +324,7 @@
     loadDashboard();
     loadGeminiCost();
     loadDailyActivity();
+    loadUserProgress();
   }
 
   function showLogin() {
@@ -728,6 +752,36 @@
     });
   }
 
+  function loadUserProgress() {
+    if (!session) return;
+
+    setProgressStatus('Yükleniyor...', '');
+    renderEmptyProgressRow('Yükleniyor...');
+
+    apiRequest('/rpc/get_admin_user_progress', {
+      method: 'POST',
+      body: JSON.stringify({})
+    }).then(function (rows) {
+      progressRows = rows || [];
+      renderProgressRows(progressRows);
+
+      if (!progressRows.length) {
+        setProgressStatus('Henüz kilo kaydı olan kullanıcı yok.', '');
+        return;
+      }
+
+      setProgressStatus(formatProgressSummary(progressRows), 'success');
+    }).catch(function (error) {
+      progressRows = [];
+      renderProgressRows([]);
+      if (isPermissionError(error)) {
+        rejectCurrentSession('Bu panel sadece admin hesaplarına açık.');
+        return;
+      }
+      setProgressStatus(error.message || 'Kullanıcı ilerlemesi alınamadı.', 'error');
+    });
+  }
+
   function loadGeminiCost() {
     if (!session) return;
 
@@ -918,6 +972,50 @@
 
   function renderEmptyActivityRow(text) {
     els.activityBody.innerHTML = '<tr><td colspan="6" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+  }
+
+  function renderProgressRows(rows) {
+    var filter = els.progressStatusFilter.value || 'all';
+    var visibleRows = (rows || []).filter(function (row) {
+      return filter === 'all' || row.progress_status === filter;
+    });
+
+    if (!visibleRows.length) {
+      renderEmptyProgressRow(rows && rows.length ? 'Bu durumda kullanıcı yok.' : 'Veri yok');
+      return;
+    }
+
+    els.progressBody.innerHTML = visibleRows.map(function (row) {
+      return [
+        '<tr>',
+        '<td class="code-cell">', escapeHtml(row.user_name || '-'), '</td>',
+        '<td>', renderProgressBadge(row.progress_status), '</td>',
+        '<td>', escapeHtml(GOAL_TYPE_LABELS[row.goal_type] || row.goal_type || '-'), '</td>',
+        '<td>', formatKg(row.goal_weight_kg), '</td>',
+        '<td>', formatReportDate(row.first_date), '</td>',
+        '<td>', formatKg(row.first_weight_kg), '</td>',
+        '<td>', formatReportDate(row.last_date), '</td>',
+        '<td>', formatKg(row.last_weight_kg), '</td>',
+        '<td>', formatSignedKg(row.weight_delta_kg), '</td>',
+        '<td class="muted-cell">', formatSignedKg(row.weekly_change_kg), '</td>',
+        '<td>', formatKg(row.last_kg_to_goal), '</td>',
+        '<td>', formatPercent(row.goal_progress_percent), '</td>',
+        '<td>', formatNumber(row.entry_count), '</td>',
+        '<td class="muted-cell">', formatDays(row.tracked_days), '</td>',
+        '<td class="muted-cell">', formatDaysAgo(row.days_since_last_entry), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  function renderProgressBadge(status) {
+    var key = String(status || 'belirsiz');
+    var label = PROGRESS_STATUS_LABELS[key] || key;
+    return '<span class="progress-badge progress-' + escapeHtml(key) + '">' + escapeHtml(label) + '</span>';
+  }
+
+  function renderEmptyProgressRow(text) {
+    els.progressBody.innerHTML = '<tr><td colspan="15" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderCostRows(rows) {
@@ -1153,6 +1251,11 @@
     els.activityStatus.className = 'message' + (type ? ' ' + type : '');
   }
 
+  function setProgressStatus(text, type) {
+    els.progressStatus.textContent = text;
+    els.progressStatus.className = 'message' + (type ? ' ' + type : '');
+  }
+
   function setCostStatus(text, type) {
     els.costStatus.textContent = text;
     els.costStatus.className = 'message' + (type ? ' ' + type : '');
@@ -1367,6 +1470,38 @@
     }).format(Number(value));
   }
 
+  function formatKg(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    return formatDecimal(value) + ' kg';
+  }
+
+  function formatSignedKg(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    var amount = Number(value);
+    if (!Number.isFinite(amount)) return '-';
+    var sign = amount > 0 ? '+' : '';
+    return sign + formatDecimal(amount) + ' kg';
+  }
+
+  function formatPercent(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    return formatDecimal(value) + '%';
+  }
+
+  function formatDays(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    return formatNumber(value) + ' gün';
+  }
+
+  function formatDaysAgo(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    var days = Number(value);
+    if (!Number.isFinite(days)) return '-';
+    if (days <= 0) return 'Bugün';
+    if (days === 1) return 'Dün';
+    return formatNumber(days) + ' gün önce';
+  }
+
   function formatMilliliters(value) {
     return formatNumber(value) + ' ml';
   }
@@ -1397,6 +1532,20 @@
     }, 0);
 
     return formatNumber(rows.length) + ' kullanıcı · ' + formatNumber(totalMeals) + ' öğün';
+  }
+
+  function formatProgressSummary(rows) {
+    var counts = rows.reduce(function (acc, row) {
+      acc[row.progress_status] = (acc[row.progress_status] || 0) + 1;
+      return acc;
+    }, {});
+
+    return [
+      formatNumber(rows.length) + ' kullanıcı',
+      formatNumber(counts.ilerleme || 0) + ' ilerleme',
+      formatNumber(counts.kotuye_gidiyor || 0) + ' kötüye gidiyor',
+      formatNumber(counts.hedefe_ulasti || 0) + ' hedefte'
+    ].join(' · ');
   }
 
   function formatCostSummary(rows) {

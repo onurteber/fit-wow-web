@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="/assets/app_icon_ios.png" />
   <link rel="stylesheet" href="/influencer/styles.css" />
   <link rel="stylesheet" href="/admin/styles.css" />
-  <script defer src="/admin/app.js?v=20260720-gemini-cost-madrid"></script>
+  <script defer src="/admin/app.js?v=20260811-user-progress"></script>
 </head>
 <body>
   <div class="shell admin-shell">
@@ -287,6 +287,58 @@
               <tbody id="activityBody">
                 <tr>
                   <td colspan="6" class="empty-cell">Yükleniyor...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-panel progress-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Kullanıcı ilerlemesi</h2>
+              <p class="table-description">İlk kilo kaydından bugüne toplam ilerleme</p>
+            </div>
+            <div class="daily-controls">
+              <label>
+                Durum
+                <select id="progressStatusFilter">
+                  <option value="all">Tümü</option>
+                  <option value="kotuye_gidiyor">Kötüye gidiyor</option>
+                  <option value="stabil">Stabil</option>
+                  <option value="ilerleme">İlerleme</option>
+                  <option value="hedefe_ulasti">Hedefte</option>
+                  <option value="yetersiz_veri">Yetersiz veri</option>
+                </select>
+              </label>
+              <button id="progressRefreshButton" class="button button-secondary" type="button">Yenile</button>
+              <p id="progressStatus" class="message" role="status"></p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table progress-table">
+              <thead>
+                <tr>
+                  <th>Kullanıcı</th>
+                  <th>Durum</th>
+                  <th>Hedef</th>
+                  <th>Hedef kilo</th>
+                  <th>İlk kayıt</th>
+                  <th>İlk kilo</th>
+                  <th>Son kayıt</th>
+                  <th>Son kilo</th>
+                  <th>Değişim</th>
+                  <th>Haftalık</th>
+                  <th>Hedefe kalan</th>
+                  <th>Hedef ilerlemesi</th>
+                  <th>Kayıt</th>
+                  <th>Takip süresi</th>
+                  <th>Son giriş</th>
+                </tr>
+              </thead>
+              <tbody id="progressBody">
+                <tr>
+                  <td colspan="15" class="empty-cell">Yükleniyor...</td>
                 </tr>
               </tbody>
             </table>
