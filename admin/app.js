@@ -13,7 +13,6 @@
     kotuye_gidiyor: 'Kötüye gidiyor',
     stabil: 'Stabil',
     hedefe_ulasti: 'Hedefte',
-    yetersiz_veri: 'Yetersiz veri',
     belirsiz: 'Belirsiz'
   };
   var GOAL_TYPE_LABELS = {
@@ -766,7 +765,7 @@
       renderProgressRows(progressRows);
 
       if (!progressRows.length) {
-        setProgressStatus('Henüz kilo kaydı olan kullanıcı yok.', '');
+        setProgressStatus('En az iki kilo kaydı olan kullanıcı yok.', '');
         return;
       }
 
@@ -1071,7 +1070,7 @@
     setDatesForRange(selectedRange);
     var madridToday = dateInputValueInTimeZone(new Date(), 'Europe/Madrid');
     var costFrom = new Date(madridToday + 'T12:00:00');
-    costFrom.setDate(costFrom.getDate() - 29);
+    costFrom.setDate(costFrom.getDate() - 6);
     els.costFromDate.value = toDateInputValue(costFrom);
     els.costToDate.value = madridToday;
     els.activityDate.value = toDateInputValue(new Date());
