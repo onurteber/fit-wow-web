@@ -6,6 +6,21 @@
   var supabaseAnonKey = config.supabaseAnonKey || readMeta('fitwow:supabase-anon-key');
   var session = null;
   var selectedRange = '30';
+  var activeTab = 'influencer';
+  // The heading used to be a fixed "Influencer performansı", which read as a
+  // lie on six of the seven tabs.
+  var TAB_TITLES = {
+    influencer: 'Influencer performansı',
+    users: 'Kullanıcı aktivitesi',
+    funnel: 'Onboarding hunisi & ekranlar',
+    quality: 'Veri kalitesi',
+    revenue: 'Paywall dönüşümü',
+    friction: 'Sürtünme & kullanıcı yolculuğu',
+    cost: 'AI maliyeti'
+  };
+  // Which tabs have already fetched. Panels load on first view and on an
+  // explicit refresh, so opening the page no longer fires every RPC at once.
+  var loadedTabs = {};
   var selectedMonthValue = '';
   var progressRows = [];
   var PROGRESS_STATUS_LABELS = {
@@ -84,6 +99,7 @@
     resetMessage: document.getElementById('resetMessage'),
     logoutButton: document.getElementById('logoutButton'),
     userEmail: document.getElementById('userEmail'),
+    pageTitle: document.getElementById('pageTitle'),
     monthPicker: document.getElementById('monthPicker'),
     monthButton: document.getElementById('monthButton'),
     monthMenu: document.getElementById('monthMenu'),
@@ -96,6 +112,8 @@
     activityDate: document.getElementById('activityDate'),
     activityRefreshButton: document.getElementById('activityRefreshButton'),
     rangeButtons: Array.prototype.slice.call(document.querySelectorAll('[data-range]')),
+    tabButtons: Array.prototype.slice.call(document.querySelectorAll('[data-tab]')),
+    tabPanels: Array.prototype.slice.call(document.querySelectorAll('[data-tab-panel]')),
     tableStatus: document.getElementById('tableStatus'),
     statsBody: document.getElementById('statsBody'),
     countryStatus: document.getElementById('countryStatus'),
@@ -203,6 +221,18 @@
     document.addEventListener('click', closeMonthMenu);
     els.fromDate.addEventListener('change', selectCustomRange);
     els.toDate.addEventListener('change', selectCustomRange);
+
+    els.tabButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        selectTab(button.getAttribute('data-tab'));
+      });
+    });
+
+    // Back/forward and a pasted #tab=... link both land on the right panel.
+    window.addEventListener('hashchange', function () {
+      var fromHash = tabFromHash();
+      if (fromHash && fromHash !== activeTab) selectTab(fromHash);
+    });
 
     els.rangeButtons.forEach(function (button) {
       button.addEventListener('click', function () {
@@ -342,10 +372,7 @@
     els.userEmail.textContent = (activeSession.user && activeSession.user.email) || '';
     els.logoutButton.hidden = false;
     showDashboard();
-    loadDashboard();
-    loadGeminiCost();
-    loadDailyActivity();
-    loadUserProgress();
+    selectTab(tabFromHash() || activeTab, { force: true });
   }
 
   function showLogin() {
@@ -366,7 +393,66 @@
     els.dashboardView.hidden = false;
   }
 
+  // Called by the refresh button, the range chips and the month picker. The
+  // date range applies to every tab, so a change invalidates them all -- but
+  // only the visible one is fetched now; the rest reload when opened.
   function loadDashboard() {
+    if (!session) return;
+    loadedTabs = {};
+    loadTab(activeTab);
+  }
+
+  function tabFromHash() {
+    var match = /(?:^|[#&])tab=([a-z]+)/.exec(window.location.hash || '');
+    if (!match) return null;
+    var name = match[1];
+    var known = els.tabButtons.some(function (button) {
+      return button.getAttribute('data-tab') === name;
+    });
+    return known ? name : null;
+  }
+
+  function selectTab(name, options) {
+    if (!name) return;
+    var force = options && options.force;
+    if (name === activeTab && !force && loadedTabs[name]) return;
+
+    activeTab = name;
+
+    els.tabButtons.forEach(function (button) {
+      var isActive = button.getAttribute('data-tab') === name;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    els.tabPanels.forEach(function (panel) {
+      panel.hidden = panel.getAttribute('data-tab-panel') !== name;
+    });
+
+    if (TAB_TITLES[name]) els.pageTitle.textContent = TAB_TITLES[name];
+
+    if (window.location.hash !== '#tab=' + name) {
+      // replaceState, not a hash assignment: switching tabs should not stack
+      // history entries the back button then has to walk through.
+      window.history.replaceState(null, '', '#tab=' + name);
+    }
+
+    loadTab(name);
+  }
+
+  function loadTab(name) {
+    if (!session || loadedTabs[name]) return;
+    loadedTabs[name] = true;
+
+    if (name === 'influencer') loadInfluencerStats();
+    else if (name === 'users') { loadDailyActivity(); loadUserProgress(); }
+    else if (name === 'funnel') { loadFunnel(); loadEngagement(); }
+    else if (name === 'quality') { loadSearchGaps(); loadCorrections(); }
+    else if (name === 'revenue') loadConversion();
+    else if (name === 'friction') loadFriction();
+    else if (name === 'cost') loadGeminiCost();
+  }
+
+  function loadInfluencerStats() {
     if (!session) return;
 
     setTableStatus('Yükleniyor...', '');
@@ -380,7 +466,6 @@
       return null;
     });
     loadCountryBreakdown(range, refundCountsRequest);
-    loadProductAnalytics();
 
     apiRequest('/rpc/get_admin_influencer_stats', {
       method: 'POST',
@@ -1392,15 +1477,6 @@
       p_from: els.fromDate.value || null,
       p_to: els.toDate.value || null
     };
-  }
-
-  function loadProductAnalytics() {
-    loadFunnel();
-    loadSearchGaps();
-    loadCorrections();
-    loadConversion();
-    loadFriction();
-    loadEngagement();
   }
 
   function setProductStatus(element, text, type) {

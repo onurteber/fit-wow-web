@@ -7,7 +7,7 @@
 }
 
 .admin-shell .metrics {
-  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
 .admin-table td:nth-child(4) {
@@ -338,4 +338,72 @@
   .funnel-bar {
     width: 72px;
   }
+}
+
+/* ── Tab bar ───────────────────────────────────────────────────────────── */
+
+/* The UA rule for [hidden] is display:none, but ANY author display rule beats
+   the UA sheet -- and .metrics sets display:grid. Without this the metric
+   strips would stay visible on every tab while the tables switched underneath.
+   !important is deliberate: nothing may out-rank "this panel is not shown". */
+[data-tab-panel][hidden] {
+  display: none !important;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  margin: 18px 0 0;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #e2e8f0;
+  /* Narrow screens scroll the tabs rather than wrapping them into a block
+     that pushes the panel off the fold. */
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tab-bar .tab {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 10px 14px;
+  border-radius: 10px 10px 0 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  /* Reserve the weight the active state adds, so selecting a tab does not
+     shift the ones next to it. */
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tab-bar .tab:hover {
+  color: inherit;
+  background: #f8fafc;
+}
+
+.tab-bar .tab.is-active {
+  color: inherit;
+  font-weight: 600;
+  background: #fff;
+  border-bottom-color: var(--accent, #22c55e);
+}
+
+.tab-bar .tab:focus-visible {
+  outline: 2px solid var(--accent, #22c55e);
+  outline-offset: -2px;
+}
+
+/* The first panel of a tab sits right under the bar; its own margin-top would
+   double the gap. */
+.tab-bar + [data-tab-panel] {
+  margin-top: 18px;
+}
+
+.funnel-metrics {
+  grid-template-columns: repeat(2, minmax(0, 220px));
 }

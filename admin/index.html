@@ -64,7 +64,7 @@
         <div class="page-head">
           <div>
             <p class="eyebrow">Admin Paneli</p>
-            <h1>Influencer performansı</h1>
+            <h1 id="pageTitle">Influencer performansı</h1>
           </div>
           <div class="account-box" aria-label="Admin hesabı">
             <span id="userEmail" class="account-detail"></span>
@@ -99,7 +99,19 @@
           </div>
         </section>
 
-        <section class="metrics" aria-label="Özet">
+        <!-- Twelve panels on one page meant scrolling past eleven of them to
+             reach the one you wanted, and every page load fired every RPC.
+             Tabs fix both: only the active tab's data is fetched. -->
+        <nav class="tab-bar" aria-label="Panel bölümleri">
+          <button class="tab" type="button" data-tab="influencer" aria-selected="true">Influencer</button>
+          <button class="tab" type="button" data-tab="users" aria-selected="false">Kullanıcılar</button>
+          <button class="tab" type="button" data-tab="funnel" aria-selected="false">Huni &amp; ekranlar</button>
+          <button class="tab" type="button" data-tab="quality" aria-selected="false">Veri kalitesi</button>
+          <button class="tab" type="button" data-tab="revenue" aria-selected="false">Dönüşüm</button>
+          <button class="tab" type="button" data-tab="friction" aria-selected="false">Sürtünme &amp; yolculuk</button>
+          <button class="tab" type="button" data-tab="cost" aria-selected="false">Maliyet</button>
+        </nav>
+        <section class="metrics" data-tab-panel="influencer" aria-label="Özet">
           <article class="metric-card">
             <span>Influencer sayısı</span>
             <strong id="influencerCountMetric">0</strong>
@@ -128,6 +140,9 @@
             <span>Toplam iptal edilen ücretsiz deneme</span>
             <strong id="cancelledFreeTrialsMetric">0</strong>
           </article>
+        </section>
+
+        <section class="metrics funnel-metrics" data-tab-panel="funnel" aria-label="Aktivasyon">
           <article class="metric-card">
             <span>Onboarding tamamlama</span>
             <strong id="onboardingCompletionMetric">-</strong>
@@ -138,7 +153,7 @@
           </article>
         </section>
 
-        <section class="table-panel cost-panel">
+        <section class="table-panel cost-panel" data-tab-panel="cost">
           <div class="table-head cost-head">
             <div>
               <h2>Gemini Google Search maliyeti</h2>
@@ -201,7 +216,7 @@
           </div>
         </section>
 
-        <section class="table-panel country-panel">
+        <section class="table-panel country-panel" data-tab-panel="influencer">
           <div class="table-head">
             <h2>Influencer satış ülkeleri</h2>
             <p id="countryStatus" class="message" role="status"></p>
@@ -233,7 +248,7 @@
           </div>
         </section>
 
-        <section class="table-panel">
+        <section class="table-panel" data-tab-panel="influencer">
           <div class="table-head">
             <h2>Influencer kodları</h2>
             <p id="tableStatus" class="message" role="status"></p>
@@ -268,7 +283,7 @@
           </div>
         </section>
 
-        <section class="table-panel daily-activity-panel">
+        <section class="table-panel daily-activity-panel" data-tab-panel="users">
           <div class="table-head">
             <h2>Günlük kullanıcı davranışı</h2>
             <div class="daily-controls">
@@ -301,7 +316,7 @@
           </div>
         </section>
 
-        <section class="table-panel progress-panel">
+        <section class="table-panel progress-panel" data-tab-panel="users">
           <div class="table-head cost-head">
             <div>
               <h2>Kullanıcı ilerlemesi</h2>
@@ -357,7 +372,7 @@
              They share the date range above; the journey panel is per-user
              and has its own control. -->
 
-        <section class="table-panel funnel-panel">
+        <section class="table-panel funnel-panel" data-tab-panel="funnel">
           <div class="table-head cost-head">
             <div>
               <h2>Onboarding &amp; aktivasyon hunisi</h2>
@@ -384,7 +399,7 @@
           </div>
         </section>
 
-        <section class="table-panel search-gaps-panel">
+        <section class="table-panel search-gaps-panel" data-tab-panel="quality">
           <div class="table-head cost-head">
             <div>
               <h2>Arama boşlukları</h2>
@@ -413,7 +428,7 @@
           </div>
         </section>
 
-        <section class="table-panel corrections-panel">
+        <section class="table-panel corrections-panel" data-tab-panel="quality">
           <div class="table-head cost-head">
             <div>
               <h2>AI düzeltmeleri</h2>
@@ -441,7 +456,7 @@
           </div>
         </section>
 
-        <section class="table-panel conversion-panel">
+        <section class="table-panel conversion-panel" data-tab-panel="revenue">
           <div class="table-head cost-head">
             <div>
               <h2>Paywall dönüşümü</h2>
@@ -472,7 +487,7 @@
           </div>
         </section>
 
-        <section class="table-panel friction-panel">
+        <section class="table-panel friction-panel" data-tab-panel="friction">
           <div class="table-head cost-head">
             <div>
               <h2>Hata &amp; sürtünme</h2>
@@ -500,7 +515,7 @@
           </div>
         </section>
 
-        <section class="table-panel engagement-panel">
+        <section class="table-panel engagement-panel" data-tab-panel="funnel">
           <div class="table-head cost-head">
             <div>
               <h2>Ekran etkileşimi</h2>
@@ -527,7 +542,7 @@
           </div>
         </section>
 
-        <section class="table-panel journey-panel">
+        <section class="table-panel journey-panel" data-tab-panel="friction">
           <div class="table-head cost-head">
             <div>
               <h2>Kullanıcı yolculuğu</h2>
