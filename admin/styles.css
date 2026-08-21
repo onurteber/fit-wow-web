@@ -7,7 +7,7 @@
 }
 
 .admin-shell .metrics {
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(9, minmax(0, 1fr));
 }
 
 .admin-table td:nth-child(4) {
@@ -231,5 +231,111 @@
 
   .cost-metric:last-child {
     border-bottom: 0;
+  }
+}
+
+/* ── Product analytics panels ──────────────────────────────────────────── */
+
+.funnel-panel,
+.search-gaps-panel,
+.corrections-panel,
+.conversion-panel,
+.friction-panel,
+.engagement-panel,
+.journey-panel {
+  margin-top: 18px;
+}
+
+/* These tables are far narrower than the influencer table the base rule is
+   sized for; without an override every one of them scrolls horizontally for
+   no reason. */
+.funnel-table { min-width: 760px; }
+.search-gaps-table { min-width: 900px; }
+.corrections-table { min-width: 820px; }
+.conversion-table { min-width: 1040px; }
+.friction-table { min-width: 900px; }
+.engagement-table { min-width: 720px; }
+.journey-table { min-width: 900px; }
+
+/* The base rule monospaces the fourth column, which is meaningful in the
+   influencer table and arbitrary here. */
+.funnel-table td:nth-child(4),
+.search-gaps-table td:nth-child(4),
+.corrections-table td:nth-child(4),
+.conversion-table td:nth-child(4),
+.friction-table td:nth-child(4),
+.engagement-table td:nth-child(4),
+.journey-table td:nth-child(4) {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Funnel: the bar makes the shape of the drop-off readable at a glance, which
+   a column of numbers never is. */
+.funnel-bar {
+  display: inline-block;
+  vertical-align: middle;
+  width: 120px;
+  height: 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.funnel-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent, #22c55e);
+}
+
+.funnel-count {
+  margin-left: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.funnel-table .funnel-worst td {
+  background: #fef2f2;
+  font-weight: 600;
+}
+
+/* Zero-result searches and leaky screens: the cells that turn into work. */
+.admin-table .gap-cell {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* Journey: a readable timeline rather than a wall of rows. */
+.journey-params {
+  color: var(--muted);
+  font-size: 12px;
+  max-width: 380px;
+  overflow-wrap: anywhere;
+}
+
+.journey-table .journey-session-break td {
+  background: #f1f5f9;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.journey-table .journey-error td:nth-child(3) {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.journey-table .journey-funnel td:nth-child(3) {
+  font-weight: 600;
+}
+
+.journey-table .journey-screen td:nth-child(3) {
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .funnel-bar {
+    width: 72px;
   }
 }

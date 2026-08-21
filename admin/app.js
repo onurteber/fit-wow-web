@@ -118,7 +118,25 @@
     subscriptionPurchasesMetric: document.getElementById('subscriptionPurchasesMetric'),
     refundedSubscriptionsMetric: document.getElementById('refundedSubscriptionsMetric'),
     activeFreeTrialsMetric: document.getElementById('activeFreeTrialsMetric'),
-    cancelledFreeTrialsMetric: document.getElementById('cancelledFreeTrialsMetric')
+    cancelledFreeTrialsMetric: document.getElementById('cancelledFreeTrialsMetric'),
+    onboardingCompletionMetric: document.getElementById('onboardingCompletionMetric'),
+    activationMetric: document.getElementById('activationMetric'),
+    funnelStatus: document.getElementById('funnelStatus'),
+    funnelBody: document.getElementById('funnelBody'),
+    searchGapsStatus: document.getElementById('searchGapsStatus'),
+    searchGapsBody: document.getElementById('searchGapsBody'),
+    correctionsStatus: document.getElementById('correctionsStatus'),
+    correctionsBody: document.getElementById('correctionsBody'),
+    conversionStatus: document.getElementById('conversionStatus'),
+    conversionBody: document.getElementById('conversionBody'),
+    frictionStatus: document.getElementById('frictionStatus'),
+    frictionBody: document.getElementById('frictionBody'),
+    engagementStatus: document.getElementById('engagementStatus'),
+    engagementBody: document.getElementById('engagementBody'),
+    journeyActorInput: document.getElementById('journeyActorInput'),
+    journeyLoadButton: document.getElementById('journeyLoadButton'),
+    journeyStatus: document.getElementById('journeyStatus'),
+    journeyBody: document.getElementById('journeyBody')
   };
 
   document.addEventListener('DOMContentLoaded', init);
@@ -173,6 +191,10 @@
     els.costRefreshButton.addEventListener('click', loadGeminiCost);
     els.activityRefreshButton.addEventListener('click', loadDailyActivity);
     els.progressRefreshButton.addEventListener('click', loadUserProgress);
+    els.journeyLoadButton.addEventListener('click', loadUserJourney);
+    els.journeyActorInput.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') loadUserJourney();
+    });
     els.progressStatusFilter.addEventListener('change', function () {
       renderProgressRows(progressRows);
     });
@@ -358,6 +380,7 @@
       return null;
     });
     loadCountryBreakdown(range, refundCountsRequest);
+    loadProductAnalytics();
 
     apiRequest('/rpc/get_admin_influencer_stats', {
       method: 'POST',
@@ -1352,6 +1375,498 @@
       headers: headers,
       body: requestOptions.body
     });
+  }
+
+  // ── Product analytics ───────────────────────────────────────────────────
+  //
+  // Every panel below reads one SECURITY DEFINER RPC from migration 531. They
+  // follow the same load / render / renderEmpty shape as the panels above,
+  // including the isPermissionError branch: a non-admin session must be
+  // rejected, not shown an error row.
+  //
+  // The RPCs take DATE, not a timestamp, so these use the raw date inputs
+  // rather than getDateRange()'s ISO strings.
+
+  function getProductDateRange() {
+    return {
+      p_from: els.fromDate.value || null,
+      p_to: els.toDate.value || null
+    };
+  }
+
+  function loadProductAnalytics() {
+    loadFunnel();
+    loadSearchGaps();
+    loadCorrections();
+    loadConversion();
+    loadFriction();
+    loadEngagement();
+  }
+
+  function setProductStatus(element, text, type) {
+    if (!element) return;
+    element.textContent = text;
+    element.className = 'message' + (type ? ' ' + type : '');
+  }
+
+  function renderEmptyProductRow(body, columns, text) {
+    if (!body) return;
+    body.innerHTML = '<tr><td colspan="' + columns + '" class="empty-cell">' +
+      escapeHtml(text) + '</td></tr>';
+  }
+
+  // Shared load path: nothing about these panels differs except the RPC, the
+  // renderer and the column count, so keeping one function avoids six copies
+  // of the same permission and error handling drifting apart.
+  function loadProductPanel(options) {
+    if (!session) return;
+
+    setProductStatus(options.statusElement, 'Yükleniyor...', '');
+    renderEmptyProductRow(options.body, options.columns, 'Yükleniyor...');
+
+    apiRequest('/rpc/' + options.rpc, {
+      method: 'POST',
+      body: JSON.stringify(options.params)
+    }).then(function (rows) {
+      var list = rows || [];
+      options.render(list);
+      if (!list.length) {
+        setProductStatus(options.statusElement, options.emptyMessage, '');
+        return;
+      }
+      setProductStatus(
+        options.statusElement,
+        options.summary ? options.summary(list) : 'Güncel',
+        'success'
+      );
+    }).catch(function (error) {
+      options.render([]);
+      if (isPermissionError(error)) {
+        rejectCurrentSession('Bu panel sadece admin hesaplarına açık.');
+        return;
+      }
+      setProductStatus(
+        options.statusElement,
+        error.message || 'Veri alınamadı.',
+        'error'
+      );
+    });
+  }
+
+  // ── Funnel ───────────────────────────────────────────────────────────────
+
+  function loadFunnel() {
+    loadProductPanel({
+      rpc: 'get_admin_product_funnel',
+      params: getProductDateRange(),
+      statusElement: els.funnelStatus,
+      body: els.funnelBody,
+      columns: 6,
+      emptyMessage: 'Bu aralıkta huni verisi yok.',
+      render: renderFunnelRows,
+      summary: function (rows) {
+        var worst = worstFunnelStep(rows);
+        if (!worst) return 'Güncel';
+        return 'En büyük düşüş: ' + worst.step_label + ' (%' +
+          formatDecimal(worst.drop_from_previous_percent) + ')';
+      }
+    });
+  }
+
+  // The point of the panel: name the step that loses the most people, rather
+  // than leaving it to be spotted by eye in sixteen rows.
+  function worstFunnelStep(rows) {
+    var worst = null;
+    rows.forEach(function (row) {
+      var drop = Number(row.drop_from_previous_percent);
+      if (!Number.isFinite(drop) || drop <= 0) return;
+      if (!worst || drop > Number(worst.drop_from_previous_percent)) worst = row;
+    });
+    return worst;
+  }
+
+  function renderFunnelRows(rows) {
+    updateActivationMetrics(rows);
+
+    if (!rows.length) {
+      renderEmptyProductRow(els.funnelBody, 6, 'Veri yok');
+      return;
+    }
+
+    var startUsers = Number(rows[0] && rows[0].users) || 0;
+    var worst = worstFunnelStep(rows);
+
+    els.funnelBody.innerHTML = rows.map(function (row) {
+      var users = Number(row.users) || 0;
+      var width = startUsers > 0 ? Math.round(users * 100 / startUsers) : 0;
+      var isWorst = worst && worst.step_key === row.step_key;
+      return [
+        '<tr' + (isWorst ? ' class="funnel-worst"' : '') + '>',
+        '<td>', escapeHtml(row.step_label || row.step_key || '-'), '</td>',
+        '<td>',
+        '<div class="funnel-bar"><span style="width:', width, '%"></span></div>',
+        '<span class="funnel-count">', formatNumber(users), '</span>',
+        '</td>',
+        '<td>', formatPercent(row.conversion_from_start_percent), '</td>',
+        '<td>', formatPercent(row.drop_from_previous_percent), '</td>',
+        '<td>', formatDurationMs(row.median_duration_ms), '</td>',
+        '<td>', formatDecimal(row.avg_back_count), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  function updateActivationMetrics(rows) {
+    var byKey = {};
+    rows.forEach(function (row) { byKey[row.step_key] = Number(row.users) || 0; });
+    var opened = byKey.app_opened || 0;
+
+    els.onboardingCompletionMetric.textContent = opened > 0
+      ? formatDecimal(byKey.onboarding_completed * 100 / opened) + '%'
+      : '-';
+    els.activationMetric.textContent = opened > 0
+      ? formatDecimal(byKey.first_meal * 100 / opened) + '%'
+      : '-';
+  }
+
+  // ── Search gaps ──────────────────────────────────────────────────────────
+
+  function loadSearchGaps() {
+    var params = getProductDateRange();
+    params.p_limit = 50;
+    loadProductPanel({
+      rpc: 'get_admin_product_search_gaps',
+      params: params,
+      statusElement: els.searchGapsStatus,
+      body: els.searchGapsBody,
+      columns: 8,
+      emptyMessage: 'Bu aralıkta başarısız arama yok.',
+      render: renderSearchGapRows,
+      summary: function (rows) {
+        var zero = 0;
+        var abandoned = 0;
+        rows.forEach(function (row) {
+          zero += Number(row.zero_result_searches) || 0;
+          abandoned += Number(row.abandoned_searches) || 0;
+        });
+        return formatNumber(zero) + ' sonuçsuz · ' +
+          formatNumber(abandoned) + ' seçilmeden bırakıldı';
+      }
+    });
+  }
+
+  function renderSearchGapRows(rows) {
+    if (!rows.length) {
+      renderEmptyProductRow(els.searchGapsBody, 8, 'Veri yok');
+      return;
+    }
+    els.searchGapsBody.innerHTML = rows.map(function (row) {
+      var zero = Number(row.zero_result_searches) || 0;
+      return [
+        '<tr>',
+        '<td class="code-cell">', escapeHtml(row.query || '-'), '</td>',
+        '<td>', formatNumber(row.searches), '</td>',
+        '<td>', formatNumber(row.users), '</td>',
+        // Zero results is the catalogue gap; highlighted because it is the one
+        // that converts straight into work.
+        '<td', zero > 0 ? ' class="gap-cell"' : '', '>', formatNumber(zero), '</td>',
+        '<td>', formatNumber(row.abandoned_searches), '</td>',
+        '<td>', formatNumber(row.relaxed_searches), '</td>',
+        '<td>', formatDecimal(row.avg_result_count), '</td>',
+        '<td>', formatDateTime(row.last_seen_at), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  // ── AI corrections ───────────────────────────────────────────────────────
+
+  function loadCorrections() {
+    var params = getProductDateRange();
+    params.p_limit = 50;
+    loadProductPanel({
+      rpc: 'get_admin_product_ai_corrections',
+      params: params,
+      statusElement: els.correctionsStatus,
+      body: els.correctionsBody,
+      columns: 7,
+      emptyMessage: 'Bu aralıkta düzeltme yok.',
+      render: renderCorrectionRows,
+      summary: function (rows) {
+        return rows.length + ' yemek düzeltildi · en çok: ' +
+          escapeHtml(rows[0].canonical_food || '-');
+      }
+    });
+  }
+
+  function renderCorrectionRows(rows) {
+    if (!rows.length) {
+      renderEmptyProductRow(els.correctionsBody, 7, 'Veri yok');
+      return;
+    }
+    els.correctionsBody.innerHTML = rows.map(function (row) {
+      return [
+        '<tr>',
+        '<td class="code-cell">', escapeHtml(row.canonical_food || '-'), '</td>',
+        '<td>', formatNumber(row.corrections), '</td>',
+        '<td>', formatNumber(row.users), '</td>',
+        '<td>', formatNumber(row.grams_corrections), '</td>',
+        '<td>', formatNumber(row.calorie_corrections), '</td>',
+        '<td>', formatPercent(row.median_abs_delta_percent), '</td>',
+        '<td>', formatSeconds(row.median_seconds_after_analysis), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  // ── Conversion ───────────────────────────────────────────────────────────
+
+  function loadConversion() {
+    loadProductPanel({
+      rpc: 'get_admin_product_conversion',
+      params: getProductDateRange(),
+      statusElement: els.conversionStatus,
+      body: els.conversionBody,
+      columns: 10,
+      emptyMessage: 'Bu aralıkta paywall verisi yok.',
+      render: renderConversionRows
+    });
+  }
+
+  function renderConversionRows(rows) {
+    if (!rows.length) {
+      renderEmptyProductRow(els.conversionBody, 10, 'Veri yok');
+      return;
+    }
+    els.conversionBody.innerHTML = rows.map(function (row) {
+      return [
+        '<tr>',
+        '<td class="code-cell">', escapeHtml(row.source || '-'), '</td>',
+        '<td>', formatNumber(row.quota_sheets), '</td>',
+        '<td>', formatNumber(row.paywalls_shown), '</td>',
+        '<td>', formatNumber(row.plans_selected), '</td>',
+        '<td>', formatNumber(row.purchases_started), '</td>',
+        '<td>', formatNumber(row.purchases_completed), '</td>',
+        '<td>', formatNumber(row.purchases_cancelled), '</td>',
+        '<td>', formatNumber(row.purchases_failed), '</td>',
+        '<td>', formatPercent(row.conversion_percent), '</td>',
+        '<td>', formatDecimal(row.median_days_since_install), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  // ── Friction ─────────────────────────────────────────────────────────────
+
+  function loadFriction() {
+    var params = getProductDateRange();
+    params.p_limit = 50;
+    loadProductPanel({
+      rpc: 'get_admin_product_error_hotspots',
+      params: params,
+      statusElement: els.frictionStatus,
+      body: els.frictionBody,
+      columns: 7,
+      emptyMessage: 'Bu aralıkta hata kaydı yok.',
+      render: renderFrictionRows,
+      summary: function (rows) {
+        var users = rows.reduce(function (total, row) {
+          return total + (Number(row.users) || 0);
+        }, 0);
+        return rows.length + ' sıcak nokta · ' + formatNumber(users) + ' kullanıcı etkilendi';
+      }
+    });
+  }
+
+  function renderFrictionRows(rows) {
+    if (!rows.length) {
+      renderEmptyProductRow(els.frictionBody, 7, 'Veri yok');
+      return;
+    }
+    els.frictionBody.innerHTML = rows.map(function (row) {
+      return [
+        '<tr>',
+        '<td class="code-cell">', escapeHtml(row.screen || '-'), '</td>',
+        '<td>', escapeHtml(row.event_name || '-'), '</td>',
+        '<td>', formatNumber(row.occurrences), '</td>',
+        '<td>', formatNumber(row.users), '</td>',
+        '<td>', escapeHtml(row.sample_stage || '-'), '</td>',
+        '<td>', escapeHtml(row.sample_reason || '-'), '</td>',
+        '<td>', formatDateTime(row.last_seen_at), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  // ── Screen engagement ────────────────────────────────────────────────────
+
+  function loadEngagement() {
+    var params = getProductDateRange();
+    params.p_limit = 60;
+    loadProductPanel({
+      rpc: 'get_admin_product_screen_engagement',
+      params: params,
+      statusElement: els.engagementStatus,
+      body: els.engagementBody,
+      columns: 6,
+      emptyMessage: 'Bu aralıkta ekran verisi yok.',
+      render: renderEngagementRows
+    });
+  }
+
+  function renderEngagementRows(rows) {
+    if (!rows.length) {
+      renderEmptyProductRow(els.engagementBody, 6, 'Veri yok');
+      return;
+    }
+    els.engagementBody.innerHTML = rows.map(function (row) {
+      var exitPercent = Number(row.exit_percent);
+      // A screen people leave the app from more often than not is worth
+      // looking at regardless of how much traffic it gets.
+      var leaky = Number.isFinite(exitPercent) && exitPercent >= 50;
+      return [
+        '<tr>',
+        '<td class="code-cell">', escapeHtml(row.screen || '-'), '</td>',
+        '<td>', formatNumber(row.views), '</td>',
+        '<td>', formatNumber(row.users), '</td>',
+        '<td>', formatDurationMs(row.median_dwell_ms), '</td>',
+        '<td>', formatPercent(row.bounce_percent), '</td>',
+        '<td', leaky ? ' class="gap-cell"' : '', '>',
+        formatPercent(row.exit_percent), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  // ── One user's journey ───────────────────────────────────────────────────
+
+  function loadUserJourney() {
+    if (!session) return;
+    var actor = els.journeyActorInput.value.trim();
+    if (!actor) {
+      setProductStatus(els.journeyStatus, 'Bir user uuid veya anon id girin.', '');
+      renderEmptyProductRow(els.journeyBody, 6, 'Bir kullanıcı seçin.');
+      return;
+    }
+
+    setProductStatus(els.journeyStatus, 'Yükleniyor...', '');
+    renderEmptyProductRow(els.journeyBody, 6, 'Yükleniyor...');
+
+    apiRequest('/rpc/get_admin_product_user_journey', {
+      method: 'POST',
+      body: JSON.stringify({ p_actor: actor, p_limit: 300 })
+    }).then(function (rows) {
+      var steps = rows || [];
+      renderJourneyRows(steps);
+      if (!steps.length) {
+        setProductStatus(els.journeyStatus, 'Bu kullanıcı için kayıt yok.', '');
+        return;
+      }
+      setProductStatus(
+        els.journeyStatus,
+        steps.length + ' adım · ' + countSessions(steps) + ' oturum',
+        'success'
+      );
+    }).catch(function (error) {
+      renderJourneyRows([]);
+      if (isPermissionError(error)) {
+        rejectCurrentSession('Bu panel sadece admin hesaplarına açık.');
+        return;
+      }
+      setProductStatus(els.journeyStatus, error.message || 'Yolculuk alınamadı.', 'error');
+    });
+  }
+
+  function countSessions(steps) {
+    var ids = {};
+    steps.forEach(function (step) {
+      if (step.session_id) ids[step.session_id] = true;
+    });
+    return Object.keys(ids).length;
+  }
+
+  function renderJourneyRows(steps) {
+    if (!steps.length) {
+      renderEmptyProductRow(els.journeyBody, 6, 'Kayıt yok');
+      return;
+    }
+
+    var previousSession = null;
+    els.journeyBody.innerHTML = steps.map(function (step) {
+      var rows = [];
+      // A visible break between sessions: without it a return three days later
+      // reads as the next step in the same sitting.
+      if (step.session_id && step.session_id !== previousSession) {
+        previousSession = step.session_id;
+        rows.push(
+          '<tr class="journey-session-break"><td colspan="6">Yeni oturum · ' +
+          formatDateTime(step.occurred_at) + '</td></tr>'
+        );
+      }
+      rows.push([
+        '<tr class="journey-row journey-' + escapeHtml(step.event_category || 'system') + '">',
+        '<td>', formatTimeOnly(step.occurred_at), '</td>',
+        '<td>', formatSeconds(step.seconds_since_previous), '</td>',
+        '<td class="code-cell">', escapeHtml(step.event_name || '-'), '</td>',
+        '<td>', escapeHtml(step.screen || '-'), '</td>',
+        '<td class="journey-params">', escapeHtml(summarizeParams(step.params)), '</td>',
+        '<td>', escapeHtml(step.app_version || '-'), '</td>',
+        '</tr>'
+      ].join(''));
+      return rows.join('');
+    }).join('');
+  }
+
+  function summarizeParams(params) {
+    if (!params || typeof params !== 'object') return '';
+    return Object.keys(params).map(function (key) {
+      return key + '=' + params[key];
+    }).join(' · ');
+  }
+
+  // ── Formatters ───────────────────────────────────────────────────────────
+
+  function formatPercent(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    return formatDecimal(value) + '%';
+  }
+
+  function formatDurationMs(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    var ms = Number(value);
+    if (!Number.isFinite(ms)) return '-';
+    if (ms < 1000) return Math.round(ms) + ' ms';
+    return formatDecimal(ms / 1000) + ' sn';
+  }
+
+  function formatSeconds(value) {
+    if (value === null || value === undefined || value === '') return '-';
+    var seconds = Number(value);
+    if (!Number.isFinite(seconds)) return '-';
+    if (seconds < 60) return formatDecimal(seconds) + ' sn';
+    if (seconds < 3600) return Math.round(seconds / 60) + ' dk';
+    return formatDecimal(seconds / 3600) + ' sa';
+  }
+
+  function formatDateTime(value) {
+    if (!value) return '-';
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return '-';
+    return new Intl.DateTimeFormat('tr-TR', {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    }).format(date);
+  }
+
+  function formatTimeOnly(value) {
+    if (!value) return '-';
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return '-';
+    return new Intl.DateTimeFormat('tr-TR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
   }
 
   function apiRequest(path, options) {

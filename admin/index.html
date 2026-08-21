@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="/assets/app_icon_ios.png" />
   <link rel="stylesheet" href="/influencer/styles.css" />
   <link rel="stylesheet" href="/admin/styles.css" />
-  <script defer src="/admin/app.js?v=20260811-user-progress-2"></script>
+  <script defer src="/admin/app.js?v=20260822-product-analytics"></script>
 </head>
 <body>
   <div class="shell admin-shell">
@@ -127,6 +127,14 @@
           <article class="metric-card">
             <span>Toplam iptal edilen ücretsiz deneme</span>
             <strong id="cancelledFreeTrialsMetric">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Onboarding tamamlama</span>
+            <strong id="onboardingCompletionMetric">-</strong>
+          </article>
+          <article class="metric-card">
+            <span>İlk öğün aktivasyonu</span>
+            <strong id="activationMetric">-</strong>
           </article>
         </section>
 
@@ -339,6 +347,215 @@
                 <tr>
                   <td colspan="15" class="empty-cell">Yükleniyor...</td>
                 </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ── Product analytics ────────────────────────────────────────── -->
+        <!-- Each panel answers one question about where users get stuck.
+             They share the date range above; the journey panel is per-user
+             and has its own control. -->
+
+        <section class="table-panel funnel-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Onboarding &amp; aktivasyon hunisi</h2>
+              <p class="table-description">Açılıştan ilk öğüne · uzun süre + çok geri dönüş = adım anlaşılmıyor</p>
+            </div>
+            <p id="funnelStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table funnel-table">
+              <thead>
+                <tr>
+                  <th>Adım</th>
+                  <th>Kullanıcı</th>
+                  <th>Kalan</th>
+                  <th>Düşüş</th>
+                  <th>Medyan süre</th>
+                  <th>Ort. geri dönüş</th>
+                </tr>
+              </thead>
+              <tbody id="funnelBody">
+                <tr><td colspan="6" class="empty-cell">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-panel search-gaps-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Arama boşlukları</h2>
+              <p class="table-description">Sonuç yok, ya da sonuç geldi ama hiçbiri seçilmedi · ikincisi daha sinsi: katalog yanlış yemeği döndürüyor</p>
+            </div>
+            <p id="searchGapsStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table search-gaps-table">
+              <thead>
+                <tr>
+                  <th>Sorgu</th>
+                  <th>Arama</th>
+                  <th>Kullanıcı</th>
+                  <th>0 sonuç</th>
+                  <th>Seçilmedi</th>
+                  <th>Gevşetilmiş</th>
+                  <th>Ort. sonuç</th>
+                  <th>Son görülme</th>
+                </tr>
+              </thead>
+              <tbody id="searchGapsBody">
+                <tr><td colspan="8" class="empty-cell">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-panel corrections-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>AI düzeltmeleri</h2>
+              <p class="table-description">Kullanıcının analiz sonrası elle düzelttiği yemekler · local_nutrition_reference için doğrudan girdi</p>
+            </div>
+            <p id="correctionsStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table corrections-table">
+              <thead>
+                <tr>
+                  <th>Yemek</th>
+                  <th>Düzeltme</th>
+                  <th>Kullanıcı</th>
+                  <th>Gramaj</th>
+                  <th>Kalori</th>
+                  <th>Medyan sapma</th>
+                  <th>Analizden sonra</th>
+                </tr>
+              </thead>
+              <tbody id="correctionsBody">
+                <tr><td colspan="7" class="empty-cell">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-panel conversion-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Paywall dönüşümü</h2>
+              <p class="table-description">Hangi özellik satın aldırıyor · en çok gösterilen, en çok dönüşen demek değil</p>
+            </div>
+            <p id="conversionStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table conversion-table">
+              <thead>
+                <tr>
+                  <th>Kaynak</th>
+                  <th>Kota uyarısı</th>
+                  <th>Paywall</th>
+                  <th>Plan seçildi</th>
+                  <th>Başlatıldı</th>
+                  <th>Tamamlandı</th>
+                  <th>İptal</th>
+                  <th>Hata</th>
+                  <th>Dönüşüm</th>
+                  <th>Medyan gün</th>
+                </tr>
+              </thead>
+              <tbody id="conversionBody">
+                <tr><td colspan="10" class="empty-cell">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-panel friction-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Hata &amp; sürtünme</h2>
+              <p class="table-description">Hatalar, izin reddi, öfke dokunuşu ve gezinme döngüsü · tekil kullanıcıya göre sıralı</p>
+            </div>
+            <p id="frictionStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table friction-table">
+              <thead>
+                <tr>
+                  <th>Ekran</th>
+                  <th>Olay</th>
+                  <th>Adet</th>
+                  <th>Kullanıcı</th>
+                  <th>Aşama</th>
+                  <th>Örnek neden</th>
+                  <th>Son görülme</th>
+                </tr>
+              </thead>
+              <tbody id="frictionBody">
+                <tr><td colspan="7" class="empty-cell">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-panel engagement-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Ekran etkileşimi</h2>
+              <p class="table-description">Çıkış oranı yüksek ve çok görüntülenen ekran, uygulamanın kullanıcıyı kaybettiği yerdir</p>
+            </div>
+            <p id="engagementStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table engagement-table">
+              <thead>
+                <tr>
+                  <th>Ekran</th>
+                  <th>Görüntüleme</th>
+                  <th>Kullanıcı</th>
+                  <th>Medyan kalış</th>
+                  <th>2 sn altı</th>
+                  <th>Çıkış</th>
+                </tr>
+              </thead>
+              <tbody id="engagementBody">
+                <tr><td colspan="6" class="empty-cell">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="table-panel journey-panel">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Kullanıcı yolculuğu</h2>
+              <p class="table-description">Tek kişinin adım adım akışı · User UUID ya da cihaz (anon) id · kayıt öncesi adımlar da dahil</p>
+            </div>
+            <div class="daily-controls">
+              <label>
+                Kullanıcı
+                <input id="journeyActorInput" type="text" placeholder="user uuid veya anon id" />
+              </label>
+              <button id="journeyLoadButton" class="button button-secondary" type="button">Göster</button>
+              <p id="journeyStatus" class="message" role="status"></p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table journey-table">
+              <thead>
+                <tr>
+                  <th>Zaman</th>
+                  <th>Ara</th>
+                  <th>Olay</th>
+                  <th>Ekran</th>
+                  <th>Detay</th>
+                  <th>Sürüm</th>
+                </tr>
+              </thead>
+              <tbody id="journeyBody">
+                <tr><td colspan="6" class="empty-cell">Bir kullanıcı seçin.</td></tr>
               </tbody>
             </table>
           </div>
