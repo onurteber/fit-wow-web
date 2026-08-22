@@ -1070,6 +1070,7 @@
         '<tr>',
         '<td class="code-cell">', escapeHtml(row.user_name || '-'), '</td>',
         '<td class="uuid-cell">', escapeHtml(row.user_uuid || '-'), '</td>',
+        '<td>', row.has_active_subscription ? 'Var' : 'Yok', '</td>',
         '<td>', formatDecimal(row.kg_to_goal), '</td>',
         '<td>', formatNumber(row.meal_count), '</td>',
         '<td>', formatMilliliters(row.water_intake_ml), '</td>',
@@ -1080,7 +1081,7 @@
   }
 
   function renderEmptyActivityRow(text) {
-    els.activityBody.innerHTML = '<tr><td colspan="6" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
+    els.activityBody.innerHTML = '<tr><td colspan="7" class="empty-cell">' + escapeHtml(text) + '</td></tr>';
   }
 
   function renderProgressRows(rows) {
