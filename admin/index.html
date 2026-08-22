@@ -376,7 +376,7 @@
           <div class="table-head cost-head">
             <div>
               <h2>Onboarding &amp; aktivasyon hunisi</h2>
-              <p class="table-description">Açılıştan ilk öğüne · uzun süre + çok geri dönüş = adım anlaşılmıyor</p>
+              <p class="table-description">Yeni kurulum kohortu · mevcut hesapla girenler hariç · uzun süre + çok geri dönüş = adım anlaşılmıyor</p>
             </div>
             <p id="funnelStatus" class="message" role="status"></p>
           </div>
@@ -487,6 +487,38 @@
           </div>
         </section>
 
+        <section class="table-panel free-quota-panel" data-tab-panel="revenue">
+          <div class="table-head cost-head">
+            <div>
+              <h2>Ücretsiz AI hakkını kullananlar</h2>
+              <p class="table-description">Freemium sınırına çarpanlar · "kullanım" 2+ ise ikinci kez geri gelmiş · "bekliyor" = 72 saatlik süre henüz dolmadı</p>
+            </div>
+            <p id="freeQuotaStatus" class="message" role="status"></p>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table free-quota-table">
+              <thead>
+                <tr>
+                  <th>Kullanıcı</th>
+                  <th>Kayıt</th>
+                  <th>Özellik</th>
+                  <th>Kullanım</th>
+                  <th>Ne zaman</th>
+                  <th>Bekliyor</th>
+                  <th>Öğün</th>
+                  <th>Su (gün)</th>
+                  <th>Son su</th>
+                  <th>Abone oldu mu</th>
+                  <th>Son olay</th>
+                  <th>User UUID</th>
+                </tr>
+              </thead>
+              <tbody id="freeQuotaBody">
+                <tr><td colspan="12" class="empty-cell">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
         <section class="table-panel friction-panel" data-tab-panel="friction">
           <div class="table-head cost-head">
             <div>

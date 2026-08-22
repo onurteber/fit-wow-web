@@ -145,6 +145,8 @@
     searchGapsBody: document.getElementById('searchGapsBody'),
     correctionsStatus: document.getElementById('correctionsStatus'),
     correctionsBody: document.getElementById('correctionsBody'),
+    freeQuotaStatus: document.getElementById('freeQuotaStatus'),
+    freeQuotaBody: document.getElementById('freeQuotaBody'),
     conversionStatus: document.getElementById('conversionStatus'),
     conversionBody: document.getElementById('conversionBody'),
     frictionStatus: document.getElementById('frictionStatus'),
@@ -447,7 +449,7 @@
     else if (name === 'users') { loadDailyActivity(); loadUserProgress(); }
     else if (name === 'funnel') { loadFunnel(); loadEngagement(); }
     else if (name === 'quality') { loadSearchGaps(); loadCorrections(); }
-    else if (name === 'revenue') loadConversion();
+    else if (name === 'revenue') { loadConversion(); loadFreeQuota(); }
     else if (name === 'friction') loadFriction();
     else if (name === 'cost') loadGeminiCost();
   }
@@ -1595,13 +1597,16 @@
   function updateActivationMetrics(rows) {
     var byKey = {};
     rows.forEach(function (row) { byKey[row.step_key] = Number(row.users) || 0; });
-    var opened = byKey.app_opened || 0;
+    // Row 0 of the funnel is the new-install cohort (migration 532), not every
+    // app launch: an existing user opening the app can never complete
+    // onboarding, so including them made both rates read far too low.
+    var opened = byKey.new_install || 0;
 
     els.onboardingCompletionMetric.textContent = opened > 0
-      ? formatDecimal(byKey.onboarding_completed * 100 / opened) + '%'
+      ? formatDecimal((byKey.onboarding_completed || 0) * 100 / opened) + '%'
       : '-';
     els.activationMetric.textContent = opened > 0
-      ? formatDecimal(byKey.first_meal * 100 / opened) + '%'
+      ? formatDecimal((byKey.first_meal || 0) * 100 / opened) + '%'
       : '-';
   }
 
@@ -1727,6 +1732,69 @@
         '<td>', formatNumber(row.purchases_failed), '</td>',
         '<td>', formatPercent(row.conversion_percent), '</td>',
         '<td>', formatDecimal(row.median_days_since_install), '</td>',
+        '</tr>'
+      ].join('');
+    }).join('');
+  }
+
+  // ── Free AI quota ────────────────────────────────────────────────────────
+  //
+  // The freemium boundary seen from the other side: the paywall panel above
+  // shows what people did once they were asked to pay, this shows who hit the
+  // free limit at all and whether anything came of it.
+  //
+  // Deliberately NOT date-filtered by the toolbar: the useful reading here is
+  // operational ("who is in cooldown right now"), and a 30-day window would
+  // silently hide the people still waiting from an older run.
+
+  function loadFreeQuota() {
+    loadProductPanel({
+      rpc: 'get_admin_free_quota_usage',
+      params: { p_from: null, p_to: null, p_limit: 200 },
+      statusElement: els.freeQuotaStatus,
+      body: els.freeQuotaBody,
+      columns: 12,
+      emptyMessage: 'Ücretsiz hak kullanımı yok.',
+      render: renderFreeQuotaRows,
+      summary: function (rows) {
+        var waiting = 0;
+        var returned = 0;
+        var subscribed = 0;
+        rows.forEach(function (row) {
+          if (row.still_waiting) waiting += 1;
+          if (Number(row.use_count) > 1) returned += 1;
+          if (row.has_ever_subscribed) subscribed += 1;
+        });
+        return rows.length + ' kullanım · ' + waiting + ' şu an bekliyor · ' +
+          returned + ' geri döndü · ' + subscribed + ' abone oldu';
+      }
+    });
+  }
+
+  function renderFreeQuotaRows(rows) {
+    if (!rows.length) {
+      renderEmptyProductRow(els.freeQuotaBody, 12, 'Veri yok');
+      return;
+    }
+    els.freeQuotaBody.innerHTML = rows.map(function (row) {
+      var returned = Number(row.use_count) > 1;
+      return [
+        // Someone who came back for a second free window is the strongest
+        // "interested but not paying" signal in this table, so the row is
+        // marked rather than left to be spotted in a column of 1s.
+        '<tr' + (returned ? ' class="quota-returned"' : '') + '>',
+        '<td>', escapeHtml(row.display_name || '-'), '</td>',
+        '<td>', formatDateOnly(row.signed_up_on), '</td>',
+        '<td class="code-cell">', escapeHtml(row.feature || '-'), '</td>',
+        '<td>', formatNumber(row.use_count), '</td>',
+        '<td>', formatAge(row.seconds_since_use), '</td>',
+        '<td>', row.still_waiting ? 'Bekliyor' : '-', '</td>',
+        '<td>', formatNumber(row.meal_count), '</td>',
+        '<td>', formatNumber(row.water_days), '</td>',
+        '<td>', formatDateOnly(row.last_water_day), '</td>',
+        '<td>', row.has_ever_subscribed ? 'Evet' : '-', '</td>',
+        '<td>', escapeHtml(row.latest_event_type || '-'), '</td>',
+        '<td class="uuid-cell">', escapeHtml(row.user_id || '-'), '</td>',
         '</tr>'
       ].join('');
     }).join('');
@@ -1922,6 +1990,24 @@
     if (seconds < 60) return formatDecimal(seconds) + ' sn';
     if (seconds < 3600) return Math.round(seconds / 60) + ' dk';
     return formatDecimal(seconds / 3600) + ' sa';
+  }
+
+  // "3 gün önce" reads faster than a timestamp when the question is how stale
+  // something is. formatSeconds tops out at hours, which is too short here.
+  function formatAge(seconds) {
+    if (seconds === null || seconds === undefined || seconds === '') return '-';
+    var value = Number(seconds);
+    if (!Number.isFinite(value)) return '-';
+    if (value < 3600) return Math.round(value / 60) + ' dk önce';
+    if (value < 86400) return Math.round(value / 3600) + ' sa önce';
+    return Math.round(value / 86400) + ' gün önce';
+  }
+
+  function formatDateOnly(value) {
+    if (!value) return '-';
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return '-';
+    return new Intl.DateTimeFormat('tr-TR', { dateStyle: 'short' }).format(date);
   }
 
   function formatDateTime(value) {

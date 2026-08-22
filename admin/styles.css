@@ -407,3 +407,24 @@
 .funnel-metrics {
   grid-template-columns: repeat(2, minmax(0, 220px));
 }
+
+/* ── Free AI quota panel ───────────────────────────────────────────────── */
+
+.free-quota-panel {
+  margin-top: 18px;
+}
+
+.free-quota-table {
+  min-width: 1240px;
+}
+
+.free-quota-table td:nth-child(4) {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Came back for a second free window: interested, not yet paying. */
+.free-quota-table .quota-returned td {
+  background: #f0fdf4;
+  font-weight: 600;
+}
