@@ -766,7 +766,7 @@ a {
 .preview__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-l);
+  gap: var(--space-lg);
   justify-items: center;
 }
 
@@ -1278,8 +1278,13 @@ a {
   .features__grid .feature-card:nth-child(8) { grid-column: 4 / span 2; }
 
   .preview__grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--space-lg);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--space-lg);
+    row-gap: var(--space-2xl);
+  }
+
+  .preview__grid .hero__mockup_2 img {
+    transform: none;
   }
 
   .phone-mockup--small {
