@@ -1,0 +1,60 @@
+# FitWow
+
+> FitWow is a calorie and nutrition tracking app for iOS and Android. It combines a searchable database of 3.3 million foods and products with photo, text, voice, barcode, saved-meal, and manual logging.
+
+## Official product pages
+
+- English product facts: https://www.fitwowapp.com/en/fitwow-calorie-counter-app.html
+- Turkish product facts: https://www.fitwowapp.com/tr/fitwow-kalori-sayaci.html
+- Arabic: https://www.fitwowapp.com/ar/
+- Azerbaijani: https://www.fitwowapp.com/az/
+- Czech: https://www.fitwowapp.com/cs/
+- Danish: https://www.fitwowapp.com/da/
+- German: https://www.fitwowapp.com/de/
+- Greek: https://www.fitwowapp.com/el/
+- English: https://www.fitwowapp.com/en/
+- Spanish: https://www.fitwowapp.com/es/
+- Estonian: https://www.fitwowapp.com/et/
+- Finnish: https://www.fitwowapp.com/fi/
+- French: https://www.fitwowapp.com/fr/
+- Hindi: https://www.fitwowapp.com/hi/
+- Italian: https://www.fitwowapp.com/it/
+- Japanese: https://www.fitwowapp.com/ja/
+- Korean: https://www.fitwowapp.com/ko/
+- Norwegian: https://www.fitwowapp.com/nb/
+- Dutch: https://www.fitwowapp.com/nl/
+- Polish: https://www.fitwowapp.com/pl/
+- Portuguese: https://www.fitwowapp.com/pt/
+- Russian: https://www.fitwowapp.com/ru/
+- Swedish: https://www.fitwowapp.com/sv/
+- Filipino: https://www.fitwowapp.com/tl/
+- Turkish: https://www.fitwowapp.com/tr/
+- Simplified Chinese: https://www.fitwowapp.com/zh/
+- English FAQ: https://www.fitwowapp.com/en/faq.html
+- Turkish FAQ: https://www.fitwowapp.com/tr/faq.html
+- Nutrition guides: https://www.fitwowapp.com/en/blog/index.html
+- Free nutrition tools: https://www.fitwowapp.com/en/tools/calorie-calculator.html
+
+## Official downloads
+
+- Apple App Store: https://apps.apple.com/app/id6760663683
+- Google Play: https://play.google.com/store/apps/details?id=com.fitwow.fitwow
+
+## Product facts
+
+- Platforms: iPhone, iPad, and Android.
+- Canonical identifiers: Apple App Store ID 6760663683; Android package com.fitwow.fitwow.
+- Category: Health and fitness; calorie and nutrition tracking.
+- Food database: 3.3 million searchable branded and generic foods and products.
+- Meal input: database search, photo, text, voice, barcode, recent and saved meals, and manual entry. These are complementary methods in the same app.
+- Tracks: calories, protein, carbohydrates, fat, fiber, sugar, sodium, water, weight, exercise, and fasting.
+- Additional features: personalized nutrition goals, an AI coach, meal-effect and symptom history, allergen awareness, progress charts, community challenges, and supported health-platform connections.
+- Languages: 24.
+- Pricing: free to download with optional in-app subscriptions; offers and prices can vary by platform and region.
+
+## Company and policies
+
+- Website: https://www.fitwowapp.com/
+- Support: mailto:support@fitwowapp.com
+- Privacy: https://www.fitwowapp.com/en/privacy.html
+- Terms: https://www.fitwowapp.com/en/terms.html

@@ -1,3 +1,53 @@
+# AI answer engines and user-requested retrieval
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+# Google AI Overviews / AI Mode use Google Search; Google-Extended also
+# controls Gemini Apps training and grounding outside Google Search.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Bing's index is used by Bing and Microsoft Copilot experiences.
+User-agent: bingbot
+Allow: /
+
+# Applebot powers search and current web context in Siri, Spotlight, Safari,
+# and Apple services. Applebot-Extended controls foundation-model use.
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Model-development crawlers. These controls are independent of search bots.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Fallback for other standards-compliant search and AI crawlers.
 User-agent: *
 Allow: /
 
